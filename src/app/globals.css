@@ -1,0 +1,411 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --card: #ffffff;
+  --card-foreground: #171717;
+  --popover: #ffffff;
+  --popover-foreground: #171717;
+  --primary: #01333C;
+  --primary-foreground: #ffffff;
+  --secondary: #f8fafc;
+  --secondary-foreground: #475569;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #f1f5f9;
+  --accent-foreground: #475569;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #01333C;
+  --radius: 0.5rem;
+   --chart-1: #3b82f6;
+  --chart-2: #06b6d4;
+  --chart-3: #f59e42;
+  --chart-4: #f43f5e;
+  --chart-5: #a21caf;
+  --sidebar: #10242b;
+  --sidebar-foreground: #f8fafc;
+  --sidebar-primary: #01333C;
+  --sidebar-primary-foreground: #f8fafc;
+  --sidebar-accent: #13414a;
+  --sidebar-accent-foreground: #f8fafc;
+  --sidebar-border: #13414a;
+  --sidebar-ring: #01708a;
+}
+
+.dark {
+  --background: #0a1a1f;
+  --foreground: #f8fafc;
+  --card: #10242b;
+  --card-foreground: #f8fafc;
+  --popover: #10242b;
+  --popover-foreground: #f8fafc;
+  --primary: #01333C;
+  --primary-foreground: #ffffff;
+  --secondary: #15313a;
+  --secondary-foreground: #e0e7ef;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --accent: #13414a;
+  --accent-foreground: #e0e7ef;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #13414a;
+  --input: #13414a;
+  --ring: #01708a;
+  --radius: 0.5rem;
+  --chart-1: #3b82f6;
+  --chart-2: #06b6d4;
+  --chart-3: #f59e42;
+  --chart-4: #f43f5e;
+  --chart-5: #a21caf;
+  --sidebar: #10242b;
+  --sidebar-foreground: #f8fafc;
+  --sidebar-primary: #01333C;
+  --sidebar-primary-foreground: #f8fafc;
+  --sidebar-accent: #13414a;
+  --sidebar-accent-foreground: #f8fafc;
+  --sidebar-border: #13414a;
+  --sidebar-ring: #01708a;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --background: #ffffff;
+    --foreground: #171717;
+  }
+} */
+
+body {
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+.scrollbar-container::-webkit-scrollbar {
+  width: 1px; /* Adjust the width of the scrollbar */
+}
+
+.scrollbar-container::-webkit-scrollbar-track {
+  background: transparent; /* Make the scrollbar track transparent */
+}
+
+.trigger-overview::target-text {
+  display: none !important;
+}
+/* styles.css */
+.custom-checkbox {
+  width: 18px;
+  height:18px;
+  appearance: none;
+  border: 1px solid #333; /* border color */
+  border-radius: 4px;
+  background-color: #fff; /* unchecked background color */
+  outline: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-checkbox:checked {
+  background-color: #333; /* checked background color */
+}
+
+
+body {
+  font-family: 'Poppins', sans-serif;
+}
+.basic-multi-select {
+  outline: none !important;
+  border-color: none !important;
+  width: 100%;
+}
+.css-13cymwt-control:hover{
+  /* border-color: #333 !important; */
+  /* outline: none !important; */
+  outline:#333 !important;
+}
+.react-datepicker-wrapper{
+  width: 100%;
+  outline:none;
+}
+
+.dropdown-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.dropdown-label {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.dropdown {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  background-color: #fff;
+}
+
+.dropdown:disabled {
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+
+/* Scrollbar for WebKit-based browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 10px;
+}
+
+/* Track (the area the scrollbar moves within) */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;  /* Light background */
+  border-radius: 10px;
+}
+
+/* Handle (the draggable part) */
+::-webkit-scrollbar-thumb {
+  background: #a4a4a5;  /* Light grey color similar to macOS */
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #7c7b7b;  /* Slightly darker grey when hovered */
+}
+
+/* Optional: Vertical scrollbar on specific containers */
+.scroll-container {
+  overflow-y: auto;
+  max-height: 400px;  /* Example max height */
+}
+
+/* Optional: Firefox scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #7b7b7e #f1f1f1;
+}
+
+
+/* Phone Input Wrapper */
+.phone-number-input .PhoneInput {
+  display: flex;
+  align-items: center;
+  border: 1px solid #d1d5db; /* Tailwind Gray-300 */
+  border-radius: 5px;
+  padding: 6px;
+  background-color: #ffffff; /* White Background */
+  transition: border-color 0.2s ease;
+}
+
+/* Focus State */
+.phone-number-input .PhoneInput:focus-within {
+  border-color: #02060c;
+  /* border-radius: 5px; */
+  /* box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);  */
+}
+
+/* Country Selector Dropdown */
+.phone-number-input .PhoneInputCountry {
+  margin-right: 8px;
+}
+
+.phone-number-input .PhoneInputCountryIcon {
+  width: 20px;
+  height: 16px;
+}
+
+.phone-number-input .PhoneInputCountrySelect {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Phone Number Input Field */
+.phone-number-input .PhoneInputInput {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  color: #111827; /* Tailwind Gray-900 */
+}
+
+/* Placeholder Styling */
+.phone-number-input .PhoneInputInput::placeholder {
+  color: #6b7280; /* Tailwind Gray-500 */
+}
+
+
+
+
+.react-datepicker {
+  display: flex !important;
+  /* flex-direction: row !important; */
+}
+
+/* Prevent shrinking on small screens */
+.react-datepicker__month-container {
+  min-width: 250px;
+}
+
+.react-datepicker__time-container {
+  min-width: 90px;
+  max-height: 240px;
+}
+
+
+.dropdown {
+  position: relative;
+  color: #333;
+  cursor: default;
+}
+
+.dropdown .arrow {
+  border-color: #999 transparent transparent;
+  border-style: solid;
+  border-width: 5px 5px 0;
+  content: " ";
+  display: block;
+  height: 0;
+  margin-top: 0.3rem;
+  position: absolute;
+  right: 10px;
+  top: 14px;
+  width: 0;
+}
+
+.dropdown .arrow.open {
+  border-color: transparent transparent #999;
+  border-width: 0 5px 5px;
+}
+
+.dropdown .selected-value input {
+  line-height: 1.5;
+  font-size: 1rem;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  box-sizing: border-box;
+  cursor: default;
+  outline: none;
+  padding: 8px 52px 8px 10px;
+  transition: all 200ms ease;
+  width: 100%;
+}
+
+.dropdown .options {
+  display: none;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  margin-top: -1px;
+  max-height: 200px;
+  overflow-y: auto;
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  z-index: 1000;
+  -webkit-overflow-scrolling: touch;
+}
+
+.dropdown .options.open {
+  display: block;
+}
+
+.dropdown .option {
+  box-sizing: border-box;
+  color: rgba(51, 51, 51, 0.8);
+  cursor: pointer;
+  display: block;
+  padding: 8px 10px;
+}
+
+.dropdown .option.selected,
+.dropdown .option:hover {
+  background-color: #f2f9fc;
+  color: #333;
+}
+
+
+/* react-datepicker.css */
+.react-datepicker-popper {
+  z-index: 9999 !important;
+}
+
+/* Apply column hover effect */
+.grouped-inventory td:hover,
+.grouped-inventory th:hover {
+  background-color: rgba(255, 0, 0, 0.2); /* red highlight */
+}
+
+/* Ensure hover applies to the full column */
+.grouped-inventory td:hover::before,
+.grouped-inventory th:hover::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(255, 0, 0, 0.2);
+  z-index: -1;
+}
