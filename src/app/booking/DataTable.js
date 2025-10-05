@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import moment from "moment";
 
 export function DataTable({
   items,
@@ -21,68 +22,65 @@ export function DataTable({
 
  
   return (
-    <div>
-      <Table>
-      <TableCaption>A list of your recent bookings.</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Date</TableHead>
-          <TableHead>Customer</TableHead>
-                  <TableHead>Driver</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Pickup Location</TableHead>
-          <TableHead>From</TableHead>
-          <TableHead>To</TableHead>
-          <TableHead>Trip Duration</TableHead>
-          <TableHead>Odo Meter</TableHead>
-          <TableHead>Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {items?.map((item, index) => (
-          <TableRow key={index}>
+    <div className="h-full flex flex-col ">
+      <div className="relative h-[550px] overflow-y-scroll border rounded-lg">
+        <Table>
+          <TableHeader className="sticky top-0 bg-background z-10">
+            <TableRow>
+              <TableHead>Date</TableHead>
+              <TableHead>Customer</TableHead>
+              <TableHead>Driver</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead>Pickup Location</TableHead>
+              <TableHead>From</TableHead>
+              <TableHead>To</TableHead>
+              <TableHead>Trip Duration</TableHead>
+              <TableHead>Odo Meter</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items?.map((item, index) => (
+              <TableRow key={index}>
                 <TableCell className="font-normal">
-                      {item?.date}{" "}{item?.time}
+                  {item?.date}{" "}{item?.time}
                 </TableCell>
-            <TableCell>{item?.customer?.name || "N/A"}</TableCell>
+                <TableCell>{item?.customer?.name || "N/A"}</TableCell>
                 <TableCell>{item?.driver || "N/A"}</TableCell>
                 <TableCell>{item?.description || "N/A"}</TableCell>
                 <TableCell>{item?.pickupLocation || "N/A"}</TableCell>
                 <TableCell>{item?.from || "N/A"}</TableCell>
                 <TableCell>{item?.to || "N/A"}</TableCell>
-            <TableCell >
-              <span className="grid gap-1 ">
-                <span>Start At : {item.tripStartAt}</span>
-              <span>End At : {item.tripEndAt}</span>
-              </span>
-            </TableCell>
-            <TableCell >
-              <span className="grid gap-1">
-                <span>Odo Start : {item.odoStart}</span>
-              <span>Odo End : {item.odoEnd}</span>
-              </span>
-              
-            </TableCell>
-            <TableCell className="flex gap-4">
-                    {/* <HasPermission permission={"inventory.update"}> */}
-                      <EditButton
-                        onClick={() => {
-                          handleEdit(item)
-                        }}data-id="edit"
-                      />
-                    {/* </HasPermission> */}
-                    {/* <HasPermission permission={"inventory.delete"}> */}
-                      <DeleteButton
-                        onClick={() => {
-                          handleDelete(item)
-                        }}data-id="delete"
-                      ></DeleteButton>
-                    {/* </HasPermission> */}
-                  </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+                <TableCell className={"text-xs"}>
+                  <span className="grid gap-1 ">
+                    <span>Start At : {moment(item.tripStartAt).format("DD-MM-YYYY HH:MM") || "N/A"}</span>
+                    <span>End At : {moment(item.tripEndAt).format("DD-MM-YYYY HH:MM") || "N/A"}</span>
+                    <span>Duration : {item.tripEndAt - item.tripStartAt}</span>
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <span className="grid gap-1">
+                    <span>Odo Start : {item.odoStart || "N/A"}</span>
+                    <span>Odo End : {item.odoEnd || "N/A"}</span>
+                  </span>
+                </TableCell>
+                <TableCell className="flex gap-4">
+                  <EditButton
+                    onClick={() => {
+                      handleEdit(item)
+                    }}data-id="edit"
+                  />
+                  {/* <DeleteButton
+                    onClick={() => {
+                      handleDelete(item)
+                    }}data-id="delete"
+                  ></DeleteButton> */}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }

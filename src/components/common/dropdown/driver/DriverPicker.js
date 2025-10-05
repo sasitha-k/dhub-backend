@@ -2,15 +2,16 @@ import React, { useEffect } from 'react'
 import useDrivers from '@/hooks/drivers/useDrivers';
 import SearchableDropdown from '../SearchableDropDown';
 
-export default function DriverPicker({errors, id, value, onChange, valueKey, labelKey }) {
+export default function DriverPicker({error, value, onChange, valueKey, labelKey }) {
   const { fetchDrivers, isLoading, drivers } = useDrivers();
   
   useEffect(() => {
     fetchDrivers();
   }, [])
+
   return (
     <SearchableDropdown
-      error={errors?.[id]}
+      error={error}
       options={drivers}
       value={value}
       onChange={onChange}

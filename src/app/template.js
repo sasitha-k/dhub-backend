@@ -5,7 +5,7 @@ import ClientLayout from "./ClientLayout";
 export default async function Layout({ children }) {
 
   return (
-    <div className="h-screen">
+    <div className="max-h-screen w-screen">
       {/* <SidebarInset> */}
         <main className="">
         <ClientLayout>

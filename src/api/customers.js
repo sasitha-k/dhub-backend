@@ -1,13 +1,20 @@
 // /lib/api/authorized.js
+const { default: authInstance } = require("./authInstance");
 
-import authInstance from './authInstance';
 
-export const getCustomers = async (params) => {
-  try {
-    const response = await authInstance.get('/customers', { params });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching drivers:', error.response?.data || error.message);
-    throw error;
-  }
+module.exports.getCustomers = async (params) => {
+  const res = await authInstance.get("/customers", { params });
+  return res.data;
+};
+
+module.exports.createCustomer = function (params) {
+    return authInstance.post("/customer", params);
+};
+
+module.exports.updateCustomer = function (params) {
+  return authInstance.put(`/customer`, params);
+};
+
+module.exports.deleteCustomer = function (params) {
+  return authInstance.delete(`/customer`, params);
 };

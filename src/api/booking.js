@@ -1,34 +1,20 @@
 // /lib/api/authorized.js
+const { default: authInstance } = require("./authInstance");
 
-import authInstance from "./authInstance";
 
-
-export const getBookings = async () => {
-  try {
-    const res = await authInstance.get("/bookings");
-    return res.data;
-  } catch (err) {
-    console.error("Error fetching bookings:", err?.response?.data || err.message);
-    throw err;
-  }
+module.exports.getBookings = async (params) => {
+  const res = await authInstance.get("/bookings", { params });
+  return res.data;
 };
 
-export const createBooking = async (params) => {
-  try {
-    const response = await authInstance.post('/booking', { params });
-    return response.data;
-  } catch (error) {
-    console.error('Error create booking:', error.response?.data || error.message);
-    throw error;
-  }
+module.exports.createBooking = function (params) {
+    return authInstance.post("/booking", params);
 };
 
-export const updateBooking = async (params) => {
-  try {
-    const response = await authInstance.put('/booking', { params });
-    return response.data;
-  } catch (error) {
-    console.error('Error update booking:', error.response?.data || error.message);
-    throw error;
-  }
+module.exports.updateBooking = function (params) {
+  return authInstance.put(`/booking`, params);
+};
+
+module.exports.deleteBooking = function (params) {
+  return authInstance.delete(`/booking`, params);
 };

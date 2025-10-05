@@ -21,9 +21,9 @@ export default function ClientLayout({ children }) {
   }
 
   return (
-    <div className='h-screen '>
+    <div className=''>
        <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar/>
       <SidebarInset>
         <main>
           {children}

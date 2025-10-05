@@ -1,33 +1,20 @@
 // /lib/api/authorized.js
+const { default: authInstance } = require("./authInstance");
 
-import authInstance from './authInstance';
 
-export const getDrivers = async (params) => {
-  try {
-    const response = await authInstance.get('/drivers', { params });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching drivers:', error.response?.data || error.message);
-    throw error;
-  }
+module.exports.getDrivers = async (params) => {
+  const res = await authInstance.get("/drivers", { params });
+  return res.data;
 };
 
-export const createDriver = async (params) => {
-  try {
-    const response = await authInstance.post('/drivers', { params });
-    return response.data;
-  } catch (error) {
-    console.error('Error create driver:', error.response?.data || error.message);
-    throw error;
-  }
+module.exports.createDrivers = function (params) {
+    return authInstance.post("/driver", params);
 };
 
-export const updateDriver = async (params) => {
-  try {
-    const response = await authInstance.put('/drivers', { params });
-    return response.data;
-  } catch (error) {
-    console.error('Error update driver:', error.response?.data || error.message);
-    throw error;
-  }
+module.exports.updateDrivers = function (params) {
+  return authInstance.put(`/driver`, params);
+};
+
+module.exports.deleteDrivers = function (params) {
+  return authInstance.delete(`/driver`, params);
 };
