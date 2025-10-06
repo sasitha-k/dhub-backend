@@ -8,7 +8,7 @@ function Table({
   ...props
 }) {
   return (
-    (<div data-slot="table-container" className="relative w-full overflow-x-auto">
+    (<div data-slot="table-container" className="relative w-full ">
       <table
         data-slot="table"
         className={cn("w-full caption-bottom text-sm", className)}
@@ -76,7 +76,7 @@ function TableHead({
     (<th
       data-slot="table-head"
       className={cn(
-        "text-primary h-10 text-md px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        "text-foreground h-10 text-md px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
         className
       )}
       {...props} />)
@@ -91,7 +91,7 @@ function TableCell({
     (<td
       data-slot="table-cell"
       className={cn(
-        "px-2 py-3 align-middle text-sm font-normal text-muted-foreground whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        "px-2 py-3 align-middle text-xs font-normal text-muted-foreground whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
         className
       )}
       {...props} />)

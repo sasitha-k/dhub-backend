@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useCookies } from "react-cookie";
 import { login } from "@/api/login";
-import { UserProvider } from "../userProvider";
 
 export function useLogin() {
   const router = useRouter();

@@ -12,13 +12,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { 
   User, 
@@ -40,13 +33,16 @@ import DatePickerLine from "@/components/common/DatePickerLine"
 import TimePicker from "@/components/common/TimePicker"
 import DateTimePicker from "@/components/common/DateTimePicker"
 import TextInput from "@/components/common/inputs/TextInput"
+import SubmitButton from "@/components/common/buttons/SubmitButton"
+import CloseButton from "@/components/common/buttons/CloseButton"
 
 export function BookingForm({
   sheetOpen,
   handleClose,
   isNewItem,
   selectedItem,
-  setSheetOpen
+  setSheetOpen,
+  fetchBookings
 }) {
   const {isLoading, errors, onSubmit, onUpdate, formData, setFormData, setErrors} = useBookingForm()
 
@@ -59,31 +55,31 @@ export function BookingForm({
       setFormData({});
     }
     setErrors({});
-  }, [selectedItem, isNewItem]);
+  }, [selectedItem, isNewItem, setFormData]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: "" }));
-    }
+   
   };
 
+
+  const onSuccess = () => {
+    setSheetOpen();
+    fetchBookings();
+  }
  
 
   const handleSubmit = (e) => {
     e.preventDefault();
     
-  if(!isNewItem) return onUpdate(formData)
-    onSubmit(formData);
+  if(!isNewItem) return onUpdate(formData?._id, onSuccess)
+    onSubmit(onSuccess);
     // Here you would typically make an API call
     console.log('Booking data:', formData);
-    
     // Close the form
     setSheetOpen(false);
   };
 
-  
 
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
@@ -111,16 +107,15 @@ export function BookingForm({
             </div>
             <div>
                 <CustomerPicker
-                  id="customer"
+                  error={errors?.customer}
                   value={formData.customer}
                   labelKey={"firstName"}
                   valueKey={"_id"}
                   onChange={(e) => setFormData({...formData, customer: e})}
                 />
             </div>
-                  </div>
-                  
-                   <div className="space-y-1">
+            </div>
+            <div className="space-y-1">
             <div className="flex items-center gap-2">
               <Car className="w-4 h-4" />
               <h3 className="font-semibold">Driver</h3>
@@ -130,16 +125,13 @@ export function BookingForm({
                   id="driver"
                   value={formData.driver}
                   labelKey={"firstName"}
-                  valueKey={"_id"}
+                  valueKey={"firstName"}
                   onChange={(e) => setFormData({...formData, driver: e})}
                 />
             </div>
-                      </div>
           </div>
-            
-
+          </div>
           <Separator />
-
           {/* Booking Information */}
           <div className="space-y-4 w-full">
             <div className="flex items-center gap-2">
@@ -247,17 +239,15 @@ export function BookingForm({
               />
               </FormGroup>
             </div>
-          
-
-          <SheetFooter className="flex gap-2">
-            <Button type="submit" className="flex-1">
-              {isNewItem ? "Create Booking" : "Update Booking"}
-            </Button>
-            <SheetClose asChild>
-              <Button variant="outline" onClick={handleClose}>
-                Cancel
-              </Button>
+          <SheetFooter className="flex flex-row gap-4 justify-end">
+             <SheetClose asChild>
+             <CloseButton onClick={handleClose}/>
             </SheetClose>
+            <SubmitButton
+              onClick={handleSubmit}
+              isNewItem={isNewItem}
+              isLoading={isLoading}
+            />
           </SheetFooter>
         </form>
       </SheetContent>

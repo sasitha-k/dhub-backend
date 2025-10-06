@@ -2,17 +2,17 @@ import React, { useEffect } from 'react'
 import useCustomer from '@/hooks/customers/useCustomer'
 import SearchableDropdown from '../SearchableDropDown';
 
-export default function CustomerPicker({errors, id, value, onChange, valueKey, labelKey }) {
+export default function CustomerPicker({error, value, onChange, valueKey, labelKey }) {
   const { fetchCustomers, isLoading, customers } = useCustomer();
   
   useEffect(() => {
     fetchCustomers();
   }, [])
 
-  console.log('ppp', customers)
+  // console.log('customers : ', customers)
   return (
     <SearchableDropdown
-      error={errors?.[id]}
+      error={error}
       options={customers}
       value={value}
       onChange={onChange}

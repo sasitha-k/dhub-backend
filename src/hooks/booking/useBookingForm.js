@@ -8,42 +8,44 @@ export default function useBookingForm() {
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({});
 
-  // Create an inventory
   const onSubmit = useCallback(
-    async (successCallBack) => {
-      setIsLoading(true);
-      setErrors({});
-      try {
-        const res = await createBooking(formData);
-        if (res.status === 201) {
-          toast.success(res.message);
-          successCallBack();
-        }
-      } catch (error) {
-        console.error(error);
-
-        if (error.response && error.response.status === 422) {
-          const validationErrors = error.response.data.errors;
-          setErrors(validationErrors);
-        } else {
-          setErrors({ submit: 'Failed to submit the form' });
-        }
-      } finally {
-        setIsLoading(false);
+  async (successCallBack) => {
+    setIsLoading(true);
+    setErrors({});
+    try {
+      const res = await createBooking(formData);
+      if (res.status === 201) {
+        toast.success(res.message || "Booking created successfully");
+        successCallBack();
       }
-    },
-    [formData]
-  );
+    } catch (error) {
+      // console.error("Booking create error:", error.response?.data || error);
+
+      if (error.response?.status === 422) {
+        const messages = error.response.data.errors || [];
+        setErrors({ submit: messages.join(", ") });
+        toast.error(messages.join(", "));
+      } else {
+        setErrors({ submit: "Failed to submit the form" });
+        toast.error("Failed to submit the form");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  },
+  [formData]
+);
+
 
   // Update an existing inventory
   const onUpdate = useCallback(
-    async (successCallBack) => {
+    async (_id, successCallBack) => {
       setIsLoading(true);
       setErrors({});
       try {
         const res = await updateBooking(formData); 
         if (res.status === 200) {
-          toast.success(res.message);
+          toast.success(res.message || "Booking updated successfully");
           successCallBack();
         } else {
           throw new Error("Failed to update data");

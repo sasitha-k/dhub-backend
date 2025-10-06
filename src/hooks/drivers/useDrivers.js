@@ -19,6 +19,7 @@ export default function useDrivers() {
     setErrors(error);
     if (error?.response?.data?.code === 403) {
       setPermissionError(error?.response?.data?.msg || "You don't have permission.");
+      redirect("/login");
     }
   } finally {
     setLoading(false);

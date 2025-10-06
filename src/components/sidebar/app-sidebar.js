@@ -79,7 +79,7 @@ export function AppSidebar() {
                           />
                           <div className='group-data-[state=collapsed]:hidden'>
                                <h1 className=' font-bold uppercase text-md tracking-widest'>
-                              <span className='bg-white px-2 py-1 rounded-xs text-primary mr-2'>Driver</span>
+                              <span className='bg-primary-foreground px-2 py-1 rounded-xs text-primary mr-2'>Driver</span>
                               hub
                           </h1>
                          </div>
