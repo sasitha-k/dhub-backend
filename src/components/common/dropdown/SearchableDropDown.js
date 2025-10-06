@@ -101,7 +101,7 @@ export function SearchableDropdown({
         <span
           className={cn(
             "truncate flex-1",
-            value ? "text-black" : error ? "text-red-500" : "text-gray-400"
+            value ? "text-muted-foreground" : error ? "text-red-500" : "text-gray-400"
           )}
         >
           {getSelectedLabel()}
