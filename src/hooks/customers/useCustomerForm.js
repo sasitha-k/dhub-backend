@@ -4,7 +4,7 @@ import { createUser, updateUser } from '@/api/users';
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
 
-export default function useDriverForm() {
+export default function useCustomerForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
@@ -12,7 +12,7 @@ export default function useDriverForm() {
     email: "",
     password: "",
     mobile: "",
-    type: "driver",
+    type: "customer",
     address:"",
     firstName: "",
     lastName: ""
@@ -26,7 +26,7 @@ export default function useDriverForm() {
       try {
         const res = await createUser(formData);
         if (res.status === 201) {
-          toast.success("Driver added successfully");
+          toast.success("Customer added successfully");
           successCallBack();
         }
       } catch (error) {
@@ -55,7 +55,7 @@ export default function useDriverForm() {
       try {
         const res = await updateUser(formData);
         if (res.status === 200) {
-          toast.success("Driver updated successfully");
+          toast.success("Customer updated successfully");
           successCallBack();
         } else {
           throw new Error("Failed to update data");
@@ -78,20 +78,11 @@ export default function useDriverForm() {
     [formData]
   );
 
-  // Update form data
-  const updateFormData = (updates) => {
-    setFormData(prev => ({
-      ...prev,
-      ...updates
-    }));
-  };
-
   return {
     isLoading,
     errors,
     formData,
     setFormData,
-    updateFormData,
     onSubmit,
     onUpdate,
     setErrors

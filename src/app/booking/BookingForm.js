@@ -33,6 +33,8 @@ import DatePickerLine from "@/components/common/DatePickerLine"
 import TimePicker from "@/components/common/TimePicker"
 import DateTimePicker from "@/components/common/DateTimePicker"
 import TextInput from "@/components/common/inputs/TextInput"
+import SubmitButton from "@/components/common/buttons/SubmitButton"
+import CloseButton from "@/components/common/buttons/CloseButton"
 
 export function BookingForm({
   sheetOpen,
@@ -237,15 +239,15 @@ export function BookingForm({
               />
               </FormGroup>
             </div>
-          <SheetFooter className="flex gap-2">
-            <Button onClick={handleSubmit} type="submit" className="flex-1">
-              {isNewItem ? "Create Booking" : "Update Booking"}
-            </Button>
-            <SheetClose asChild>
-              <Button variant="outline" onClick={handleClose}>
-                Cancel
-              </Button>
+          <SheetFooter className="flex flex-row gap-4 justify-end">
+             <SheetClose asChild>
+             <CloseButton onClick={handleClose}/>
             </SheetClose>
+            <SubmitButton
+              onClick={handleSubmit}
+              isNewItem={isNewItem}
+              isLoading={isLoading}
+            />
           </SheetFooter>
         </form>
       </SheetContent>

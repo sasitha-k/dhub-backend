@@ -20,22 +20,22 @@ import {
   Lock,
   AlertCircle
 } from 'lucide-react'
-import useDriverForm from "@/hooks/drivers/useDriverForm"
 import FormGroup from "@/components/common/FormGroup"
 import InlineValidationError from "@/components/common/errors/InlineValidationError"
 import SubmitButton from '@/components/common/buttons/SubmitButton'
 import CloseButton from '@/components/common/buttons/CloseButton'
 import TextInput from '@/components/common/inputs/TextInput'
+import useCustomerForm from '@/hooks/customers/useCustomerForm'
 
-export function DriverForm({
+export function CustomerForm({
   sheetOpen,
   isNewItem,
   selectedItem,
   setSheetOpen,
-  fetchDrivers,
+  fetchCustomers,
   handleClose
 }) {
-  const {isLoading, errors, onSubmit, onUpdate, formData, setFormData, setErrors} = useDriverForm()
+  const {isLoading, errors, onSubmit, onUpdate, formData, setFormData, setErrors} = useCustomerForm()
 
   // Load data when editing
   useEffect(() => {
@@ -55,11 +55,11 @@ export function DriverForm({
       });
     }
   }, [selectedItem, isNewItem, setFormData]);
-
-   const onSuccess = () => {
-    fetchDrivers();
-     setSheetOpen(false);
-     setFormData({});
+    
+    const onSuccess = () => {
+    fetchCustomers();
+        setSheetOpen(false);
+        setFormData({});
   }
 
   const handleSubmit = async (e) => {
@@ -94,12 +94,12 @@ export function DriverForm({
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
-            {isNewItem ? 'Add New Driver' : 'Edit Driver'}
+            {isNewItem ? 'Add New Customer' : 'Edit Customer'}
           </SheetTitle>
           <SheetDescription>
             {isNewItem 
               ? 'Fill in the details to add a new driver to the system.' 
-              : 'Update the driver information below.'
+              : 'Update the customer information below.'
             }
           </SheetDescription>
         </SheetHeader>

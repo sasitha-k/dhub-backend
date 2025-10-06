@@ -46,6 +46,9 @@ export default function Page() {
     fetchBookings();
   }
   
+   const handleClose = () => {
+    setSheetOpen(false);
+  }
   // console.log('bookings :', bookings);
 
   return (
@@ -53,7 +56,7 @@ export default function Page() {
       { label: "Dashboard", href: "/dashboard"},
       { label: "Booking", href: "/booking" },
     ]}>
-      <div className="flex w-auto h-auto flex-col gap-6 p-6">
+      <div className="flex w-auto h-auto flex-col gap-6 p-4">
         <div className='grid md:grid-cols-2 lg:grid-cols-5 gap-4'>
           <TextInput placeholder="Search" readOnly/>
           <div className='col-span-3 lg:block hidden'></div>
@@ -73,7 +76,7 @@ export default function Page() {
         sheetOpen={sheetOpen}
         isNewItem={isNewItem}
         selectedItem={selectedItem}
-
+        handleClose={handleClose}
         setSheetOpen={setSheetOpen}
       />
       <DeleteConfirmationModal
