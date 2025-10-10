@@ -125,7 +125,7 @@ export function BookingForm({
                   id="driver"
                   value={formData.driver}
                   labelKey={"firstName"}
-                  valueKey={"firstName"}
+                  valueKey={"_id"}
                   onChange={(e) => setFormData({...formData, driver: e})}
                 />
             </div>
