@@ -46,7 +46,7 @@ export function DataTable({
                   {item?.date}{" "}{item?.time}
                 </TableCell>
                 <TableCell>{item?.customer?.name || "N/A"}</TableCell>
-                <TableCell>{item?.driver || "N/A"}</TableCell>
+                <TableCell>{item?.driver?.name || "N/A"}</TableCell>
                 <TableCell>{item?.description || "N/A"}</TableCell>
                 <TableCell>{item?.pickupLocation || "N/A"}</TableCell>
                 <TableCell>{item?.from || "N/A"}</TableCell>
