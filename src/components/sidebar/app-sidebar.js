@@ -7,6 +7,7 @@ import {
   Car,
   ChevronsDownUp,
   CreditCard,
+  CreditCardIcon,
   FileBarChart2,
   FileStack,
   FileText,
@@ -16,6 +17,7 @@ import {
   Inbox,
   LayoutDashboard,
   LogOut,
+  Package,
   Search,
   Settings,
   User,
@@ -45,13 +47,15 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useLogin } from '@/hooks/login/useLogin';
+import { usePathname } from 'next/navigation';
 
 const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
   { label: 'Bookings', icon: FileStack, path: '/booking' },
   { label: 'Customers', icon: UserSquare, path: '/customers' },
   { label: 'Drivers', icon: Car, path: '/drivers' },
-  { label: 'Riders', icon: Bike, path: '/riders' },
+  // { label: 'Riders', icon: Bike, path: '/riders' },
+  { label: 'Packages', icon: CreditCardIcon, path: '/packages' },
   { label: 'Billing', icon: CreditCard, path: '/billing' },
   { label: 'Reports', icon: FileText, path: '/reports' },
 ];
@@ -64,7 +68,8 @@ const bottomNav = [
 
 export function AppSidebar() {
 
-  const { onLogout} = useLogin();
+  const { onLogout } = useLogin();
+  const pathname = usePathname();
 
   return (
     <Sidebar  className="group ">
@@ -95,9 +100,9 @@ export function AppSidebar() {
             {/* Top navigation items */}
             <SidebarMenu className={"space-y-2"}>
               {navItems.map(({ label, icon: Icon, path }) => (
-                <SidebarMenuItem key={label}>
-                  <SidebarMenuButton >
-                    <a href={path} className="flex gap-2 items-center justify-center">
+                <SidebarMenuItem key={label} >
+                  <SidebarMenuButton className={`${pathname === path ? "bg-sidebar-accent":""}`} >
+                    <a href={path} className={`flex gap-2 items-center justify-center `}>
                       <Icon className="w-6 h-6" />
                       <span>{label}</span>
                     </a>

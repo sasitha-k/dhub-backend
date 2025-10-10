@@ -36,7 +36,7 @@ export function useLogin() {
 
         setCookie('token', token);
         console.log('token', token)
-        router.push("/dashboard");
+        router.push("/booking");
       }else {
         setIsLoading(false);
 

@@ -33,16 +33,16 @@ export default function useCustomerForm() {
         console.error(error);
 
         if (error.response?.status === 422) {
-        const messages = error.response.data.errors || [];
-        setErrors({ submit: messages.join(", ") });
-        toast.error(messages.join(", "));
-      } else {
-        setErrors({ submit: "Failed to submit the form" });
-        toast.error("Failed to submit the form");
+          const messages = error.response.data.errors || [];
+          setErrors({ submit: messages.join(", ") });
+          toast.error(messages.join(", "));
+        } else {
+          setErrors({ submit: "Failed to update package" });
+          toast.error("Failed to update package");
+        }
+      } finally {
+        setIsLoading(false);
       }
-    } finally {
-      setIsLoading(false);
-    }
     },
     [formData]
   );
@@ -64,16 +64,16 @@ export default function useCustomerForm() {
         console.error(error);
 
         if (error.response?.status === 422) {
-        const messages = error.response.data.errors || [];
-        setErrors({ submit: messages.join(", ") });
-        toast.error(messages.join(", "));
-      } else {
-        setErrors({ submit: "Failed to submit the form" });
-        toast.error("Failed to submit the form");
+          const messages = error.response.data.errors || [];
+          setErrors({ submit: messages.join(", ") });
+          toast.error(messages.join(", "));
+        } else {
+          setErrors({ submit: "Failed to update package" });
+          toast.error("Failed to update package");
+        }
+      } finally {
+        setIsLoading(false);
       }
-    } finally {
-      setIsLoading(false);
-    }
     },
     [formData]
   );

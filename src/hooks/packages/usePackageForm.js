@@ -1,69 +1,69 @@
+"use client";
 
-
-import { createUser, updateUser } from '@/api/users';
+import { createPackage, updatePackage } from '@/api/packages';
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
 
-export default function useDriverForm() {
+export default function usePackageForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
-    userName: "",
-    email: "",
-    password: "",
-    mobile: "",
-    type: "driver",
-    address:"",
-    firstName: "",
-    lastName: ""
-});
+    title: "",
+    description: "",
+    unit: "",
+    pricing: {
+      minimum: 0,
+      minimumCharge: 0,
+      perUnitCharge: 0
+    }
+  });
 
-  // Create an inventory
+  // Create a package
   const onSubmit = useCallback(
     async (successCallBack) => {
       setIsLoading(true);
       setErrors({});
       try {
-        const res = await createUser(formData);
-        if (re.status === 201) {
-          toast.success(res.message || "Driver added successfully");
+        const res = await createPackage(formData);
+          if (res.status === 201) {
+            toast.success(res.message || "Package created successfully");
           successCallBack();
-        }
-      } catch (error) {
-        console.error(error);
-
-        if (error.response?.status === 422) {
-          const messages = error.response.data.errors || [];
-          setErrors({ submit: messages.join(", ") });
-          toast.error(messages.join(", "));
-        } else {
-          setErrors({ submit: "Failed to update package" });
-          toast.error("Failed to update package");
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [formData]
-  );
-
-  // Update an existing inventory
-  const onUpdate = useCallback(
-    async (_id, successCallBack) => {
-      setIsLoading(true);
-      setErrors({});
-      try {
-        const res = await updateUser(formData);
-        if (res.status === 200) {
-          toast.success(res.message || "Driver updated successfully");
-          successCallBack();
-        } else {
-          throw new Error("Failed to update data");
         }
       } catch (error) {
         console.error(error);
 
          if (error.response?.status === 422) {
+        const messages = error.response.data.errors || [];
+        setErrors({ submit: messages.join(", ") });
+        toast.error(messages.join(", "));
+      } else {
+        setErrors({ submit: "Failed to submit the form" });
+        toast.error("Failed to submit the form");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+    },
+    [formData]
+  );
+
+  // Update an existing package
+  const onUpdate = useCallback(
+    async (_id, successCallBack) => {
+      setIsLoading(true);
+      setErrors({});
+      try {
+        const res = await updatePackage({ ...formData, _id });
+        if (res.status === 200) {
+          toast.success(res.message || "Package updated successfully");
+          successCallBack();
+        } else {
+          throw new Error("Failed to update package");
+        }
+      } catch (error) {
+        console.error(error);
+
+        if (error.response?.status === 422) {
           const messages = error.response.data.errors || [];
           setErrors({ submit: messages.join(", ") });
           toast.error(messages.join(", "));
@@ -86,15 +86,26 @@ export default function useDriverForm() {
     }));
   };
 
+  // Update pricing data
+  const updatePricing = (pricingUpdates) => {
+    setFormData(prev => ({
+      ...prev,
+      pricing: {
+        ...prev.pricing,
+        ...pricingUpdates
+      }
+    }));
+  };
+
   return {
     isLoading,
     errors,
     formData,
     setFormData,
     updateFormData,
+    updatePricing,
     onSubmit,
     onUpdate,
     setErrors
   };
 }
-
