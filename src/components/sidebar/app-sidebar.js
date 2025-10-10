@@ -61,7 +61,7 @@ const navItems = [
 ];
 
 const bottomNav = [
-  { label: 'Users', icon: Users, path: '/users' },
+  // { label: 'Users', icon: Users, path: '/users' },
   { label: 'Roles', icon: UserCog, path: '/roles' },
   { label: 'Settings', icon: Settings, path: '/settings' },
 ];
