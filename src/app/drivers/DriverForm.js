@@ -115,7 +115,6 @@ export function DriverForm({
                     value={formData.firstName}
                     onChange={(e) => handleInputChange('firstName', e.target.value)}
                     placeholder="Enter first name"
-                    className={errors.firstName ? 'border-red-500' : ''}
                   />
                   <InlineValidationError error={errors.firstName} />
                 </FormGroup>
@@ -127,7 +126,6 @@ export function DriverForm({
                     value={formData.lastName}
                     onChange={(e) => handleInputChange('lastName', e.target.value)}
                     placeholder="Enter last name"
-                    className={errors.lastName ? 'border-red-500' : ''}
                   />
                 </FormGroup>
 
@@ -138,21 +136,18 @@ export function DriverForm({
                   value={formData.userName}
                   onChange={(e) => handleInputChange('userName', e.target.value)}
                   placeholder="Enter username"
-                  className={errors.userName ? 'border-red-500' : ''}
                 />
               </FormGroup>
 
               <FormGroup id={"email"} errors={errors}>
                 <Label htmlFor="email">Email Address *</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <TextInput
                     id="email"
                     type="email"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
                     placeholder="Enter email address"
-                    className={`pl-10 ${errors.email ? 'border-red-500' : ''}`}
                   />
                 </div>
               </FormGroup>
@@ -160,13 +155,11 @@ export function DriverForm({
                <FormGroup id={"mobile"} errors={errors}>
                 <Label htmlFor="mobile">Mobile Number *</Label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <TextInput
+                 <TextInput
                     id="mobile"
                     value={formData.mobile}
                     onChange={(e) => handleInputChange('mobile', e.target.value)}
                     placeholder="Enter mobile number"
-                    className={`pl-10 ${errors.mobile ? 'border-red-500' : ''}`}
                   />
                 </div>
               </FormGroup>
@@ -174,13 +167,11 @@ export function DriverForm({
               <FormGroup id={"licenseNumber"} errors={errors}>
                 <Label htmlFor="licenseNumber">License Number *</Label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <TextInput
                     id="licenseNumber"
                     value={formData.licenseNumber}
                     onChange={(e) => handleInputChange('licenseNumber', e.target.value)}
-                    placeholder="Enter licenseNumber number"
-                    className={`pl-10 ${errors.licenseNumber ? 'border-red-500' : ''}`}
+                    placeholder="Enter license number"
                   />
                 </div>
               </FormGroup>
@@ -188,13 +179,11 @@ export function DriverForm({
               <FormGroup id={"address"} errors={errors}>
                 <Label htmlFor="address">Address *</Label>
                 <div className="relative">
-                  <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <TextInput
                     id="address"
                     value={formData.address}
                     onChange={(e) => handleInputChange('address', e.target.value)}
                     placeholder="Enter complete address"
-                    className={`pl-10 ${errors.address ? 'border-red-500' : ''}`}
                   />
                 </div>
               </FormGroup>
@@ -203,14 +192,12 @@ export function DriverForm({
                 <FormGroup id={"password"} errors={errors}>
                   <Label htmlFor="password">Password *</Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <TextInput
+                   <TextInput
                       id="password"
                       type="password"
                       value={formData.password}
                       onChange={(e) => handleInputChange('password', e.target.value)}
                       placeholder="Enter password"
-                      className={`pl-10 ${errors.password ? 'border-red-500' : ''}`}
                     />
                   </div>
                 </FormGroup>
