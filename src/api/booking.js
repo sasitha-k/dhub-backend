@@ -18,3 +18,11 @@ module.exports.updateBooking = function (params) {
 module.exports.deleteBooking = function (params) {
   return authInstance.delete(`/booking`, params);
 };
+
+module.exports.startBooking = function (params) {
+    return authInstance.post("/booking/start", params);
+};
+
+module.exports.completeBooking = function (params) {
+    return authInstance.post("/booking/complete", params);
+};

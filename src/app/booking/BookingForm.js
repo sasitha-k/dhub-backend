@@ -21,7 +21,9 @@ import {
   CreditCard,
   Clock,
   FileText,
-  AlertCircle
+  AlertCircle,
+  Package,
+  WalletCards
 } from 'lucide-react'
 import CustomerPicker from "@/components/common/dropdown/customer/CustomerPicker"
 import DriverPicker from "@/components/common/dropdown/driver/DriverPicker"
@@ -33,6 +35,8 @@ import DateTimePicker from "@/components/common/DateTimePicker"
 import TextInput from "@/components/common/inputs/TextInput"
 import SubmitButton from "@/components/common/buttons/SubmitButton"
 import CloseButton from "@/components/common/buttons/CloseButton"
+import { Switch } from "@/components/ui/switch"
+import PackagePicker from "@/components/common/dropdown/package/PackagePicker"
 
 export function BookingForm({
   sheetOpen,
@@ -40,10 +44,12 @@ export function BookingForm({
   isNewItem,
   selectedItem,
   setSheetOpen,
-  fetchBookings
+  fetchBookings,
+  setActiveTab,
+  handleEdit
 }) {
-  const {isLoading, errors, onSubmit, onUpdate, formData, setFormData, setErrors} = useBookingForm()
-
+  const {isLoading, errors, onSubmit, onUpdate, formData, setFormData, setErrors, onStartBooking, onComplete} = useBookingForm()
+  const [isChecked, setIsChecked] = useState(false);
   // Load data when editing
   useEffect(() => {
     if (selectedItem && !isNewItem) {
@@ -53,30 +59,66 @@ export function BookingForm({
       setFormData({});
     }
     setErrors({});
+    setIsChecked(false);
   }, [selectedItem, isNewItem, setFormData]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-   
   };
 
-
   const onSuccess = () => {
-    setSheetOpen();
+    setSheetOpen(false);
     fetchBookings();
   }
- 
+
+  const handleStartSuccess = () => {
+    setIsChecked(true);
+    // Navigate to ongoing tab and refresh data
+    setActiveTab("ongoing");
+    fetchBookings();
+    // Keep the same booking open in the sheet
+    // The booking status will be updated to "ongoing" so it will show the correct switch
+  }
+
+  const handleEndSuccess = () => {
+    setIsChecked(true);
+    // Navigate to completed tab and refresh data
+    setActiveTab("completed");
+    fetchBookings();
+    // Keep the same booking open in the sheet
+  }
+
+  const handleStart = (checked) => {
+    if (formData?.status === "pending") {
+      if (checked) {
+        onStartBooking({
+          bookingId: formData?._id,
+          odoStart: formData?.odoStart,
+        },
+        handleStartSuccess);
+      }
+    }
+  }
+
+  const handleEnd = (checked) => {
+    if (formData?.status === "ongoing") {
+      if (checked) {
+        onComplete({
+          bookingId: formData?._id,
+          odoEnd: formData?.odoEnd,
+        },
+        handleEndSuccess);
+      }
+    }
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
     
-  if(!isNewItem) return onUpdate(formData?._id, onSuccess)
+    if(!isNewItem) return onUpdate(formData?._id, onSuccess)
     onSubmit(onSuccess);
-    // Here you would typically make an API call
-    console.log('Booking data:', formData);
-    // Close the form
-    setSheetOpen(false);
   };
+
 
 
   return (
@@ -94,11 +136,10 @@ export function BookingForm({
             }
           </SheetDescription>
         </SheetHeader>
-
         <form onSubmit={handleSubmit} className="space-y-6 py-4 w-full">
           {/* Customer Information */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="space-y-1">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-1">
             <div className="flex items-center gap-2">
               <User className="w-4 h-4" />
               <h3 className="font-semibold">Customer</h3>
@@ -127,8 +168,42 @@ export function BookingForm({
                   onChange={(e) => setFormData({...formData, driver: e})}
                 />
             </div>
+            </div>
+            <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <WalletCards className="w-4 h-4"/>
+              <h3 className="font-semibold">Package</h3>
+            </div>
+            <div>
+                <PackagePicker
+                  id="package"
+                  value={formData.method}
+                  labelKey={"title"}
+                  valueKey={"_id"}
+                  onChange={(e) => setFormData({...formData, method: e})}
+                />
+            </div>
+            </div>
           </div>
-          </div>
+          <div className="flex items-end space-x-2 justify-end">
+              {formData?.status === "pending" ? (
+                <div className="flex items-center space-x-2">
+                   <Switch checked={isChecked} onCheckedChange={handleStart}/>
+                    <Label htmlFor="status-switch">
+                      Start Booking
+                    </Label>
+               </div>
+              ) : formData?.status === "ongoing" ? (
+                  <div className="flex items-center space-x-2">
+                   <Switch checked={isChecked} onCheckedChange={handleEnd}/>
+                    <Label htmlFor="status-switch">
+                      End Booking
+                    </Label>
+               </div>
+              ) :
+                null
+              }
+              </div>
           <Separator />
           {/* Booking Information */}
           <div className="space-y-4 w-full">

@@ -15,8 +15,6 @@ export default function TextInput({
 }) {
   const id = label ?? children;
   return (
-    <div className="w-auto space-y-1">
-      {/* <Label htmlFor={id}> {id}</Label> */}
       <Input
         type={type ? type : "text"}
         className={`text-sm placeholder:text-gray-400 text-muted-foreground placeholder:text-xs ${
@@ -29,6 +27,5 @@ export default function TextInput({
         disabled={disabled}
         {...props}
       />
-    </div>
   );
 }

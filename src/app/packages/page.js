@@ -5,22 +5,24 @@ import React, { useEffect, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card';
 import TextInput from '@/components/common/inputs/TextInput';
 import CreateButton from '@/components/common/buttons/CreateButton';
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { DataTable } from './DataTable';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PackageForm } from './PackageForm';
 import usePackages from '@/hooks/packages/usePackages';
-import EditButton from '@/components/common/buttons/EditButton';
 
+
+const tabs = ["pending", "onGoing", "completed"]
 
 export default function Page() {
-
+  const [activeTab, setActiveTab] = useState("pending");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [isNewItem, setIsNewItem] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const { fetchPackages, packages, isLoading } = usePackages();
 
   useEffect(() => {
-    fetchPackages();
-  }, [fetchPackages])
+    fetchPackages({ status: activeTab });
+  }, [fetchPackages, activeTab])
 
   const handleCreate = () => {
     setIsNewItem(true);
@@ -51,50 +53,10 @@ export default function Page() {
         <div className='w-full flex justify-end'>
            <CreateButton onClick={handleCreate}/>
        </div>
-              <Card>
-                <CardContent>
-                  <Table>
-      <TableCaption className={""}>A list of your package services.</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Title</TableHead>
-          <TableHead>Description</TableHead>
-                  <TableHead>Unit</TableHead>
-                  <TableHead>Pricing</TableHead>
-                  {/* <TableHead></TableHead> */}
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {packages?.map((item, index) => (
-          <TableRow key={index} className={""}>
-            <TableCell>{item?.title}</TableCell>
-                <TableCell>{item?.description}</TableCell>
-                <TableCell>{item?.unit}</TableCell>
-            <TableCell>
-              <span className='grid gap-1'>
-                <span>Minimum Unit : {item?.pricing?.minimum}</span>
-              <span>Minimum Charge : {item?.pricing?.minimumCharge}</span>
-              <span>Per Unit Charge : {item?.pricing?.perUnitCharge}</span>
-              </span>
-            </TableCell>
-             {/* <TableCell className="flex gap-4">
-                  <EditButton
-                    onClick={() => {
-                      handleEdit(item)
-                    }}data-id="edit"
-                  />
-                  <DeleteButton
-                    onClick={() => {
-                      handleDelete(item)
-                    }}data-id="delete"
-                  ></DeleteButton>
-                </TableCell> */}
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-                </CardContent>
-              </Card>
+             <DataTable
+               items={packages}
+               handleEdit={handleEdit}
+             />
         <div className='w-full'>
           <PackageForm
           sheetOpen={sheetOpen}

@@ -1,7 +1,6 @@
 import StatusBadge from "@/components/common/badges/StatusBadge";
-import DeleteButton from "@/components/common/buttons/DeleteButton";
 import EditButton from "@/components/common/buttons/EditButton";
-import ReferenceLink from "@/components/common/ReferenceLink";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -17,7 +16,8 @@ import moment from "moment";
 export function DataTable({
   items,
   handleDelete,
-  handleEdit
+  handleEdit,
+  handleStart
 }) {
 
  
@@ -36,7 +36,8 @@ export function DataTable({
               <TableHead>To</TableHead>
               <TableHead>Trip Duration</TableHead>
               <TableHead>Odo Meter</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -64,12 +65,15 @@ export function DataTable({
                     <span>Odo End : {item.odoEnd || "N/A"}</span>
                   </span>
                 </TableCell>
-                <TableCell className="flex gap-4">
-                  <EditButton
+                <TableCell>
+                  <StatusBadge>{item?.status}</StatusBadge>
+                </TableCell>
+                <TableCell>
+                    <EditButton
                     onClick={() => {
-                      handleEdit(item)
+                        handleEdit(item);
                     }}data-id="edit"
-                  />
+                    />
                   {/* <DeleteButton
                     onClick={() => {
                       handleDelete(item)

@@ -28,7 +28,7 @@ const getClassName=() => {
         case 'rejected':
             return "bg-red-600 text-white"
             break;
-        case 'inProgress':
+        case 'ongoing':
             return "bg-yellow-500 text-white"
             break;
             case 'overdue':
@@ -60,6 +60,8 @@ const getClassName=() => {
     }
 }
   return (
-    <Badge className={" capitalize font-bold text-xs "+getClassName()} {...props}>{capitalizeWords(children)}</Badge>
+      <Badge className={" capitalize font-bold text-xs " + getClassName()} {...props}>
+          {capitalizeWords(children)}
+      </Badge>
   )
 }

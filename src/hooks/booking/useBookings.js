@@ -1,5 +1,6 @@
 "use client";
 import { deleteBooking, getBookings } from "@/api/booking";
+import { redirect } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -17,10 +18,14 @@ export default function useBookings() {
       setBookings(res?.bookings);
       // toast.success(res?.message || "Bookings Retrieved successfully");
      } catch (error) {
-    setErrors(error);
-    if (error?.response?.data?.code === 403) {
+      setErrors(error);
+      if (error?.response?.status === 401) {
       setPermissionError(error?.response?.data?.msg || "You don't have permission.");
-      redirect("/login");
+      redirect("/");
+    }
+    if (error?.response?.status === 403) {
+      setPermissionError(error?.response?.data?.msg || "You don't have permission.");
+      redirect("/");
     }
   } finally {
     setLoading(false);

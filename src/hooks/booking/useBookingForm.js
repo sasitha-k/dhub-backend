@@ -1,5 +1,5 @@
 
-import { createBooking, updateBooking } from '@/api/booking';
+import { completeBooking, createBooking, startBooking, updateBooking } from '@/api/booking';
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
 
@@ -21,17 +21,15 @@ export default function useBookingForm() {
     } catch (error) {
       // console.error("Booking create error:", error.response?.data || error);
 
-      if (error.response?.status === 422) {
-        const messages = error.response.data.errors || [];
-        setErrors({ submit: messages.join(", ") });
-        toast.error(messages.join(", "));
-      } else {
-        setErrors({ submit: "Failed to submit the form" });
-        toast.error("Failed to submit the form");
+      if (error.response && error.response.status === 422) {
+          const validationErrors = error.response.data.errors;
+          setErrors(validationErrors);
+        } else {
+          setErrors({ submit: 'Failed to submit the form' });
+        }
+      } finally {
+        setIsLoading(false);
       }
-    } finally {
-      setIsLoading(false);
-    }
   },
   [formData]
 );
@@ -66,6 +64,61 @@ export default function useBookingForm() {
     [formData]
   );
 
+  const onStartBooking = useCallback(
+  async (params, handleSuccess) => {
+    setIsLoading(true);
+    setErrors({});
+    try {
+      const res = await startBooking(params);
+      if (res.status === 200) {
+        toast.success(res.message || "Booking started successfully");
+        handleSuccess();
+      }
+    } catch (error) {
+      // console.error("Booking create error:", error.response?.data || error);
+      if (error.response?.status === 422) {
+        const messages = error.response.data.errors || [];
+        setErrors({ submit: messages.join(", ") });
+        toast.error(error.response.data.message);
+      } else {
+        setErrors({ submit: "Failed to submit the form" });
+        toast.error("Failed to submit the form");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  },
+  [formData]
+  );
+  
+  const onComplete = useCallback(
+  async (params, handleSuccess) => {
+    setIsLoading(true);
+    setErrors({});
+    try {
+      const res = await completeBooking(params);
+      if (res.status === 200) {
+        toast.success(res.message || "Booking completed successfully");  
+        handleSuccess();
+      }
+    } catch (error) {
+      // console.error("Booking create error:", error.response?.data || error);
+
+      if (error.response?.status === 422) {
+        const messages = error.response.data.errors || [];
+        setErrors({ submit: messages.join(", ") });
+        toast.error(error.response.data.message);
+      } else {
+        setErrors({ submit: "Failed to submit the form" });
+        toast.error("Failed to submit the form");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  },
+  [formData]
+);
+
   return {
     isLoading,
     errors,
@@ -73,7 +126,9 @@ export default function useBookingForm() {
     setFormData,
     onSubmit,
     onUpdate,
-    setErrors
+    setErrors,
+    onStartBooking,
+    onComplete
   };
 }
 
