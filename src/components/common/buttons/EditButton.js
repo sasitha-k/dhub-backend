@@ -7,7 +7,7 @@ export default function EditButton({onClick, ...props }) {
        <Button
             variant="outline"
             onClick={onClick}
-            className="text-muted-foreground h-12 hover:bg-primary bg-background hover:text-background cursor-pointer"
+            className="text-muted-foreground h-auto hover:bg-primary bg-background hover:text-background cursor-pointer"
             {...props}
             >
             <PencilIcon className='w-5 h-5'/>

@@ -21,7 +21,9 @@ import {
   CreditCard,
   Clock,
   FileText,
-  AlertCircle
+  AlertCircle,
+  Package,
+  WalletCards
 } from 'lucide-react'
 import CustomerPicker from "@/components/common/dropdown/customer/CustomerPicker"
 import DriverPicker from "@/components/common/dropdown/driver/DriverPicker"
@@ -33,6 +35,10 @@ import DateTimePicker from "@/components/common/DateTimePicker"
 import TextInput from "@/components/common/inputs/TextInput"
 import SubmitButton from "@/components/common/buttons/SubmitButton"
 import CloseButton from "@/components/common/buttons/CloseButton"
+import { Switch } from "@/components/ui/switch"
+import PackagePicker from "@/components/common/dropdown/package/PackagePicker"
+import StatusBadge from "@/components/common/badges/StatusBadge"
+import { formatter } from "@/constants/formatNumber"
 
 export function BookingForm({
   sheetOpen,
@@ -40,43 +46,94 @@ export function BookingForm({
   isNewItem,
   selectedItem,
   setSheetOpen,
-  fetchBookings
+  fetchBookings,
+  setActiveTab,
+  handleEdit,
+  findBooking,
+  booking
 }) {
-  const {isLoading, errors, onSubmit, onUpdate, formData, setFormData, setErrors} = useBookingForm()
-
+  const {isLoading, errors, onSubmit, onUpdate, formData, setFormData, setErrors, onStartBooking, onComplete} = useBookingForm()
+  const [isChecked, setIsChecked] = useState(false);
   // Load data when editing
+
   useEffect(() => {
-    if (selectedItem && !isNewItem) {
-      setFormData(selectedItem);
-    } else {
-      // Reset form for new booking
-      setFormData({});
+    if (isChecked && !isNewItem) {
+      findBooking(selectedItem?._id);
+      setFormData({
+        ...booking,
+        method: booking?.method?._id
+      });
+    } if (selectedItem && !isNewItem) {
+      setIsChecked(false)
+      setFormData({
+        ...selectedItem,
+        method: selectedItem?.method?._id
+      });
     }
-    setErrors({});
-  }, [selectedItem, isNewItem, setFormData]);
+    else {
+      setFormData({})
+  }
+}, [selectedItem, isNewItem, findBooking, setFormData])
+
+ 
+
+console.log("booking :", booking)
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-   
   };
-
 
   const onSuccess = () => {
-    setSheetOpen();
+    setSheetOpen(false);
     fetchBookings();
   }
- 
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-  if(!isNewItem) return onUpdate(formData?._id, onSuccess)
-    onSubmit(onSuccess);
-    // Here you would typically make an API call
-    console.log('Booking data:', formData);
-    // Close the form
-    setSheetOpen(false);
+  const handleStartSuccess = () => {
+    setIsChecked(true);
+    setActiveTab("ongoing");
+    fetchBookings();
+    findBooking(formData?._id);
+    // setSheetOpen(false);
+  }
+
+  const handleEndSuccess = () => {
+    setIsChecked(true);
+    setActiveTab("completed");
+    fetchBookings();
+    findBooking(formData?._id);
+    // setSheetOpen(false);
+  }
+
+  const handleStart = () => {
+    if (formData?.status === "pending") {
+        onStartBooking({
+          bookingId: formData?._id,
+          odoStart: formData?.odoStart,
+        },
+          handleStartSuccess
+        );
+    }
+  }
+
+  const handleEnd = () => {
+    if (formData?.status === "ongoing") {
+        onComplete({
+          bookingId: formData?._id,
+          odoEnd: formData?.odoEnd,
+        },
+          handleEndSuccess
+        );
+    }
+  }
+
+  const handleSubmit = () => {
+    if (!isNewItem && selectedItem) {
+      onUpdate(formData?._id, onSuccess)
+    } else if (isNewItem) {
+      onSubmit(onSuccess);
+    }
   };
+
 
 
   return (
@@ -86,6 +143,7 @@ export function BookingForm({
           <SheetTitle className="flex items-center gap-2">
             {isNewItem ? <FileText className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
             {isNewItem ? "Create New Booking" : "Update Booking"}
+            {!isNewItem && <StatusBadge>{booking ? booking?.status : formData?.status}</StatusBadge>}
           </SheetTitle>
           <SheetDescription>
             {isNewItem 
@@ -94,11 +152,10 @@ export function BookingForm({
             }
           </SheetDescription>
         </SheetHeader>
-
         <form onSubmit={handleSubmit} className="space-y-6 py-4 w-full">
           {/* Customer Information */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="space-y-1">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-1">
             <div className="flex items-center gap-2">
               <User className="w-4 h-4" />
               <h3 className="font-semibold">Customer</h3>
@@ -127,8 +184,45 @@ export function BookingForm({
                   onChange={(e) => setFormData({...formData, driver: e})}
                 />
             </div>
+            </div>
+            <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <WalletCards className="w-4 h-4"/>
+              <h3 className="font-semibold">Package</h3>
+            </div>
+            <div>
+                <PackagePicker
+                  id="package"
+                  value={formData.method}
+                  labelKey={"title"}
+                  valueKey={"_id"}
+                  onChange={(e) => setFormData({...formData, method: e})}
+                />
+            </div>
+            </div>
           </div>
-          </div>
+          <div className="flex items-end space-x-2 justify-end">
+            <span className="px-4 text-sm text-muted-foreground grid gap-1">
+              <span className="text-primary font-semibold">Total Fee </span>
+              {formatter.format(booking?.fee || 0)} LKR</span>
+              {formData?.status === "pending" ? (
+                <div className="flex items-center space-x-2">
+                   <Switch checked={isChecked} onCheckedChange={handleStart}/>
+                    <Label htmlFor="status-switch">
+                      Start Booking
+                    </Label>
+               </div>
+              ) : formData?.status === "ongoing" ? (
+                  <div className="flex items-center space-x-2">
+                   <Switch checked={isChecked} onCheckedChange={handleEnd}/>
+                    <Label htmlFor="status-switch">
+                      End Booking
+                    </Label>
+               </div>
+              ) :
+                null
+              }
+              </div>
           <Separator />
           {/* Booking Information */}
           <div className="space-y-4 w-full">

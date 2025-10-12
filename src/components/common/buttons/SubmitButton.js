@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/button'
 import React from 'react'
 
-const SubmitButton = ({isLoading, isNewItem, children, onClick, label}) => {
+const SubmitButton = ({isLoading, isNewItem, children, onClick, label, disabled}) => {
   return (
       <div>
-          <Button onClick={onClick} type="submit" className="flex-1 cursor-pointer">
+          <Button disabled={isLoading} onClick={onClick} type="submit" className={`flex-1 cursor-pointer `}>
               {isLoading && isNewItem ? "Saving..." : isLoading && !isNewItem ? "Updating..." : isNewItem ? `Submit` : `Update` || children}
           </Button>
     </div>
