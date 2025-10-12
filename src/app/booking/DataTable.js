@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { formatter } from "@/constants/formatNumber";
 import moment from "moment";
 
 export function DataTable({
@@ -36,6 +37,7 @@ export function DataTable({
               <TableHead>To</TableHead>
               <TableHead>Trip Duration</TableHead>
               <TableHead>Odo Meter</TableHead>
+              <TableHead>Booking Fee</TableHead>
               <TableHead>Status</TableHead>
               <TableHead></TableHead>
             </TableRow>
@@ -66,14 +68,19 @@ export function DataTable({
                   </span>
                 </TableCell>
                 <TableCell>
+                  {formatter.format(item?.fee)}
+                </TableCell>
+                <TableCell>
                   <StatusBadge>{item?.status}</StatusBadge>
                 </TableCell>
                 <TableCell>
-                    <EditButton
-                    onClick={() => {
-                        handleEdit(item);
-                    }}data-id="edit"
-                    />
+                  {(item?.status === "pending" || item?.status === "ongoing") && (
+                     <EditButton
+                      onClick={() => {
+                          handleEdit(item);
+                      }}data-id="edit"
+                      />
+                    )}
                   {/* <DeleteButton
                     onClick={() => {
                       handleDelete(item)

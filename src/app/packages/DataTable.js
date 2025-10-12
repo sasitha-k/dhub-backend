@@ -29,8 +29,22 @@ export function DataTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {items?.map((item, index) => (
-              <TableRow key={index}>
+            {items?.map((item, index) => {
+              const getRowClassName = () => {
+                switch (item?.status?.toLowerCase()) {
+                  case 'completed':
+                    return 'bg-green-50 hover:bg-green-100 border-l-4 border-green-500';
+                  case 'onGoing':
+                    return 'bg-blue-50 hover:bg-blue-100 border-l-4 border-blue-500';
+                  case 'pending':
+                    return 'bg-yellow-50 hover:bg-yellow-100 border-l-4 border-yellow-500';
+                  default:
+                    return 'hover:bg-gray-50';
+                }
+              };
+
+              return (
+              <TableRow key={index} className={getRowClassName()}>
                 <TableCell className="font-normal">{item?.title}</TableCell>
                 <TableCell>{item?.description}</TableCell>
                 <TableCell>{item?.unit}</TableCell>
@@ -49,7 +63,8 @@ export function DataTable({
                   />
                 </TableCell>
               </TableRow>
-            ))}
+              );
+            })}
           </TableBody>
         </Table>
       </div>

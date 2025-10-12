@@ -7,6 +7,11 @@ module.exports.getBookings = async (params) => {
   return res.data;
 };
 
+module.exports.getBookingById = async (bookingId) => {
+    return authInstance.get(`/booking/id?_id=${bookingId}`);
+};
+
+
 module.exports.createBooking = function (params) {
     return authInstance.post("/booking", params);
 };

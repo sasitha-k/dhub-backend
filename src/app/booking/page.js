@@ -10,18 +10,16 @@ import useBookings from '@/hooks/booking/useBookings';
 import DeleteConfirmationModal from '@/components/modals/DeleteConfirmModal';
 import { Button } from '@/components/ui/button';
 import { capitalizeWords } from '@/constants/CapitalizedWord';
-import BookingStartModal from '@/components/modals/BookingStartModal';
 
 const tabs = ["pending", "ongoing", "completed"];
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState("pending");
   const [sheetOpen, setSheetOpen] = useState(false);
-   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteItem, setDeleteItem] = useState();
   const [isNewItem, setIsNewItem] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  const { fetchBookings, bookings, isLoading, onDelete } = useBookings();
+  const { fetchBookings, bookings, isLoading, onDelete, findBooking, booking } = useBookings();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
@@ -48,7 +46,6 @@ export default function Page() {
 
   const handleStart = (item) => {
     setSelectedItem(item);
-    setIsModalOpen(true);
   };
 
   const handleDelete = (item) => {
@@ -117,8 +114,9 @@ export default function Page() {
         selectedItem={selectedItem}
         handleClose={handleClose}
         setSheetOpen={setSheetOpen}
+        findBooking={findBooking}
+        booking={booking}
         setActiveTab={setActiveTab}
-        handleEdit={handleEdit}
       />
 
       {/* 🔹 Delete Confirmation */}
@@ -127,12 +125,6 @@ export default function Page() {
         setIsOpen={setIsDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={() => onDelete(deleteItem?._id, onSuccess)}
-      />
-      <BookingStartModal
-        isOpen={isModalOpen}
-        setIsOpen={setIsModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        selectedItem={selectedItem}
       />
     </BreadcrumbProvider>
   );

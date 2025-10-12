@@ -1,5 +1,5 @@
 "use client";
-import { deleteBooking, getBookings } from "@/api/booking";
+import { deleteBooking, getBookingById, getBookings } from "@/api/booking";
 import { redirect } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -9,6 +9,7 @@ export default function useBookings() {
   const [isLoading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [permissionError, setPermissionError] = useState();
+  const [booking, setBooking] = useState(null);
 
   // get bookings
   const fetchBookings = useCallback(async (params) => {
@@ -31,6 +32,21 @@ export default function useBookings() {
     setLoading(false);
   }
   }, []);
+
+   const findBooking = useCallback(
+    async (bookingId) => {
+      try {
+        setLoading(true);
+        const res = await getBookingById(bookingId);
+        setBooking(res?.data?.booking);
+        setLoading(false);
+      } catch (error) {
+        console.error({ error });
+        setLoading(false);
+      }
+    },
+    [setLoading, setBooking]
+  );
 
 
    const onDelete = useCallback(async (_id, onDeleteCallback) => {
@@ -56,6 +72,8 @@ export default function useBookings() {
     isLoading,
     errors,
     permissionError,
-    onDelete
+    onDelete,
+    booking,
+    findBooking
   };
 }

@@ -37,6 +37,8 @@ import SubmitButton from "@/components/common/buttons/SubmitButton"
 import CloseButton from "@/components/common/buttons/CloseButton"
 import { Switch } from "@/components/ui/switch"
 import PackagePicker from "@/components/common/dropdown/package/PackagePicker"
+import StatusBadge from "@/components/common/badges/StatusBadge"
+import { formatter } from "@/constants/formatNumber"
 
 export function BookingForm({
   sheetOpen,
@@ -46,21 +48,36 @@ export function BookingForm({
   setSheetOpen,
   fetchBookings,
   setActiveTab,
-  handleEdit
+  handleEdit,
+  findBooking,
+  booking
 }) {
   const {isLoading, errors, onSubmit, onUpdate, formData, setFormData, setErrors, onStartBooking, onComplete} = useBookingForm()
   const [isChecked, setIsChecked] = useState(false);
   // Load data when editing
+
   useEffect(() => {
-    if (selectedItem && !isNewItem) {
-      setFormData(selectedItem);
-    } else {
-      // Reset form for new booking
-      setFormData({});
+    if (isChecked && !isNewItem) {
+      findBooking(selectedItem?._id);
+      setFormData({
+        ...booking,
+        method: booking?.method?._id
+      });
+    } if (selectedItem && !isNewItem) {
+      setIsChecked(false)
+      setFormData({
+        ...selectedItem,
+        method: selectedItem?.method?._id
+      });
     }
-    setErrors({});
-    setIsChecked(false);
-  }, [selectedItem, isNewItem, setFormData]);
+    else {
+      setFormData({})
+  }
+}, [selectedItem, isNewItem, findBooking, setFormData])
+
+ 
+
+console.log("booking :", booking)
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -73,50 +90,48 @@ export function BookingForm({
 
   const handleStartSuccess = () => {
     setIsChecked(true);
-    // Navigate to ongoing tab and refresh data
     setActiveTab("ongoing");
     fetchBookings();
-    // Keep the same booking open in the sheet
-    // The booking status will be updated to "ongoing" so it will show the correct switch
+    findBooking(formData?._id);
+    // setSheetOpen(false);
   }
 
   const handleEndSuccess = () => {
     setIsChecked(true);
-    // Navigate to completed tab and refresh data
     setActiveTab("completed");
     fetchBookings();
-    // Keep the same booking open in the sheet
+    findBooking(formData?._id);
+    // setSheetOpen(false);
   }
 
-  const handleStart = (checked) => {
+  const handleStart = () => {
     if (formData?.status === "pending") {
-      if (checked) {
         onStartBooking({
           bookingId: formData?._id,
           odoStart: formData?.odoStart,
         },
-        handleStartSuccess);
-      }
+          handleStartSuccess
+        );
     }
   }
 
-  const handleEnd = (checked) => {
+  const handleEnd = () => {
     if (formData?.status === "ongoing") {
-      if (checked) {
         onComplete({
           bookingId: formData?._id,
           odoEnd: formData?.odoEnd,
         },
-        handleEndSuccess);
-      }
+          handleEndSuccess
+        );
     }
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    if(!isNewItem) return onUpdate(formData?._id, onSuccess)
-    onSubmit(onSuccess);
+  const handleSubmit = () => {
+    if (!isNewItem && selectedItem) {
+      onUpdate(formData?._id, onSuccess)
+    } else if (isNewItem) {
+      onSubmit(onSuccess);
+    }
   };
 
 
@@ -128,6 +143,7 @@ export function BookingForm({
           <SheetTitle className="flex items-center gap-2">
             {isNewItem ? <FileText className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
             {isNewItem ? "Create New Booking" : "Update Booking"}
+            {!isNewItem && <StatusBadge>{booking ? booking?.status : formData?.status}</StatusBadge>}
           </SheetTitle>
           <SheetDescription>
             {isNewItem 
@@ -186,6 +202,9 @@ export function BookingForm({
             </div>
           </div>
           <div className="flex items-end space-x-2 justify-end">
+            <span className="px-4 text-sm text-muted-foreground grid gap-1">
+              <span className="text-primary font-semibold">Total Fee </span>
+              {formatter.format(booking?.fee || 0)} LKR</span>
               {formData?.status === "pending" ? (
                 <div className="flex items-center space-x-2">
                    <Switch checked={isChecked} onCheckedChange={handleStart}/>

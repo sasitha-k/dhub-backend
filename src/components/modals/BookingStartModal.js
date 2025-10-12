@@ -28,7 +28,7 @@ export default function BookingStartModal({
   });
 
     
-    console.log('bb', selectedItem);
+    // console.log('bb', selectedItem);
   // 🧠 Populate form data when modal opens or item changes
   useEffect(() => {
     if (selectedItem) {

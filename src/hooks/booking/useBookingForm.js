@@ -65,14 +65,14 @@ export default function useBookingForm() {
   );
 
   const onStartBooking = useCallback(
-  async (params, handleSuccess) => {
+  async (params, successCallBack) => {
     setIsLoading(true);
     setErrors({});
     try {
       const res = await startBooking(params);
       if (res.status === 200) {
         toast.success(res.message || "Booking started successfully");
-        handleSuccess();
+        successCallBack();
       }
     } catch (error) {
       // console.error("Booking create error:", error.response?.data || error);
@@ -92,14 +92,14 @@ export default function useBookingForm() {
   );
   
   const onComplete = useCallback(
-  async (params, handleSuccess) => {
+  async (params, successCallBack) => {
     setIsLoading(true);
     setErrors({});
     try {
       const res = await completeBooking(params);
       if (res.status === 200) {
         toast.success(res.message || "Booking completed successfully");  
-        handleSuccess();
+        successCallBack();
       }
     } catch (error) {
       // console.error("Booking create error:", error.response?.data || error);
