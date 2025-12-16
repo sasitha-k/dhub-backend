@@ -11,7 +11,7 @@ const items = [
 export default function DashboardPage() {
   return (
     <BreadcrumbProvider value={items}>
-      <span>Dashboard</span>
+      <span className="p-4 mt-4">Dashboard</span>
     </BreadcrumbProvider>
   );
 }

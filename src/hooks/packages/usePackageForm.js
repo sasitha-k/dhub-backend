@@ -7,16 +7,7 @@ import { toast } from 'sonner';
 export default function usePackageForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    unit: "",
-    pricing: {
-      minimum: 0,
-      minimumCharge: 0,
-      perUnitCharge: 0
-    }
-  });
+  const [formData, setFormData] = useState({});
 
   // Create a package
   const onSubmit = useCallback(
@@ -35,7 +26,7 @@ export default function usePackageForm() {
          if (error.response?.status === 422) {
         const messages = error.response.data.errors || [];
         setErrors({ submit: messages.join(", ") });
-        toast.error(messages.join(", "));
+        toast.error('Please fill all the required fields');
       } else {
         setErrors({ submit: "Failed to submit the form" });
         toast.error("Failed to submit the form");
@@ -49,11 +40,11 @@ export default function usePackageForm() {
 
   // Update an existing package
   const onUpdate = useCallback(
-    async (_id, successCallBack) => {
+    async (successCallBack) => {
       setIsLoading(true);
       setErrors({});
       try {
-        const res = await updatePackage({ ...formData, _id });
+        const res = await updatePackage({ ...formData});
         if (res.status === 200) {
           toast.success(res.message || "Package updated successfully");
           successCallBack();
@@ -66,7 +57,7 @@ export default function usePackageForm() {
         if (error.response?.status === 422) {
           const messages = error.response.data.errors || [];
           setErrors({ submit: messages.join(", ") });
-          toast.error(messages.join(", "));
+          toast.error(error.response.data.message);
         } else {
           setErrors({ submit: "Failed to update package" });
           toast.error("Failed to update package");

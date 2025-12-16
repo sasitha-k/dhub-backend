@@ -2,13 +2,11 @@
 
 import { BreadcrumbProvider } from '@/hooks/providers/useBreadcrumbProvider'
 import React, { useEffect, useState } from 'react'
-import { Card, CardContent } from '@/components/ui/card';
-import TextInput from '@/components/common/inputs/TextInput';
 import CreateButton from '@/components/common/buttons/CreateButton';
 import { DataTable } from './DataTable';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PackageForm } from './PackageForm';
 import usePackages from '@/hooks/packages/usePackages';
+import SearchFilter from '@/components/common/filters/SearchFilter';
 
 
 const tabs = ["pending", "onGoing", "completed"]
@@ -19,6 +17,8 @@ export default function Page() {
   const [isNewItem, setIsNewItem] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const { fetchPackages, packages, isLoading } = usePackages();
+  const [filtered, setFiltered] = useState([]);
+  const [filters, setFilters] = useState({});
 
   useEffect(() => {
     fetchPackages({ status: activeTab });
@@ -46,15 +46,21 @@ export default function Page() {
                 ]}>
      <div className="flex w-auto h-auto flex-col gap-6 p-4">
         <div className='grid md:grid-cols-2 lg:grid-cols-5 gap-4'>
-          <TextInput placeholder="Search" readOnly/>
-          <div className='col-span-3 lg:block hidden'></div>
-          <TextInput placeholder="Date Range" readOnly/>
+          <SearchFilter
+            data={packages}
+            filterKeys={["packageName"]}
+            filters={filters}
+            setFilters={setFilters}
+            onFilter={setFiltered}
+            placeholder="Search by package name"
+            data-id="search"
+          />
         </div>
         <div className='w-full flex justify-end'>
            <CreateButton onClick={handleCreate}/>
        </div>
              <DataTable
-               items={packages}
+               items={filtered}
                handleEdit={handleEdit}
              />
         <div className='w-full'>

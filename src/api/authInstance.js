@@ -1,7 +1,6 @@
 // /lib/api/authInstance.js
 import axios from "axios";
-import Cookies from "js-cookie";
-import { redirect } from "next/navigation";
+  import Cookies from "js-cookie";
 
 const authInstance = axios.create({
   baseURL: "https://dhub.yaludev.com",
@@ -13,6 +12,7 @@ const authInstance = axios.create({
 authInstance.interceptors.request.use(
   (config) => {
     const token = Cookies.get("token");
+    console.log('token', token)
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

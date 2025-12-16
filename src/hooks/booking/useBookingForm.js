@@ -6,7 +6,22 @@ import { toast } from 'sonner';
 export default function useBookingForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    date: "",
+    time: "",
+    customerId: "",
+    customerNumber: "",
+    customerName: "",
+    driver: "",
+    selectedPackage: "",
+    description: "",
+    pickupLocation: "",
+    from: "",
+    to: "",
+    isOutstation: false,
+    additionalFees: 0,
+    customAmount: 0,
+  });
 
   const onSubmit = useCallback(
   async (successCallBack) => {
