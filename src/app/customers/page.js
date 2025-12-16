@@ -7,10 +7,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import TextInput from '@/components/common/inputs/TextInput';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import useCustomer from '@/hooks/customers/useCustomer';
-import CustomerPicker from '@/components/common/dropdown/customer/CustomerPicker';
 import { CustomerForm } from './CustomerForm';
 import CreateButton from '@/components/common/buttons/CreateButton';
 import EditButton from '@/components/common/buttons/EditButton';
+import SearchFilter from '@/components/common/filters/SearchFilter';
 
 
 export default function Page() {
@@ -19,6 +19,8 @@ export default function Page() {
   const [isNewItem, setIsNewItem] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const { fetchCustomers, customers, isLoading } = useCustomer();
+  const [filters, setFilters] = useState({});
+  const [filtered, setFiltered] = useState(customers);
 
   useEffect(() => {
     fetchCustomers();
@@ -46,9 +48,15 @@ export default function Page() {
                 ]}>
        <div className="flex w-auto h-auto flex-col gap-6 p-4">
         <div className='grid md:grid-cols-2 lg:grid-cols-5 gap-4'>
-          <TextInput placeholder="Search" readOnly/>
-          <div className='col-span-3 lg:block hidden'></div>
-          <TextInput placeholder="Date Range" readOnly/>
+         <SearchFilter
+                              data={customers}
+                              filterKeys={["firstName", "lastName"]}
+                              filters={filters}
+                              setFilters={setFilters}
+                              onFilter={setFiltered}
+                              placeholder="Search by name"
+                              data-id="search"
+                            />
         </div>
         <div className='w-full flex justify-end'>
            <CreateButton onClick={handleCreate}/>
@@ -69,26 +77,21 @@ export default function Page() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {customers?.map((item, index) => (
+        {filtered?.map((item, index) => (
           <TableRow key={index} className={""}>
             <TableCell>{item?.firstName}</TableCell>
-                <TableCell>{item?.lastName}</TableCell>
-                <TableCell>{item?.email}</TableCell>
-                <TableCell>{item?.mobile}</TableCell>
-                <TableCell>{item?.address}</TableCell>
+            <TableCell>{item?.lastName}</TableCell>
+            <TableCell>{item?.email}</TableCell>
+            <TableCell>{item?.mobile}</TableCell>
+            <TableCell>{item?.address}</TableCell>
             <TableCell>{item?.type}</TableCell>
-             <TableCell className="flex gap-4">
-                  <EditButton
+            <TableCell className="flex gap-4">
+                <EditButton
                     onClick={() => {
                       handleEdit(item)
                     }}data-id="edit"
-                  />
-                  {/* <DeleteButton
-                    onClick={() => {
-                      handleDelete(item)
-                    }}data-id="delete"
-                  ></DeleteButton> */}
-                </TableCell>
+                />
+              </TableCell>
           </TableRow>
         ))}
       </TableBody>

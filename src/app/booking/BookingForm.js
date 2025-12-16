@@ -10,7 +10,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
-import { Separator } from "@/components/ui/separator"
 import { 
   User, 
   Phone, 
@@ -31,14 +30,12 @@ import useBookingForm from "@/hooks/booking/useBookingForm"
 import FormGroup from "@/components/common/FormGroup"
 import DatePickerLine from "@/components/common/DatePickerLine"
 import TimePicker from "@/components/common/TimePicker"
-import DateTimePicker from "@/components/common/DateTimePicker"
 import TextInput from "@/components/common/inputs/TextInput"
 import SubmitButton from "@/components/common/buttons/SubmitButton"
 import CloseButton from "@/components/common/buttons/CloseButton"
 import { Switch } from "@/components/ui/switch"
 import PackagePicker from "@/components/common/dropdown/package/PackagePicker"
 import StatusBadge from "@/components/common/badges/StatusBadge"
-import { formatter } from "@/constants/formatNumber"
 
 export function BookingForm({
   sheetOpen,
@@ -61,17 +58,48 @@ export function BookingForm({
       findBooking(selectedItem?._id);
       setFormData({
         ...booking,
-        method: booking?.method?._id
+        // Ensure keys map correctly if backend differs
       });
-    } if (selectedItem && !isNewItem) {
+    } else if (selectedItem && !isNewItem) {
       setIsChecked(false)
+      // Map existing item to form fields
       setFormData({
-        ...selectedItem,
-        method: selectedItem?.method?._id
+        date: selectedItem.date || "",
+        time: selectedItem.time || "",
+        customerId: selectedItem.customerId || selectedItem.customer?._id || "",
+        customerNumber: selectedItem.customerNumber || selectedItem.customer?.number || "",
+        customerName: selectedItem.customerName || selectedItem.customer?.name || "",
+        driver: selectedItem.driver || "",
+        selectedPackage: selectedItem.selectedPackage?._id || selectedItem.selectedPackage || selectedItem.method?._id || "",
+        packageType: selectedItem.selectedPackage?.packageType || "",
+        description: selectedItem.description || "",
+        pickupLocation: selectedItem.pickupLocation || "",
+        from: selectedItem.from || "",
+        to: selectedItem.to || "",
+        isOutstation: selectedItem.isOutstation || false,
+        additionalFees: selectedItem.additionalFees || 0,
+        customAmount: selectedItem.customAmount || 0,
+        ...selectedItem // Spread rest for ID etc
       });
     }
     else {
-      setFormData({})
+      setFormData({
+        date: "",
+        time: "",
+        customerId: "",
+        customerNumber: "",
+        customerName: "",
+        driver: "",
+        selectedPackage: "",
+        packageType: "",
+        description: "",
+        pickupLocation: "",
+        from: "",
+        to: "",
+        isOutstation: false,
+        additionalFees: 0,
+        customAmount: 0,
+      })
   }
 }, [selectedItem, isNewItem, findBooking, setFormData])
 
@@ -138,7 +166,7 @@ console.log("booking :", booking)
 
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-      <SheetContent className="w-full sm:max-w-4xl overflow-y-auto">
+      <SheetContent className="w-full sm:max-w-7xl overflow-y-auto">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             {isNewItem ? <FileText className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
@@ -153,58 +181,176 @@ console.log("booking :", booking)
           </SheetDescription>
         </SheetHeader>
         <form onSubmit={handleSubmit} className="space-y-6 py-4 w-full">
-          {/* Customer Information */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <User className="w-4 h-4" />
-              <h3 className="font-semibold">Customer</h3>
+
+            {/* Date and Time */}
+            <div className="flex flex-col md:flex-row gap-4">
+              <FormGroup id={"date"} errors={errors} className="flex-1">
+                <Label htmlFor="date">Date *</Label>
+                <DatePickerLine
+                  error={errors?.date}
+                  value={formData?.date}
+                  onChange={(d) => setFormData({...formData, date: d})}
+                />
+              </FormGroup>
+               <FormGroup id={"time"} errors={errors} className="flex-1">
+                <Label htmlFor="time"> Time *</Label>
+                <TimePicker
+                  error={errors?.time}
+                  value={formData.time}
+                  onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                />
+              </FormGroup>
             </div>
-            <div>
+
+          {/* Customer Selection */}
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <FormGroup id={"customerId"} errors={errors}>
+                <Label htmlFor="customerId">Customer</Label>
                 <CustomerPicker
-                  error={errors?.customer}
-                  value={formData.customer}
+                  error={errors?.customerId}
+                  value={formData.customerId}
                   labelKey={"firstName"}
                   valueKey={"_id"}
-                  onChange={(e) => setFormData({...formData, customer: e})}
+                  onChange={(e) => setFormData({...formData, customerId: e})}
                 />
-            </div>
-            </div>
-            <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <Car className="w-4 h-4" />
-              <h3 className="font-semibold">Driver</h3>
-            </div>
-            <div>
+            </FormGroup>
+
+            
+                <FormGroup id={"customerName"} errors={errors}>
+                  <Label htmlFor="customerName">Customer Name</Label>
+                  <TextInput
+                    id="customerName"
+                    value={formData.customerName}
+                    onChange={(e) => handleInputChange('customerName', e.target.value)}
+                    placeholder="Enter name"
+                  />
+                </FormGroup>
+
+                <FormGroup id={"customerNumber"} errors={errors}>
+                  <Label htmlFor="customerNumber">Customer Number</Label>
+                  <TextInput
+                    id="customerNumber"
+                    value={formData.customerNumber}
+                    onChange={(e) => handleInputChange('customerNumber', e.target.value)}
+                    placeholder="Enter number"
+                  />
+                </FormGroup>
+          </div>
+
+           {/* Driver and Package */}
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <FormGroup id={"driver"} errors={errors}>
+                <Label htmlFor="driver">Driver</Label>
                 <DriverPicker
                   id="driver"
                   value={formData.driver}
                   labelKey={"firstName"}
                   valueKey={"_id"}
                   onChange={(e) => setFormData({...formData, driver: e})}
+                  error={errors?.driver}
                 />
-            </div>
-            </div>
-            <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <WalletCards className="w-4 h-4"/>
-              <h3 className="font-semibold">Package</h3>
-            </div>
-            <div>
+              </FormGroup>
+
+             <FormGroup id={"selectedPackage"} errors={errors}>
+                <Label htmlFor="selectedPackage">Package</Label>
                 <PackagePicker
-                  id="package"
-                  value={formData.method}
-                  labelKey={"title"}
+                  id="selectedPackage"
+                  value={formData.selectedPackage}
+                  labelKey={"packageName"}
                   valueKey={"_id"}
-                  onChange={(e) => setFormData({...formData, method: e})}
+                  onChange={(e) => setFormData({...formData, selectedPackage: e})}
+                  onPackageSelect={(pkg) => setFormData(prev => ({...prev, packageType: pkg?.packageType}))}
+                  error={errors?.selectedPackage}
                 />
-            </div>
-            </div>
+            </FormGroup>
+           </div>
+          
+  
+          {/* Trip Details */}
+         <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+             <FormGroup id={"pickupLocation"} errors={errors}>
+                <Label htmlFor="pickupLocation">Pickup Location *</Label>
+                <TextInput
+                  id="pickupLocation"
+                  value={formData.pickupLocation}
+                  onChange={(e) => handleInputChange('pickupLocation', e.target.value)}
+                  placeholder="Enter pickup location"
+                />
+              </FormGroup>
+              
+              
+                <FormGroup id={"from"} errors={errors}>
+                <Label htmlFor="from">From</Label>
+                <TextInput
+                  id="from"
+                  value={formData.from}
+                  onChange={(e) => handleInputChange('from', e.target.value)}
+                  placeholder="Enter city"
+                />
+              </FormGroup>
+              <FormGroup id={"to"} errors={errors}>
+                <Label htmlFor="to">To</Label>
+                <TextInput
+                  id="to"
+                  value={formData.to}
+                  onChange={(e) => handleInputChange('to', e.target.value)}
+                  placeholder="Enter city"
+                />
+              </FormGroup>
           </div>
-          <div className="flex items-end space-x-2 justify-end">
-            <span className="px-4 text-sm text-muted-foreground grid gap-1">
-              <span className="text-primary font-semibold">Total Fee </span>
-              {formatter.format(booking?.fee || 0)} LKR</span>
+
+          <FormGroup id={"description"} errors={errors}>
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                placeholder="Enter any additional description..."
+                rows={3}
+              />
+          </FormGroup>
+
+           {/* Options */}
+           <div className="flex items-center space-x-2">
+            <Switch 
+              id="isOutstation" 
+              checked={formData.isOutstation}
+              onCheckedChange={(checked) => handleInputChange('isOutstation', checked)}
+            />
+            <Label htmlFor="isOutstation">Is Outstation?</Label>
+          </div>
+
+          {/* Financials */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormGroup id={"additionalFees"} errors={errors}>
+              <Label htmlFor="additionalFees">Additional Fees</Label>
+              <TextInput
+                id="additionalFees"
+                type="number"
+                value={formData.additionalFees}
+                onChange={(e) => handleInputChange('additionalFees', e.target.value)}
+                placeholder="0.00"
+              />
+            </FormGroup>
+
+            {formData?.packageType === "CUSTOM" && (
+            <FormGroup id={"customAmount"} errors={errors}>
+              <Label htmlFor="customAmount">Custom Amount</Label>
+              <TextInput
+                id="customAmount"
+                type="number"
+                value={formData.customAmount}
+                onChange={(e) => handleInputChange('customAmount', e.target.value)}
+                placeholder="0.00"
+              />
+            </FormGroup>
+            )}
+          </div>
+            
+              <div className="flex items-end space-x-2 justify-end">
+             {/* Retained Start/End logic if needed, partially commented or kept if relevant to new structure.
+                 For now, primarily rendering the new input fields.
+              */}
               {formData?.status === "pending" ? (
                 <div className="flex items-center space-x-2">
                    <Switch checked={isChecked} onCheckedChange={handleStart}/>
@@ -222,114 +368,6 @@ console.log("booking :", booking)
               ) :
                 null
               }
-              </div>
-          <Separator />
-          {/* Booking Information */}
-          <div className="space-y-4 w-full">
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              <h3 className="font-semibold">Booking Information</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                <FormGroup id={"date"} errors={errors}>
-                <Label htmlFor="date">Date *</Label>
-                <DatePickerLine
-                  error={errors?.date}
-                  value={formData?.date}
-                  onChange={(d) => setFormData({...formData, date: d})}
-                  // disabled={disabled}
-                  errors={errors}
-                />
-    
-              </FormGroup>
-             <FormGroup id={"time"} errors={errors}>
-                <Label htmlFor="time"> Time *</Label>
-                <TimePicker
-                  error={errors?.time}
-                  value={formData.time}
-                  onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                />
-              </FormGroup>
-              <FormGroup id={"pickupLocation"} errors={errors}>
-                <Label htmlFor="pickupLocation">Pickup Location *</Label>
-                <TextInput
-                  id="pickupLocation"
-                  value={formData.pickupLocation}
-                  onChange={(e) => handleInputChange('pickupLocation', e.target.value)}
-                  placeholder="Enter pickup location"
-                />
-              </FormGroup>
-              <div className="w-full grid grid-cols-2 gap-4">
-                <FormGroup>
-                <Label htmlFor="from">From *</Label>
-                <TextInput
-                  id="from"
-                  value={formData.from}
-                  onChange={(e) => handleInputChange('from', e.target.value)}
-                  placeholder="Enter city"
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label htmlFor="from">To *</Label>
-                <TextInput
-                  id="to"
-                  value={formData.to}
-                  onChange={(e) => handleInputChange('to', e.target.value)}
-                  placeholder="Enter city"
-                />
-              </FormGroup>
-              </div>
-              <FormGroup id={"tripStartAt"} errors={errors}>
-                <Label htmlFor="tripStartAt">Trip Start At *</Label>
-                <DateTimePicker
-                  error={errors?.tripStartAt}
-                  value={formData?.tripStartAt}
-                  onChange={(d) => setFormData({...formData, tripStartAt: d})}
-                  // disabled={disabled}
-                  errors={errors}
-                />
-    
-              </FormGroup>
-              <FormGroup id={"tripEndAt"} errors={errors}>
-                <Label htmlFor="tripEndAt">Trip End At *</Label>
-                <DateTimePicker
-                  error={errors?.tripEndAt}
-                  value={formData?.tripEndAt}
-                  onChange={(d) => setFormData({...formData, tripEndAt: d})}
-                  // disabled={disabled}
-                  errors={errors}
-                />
-    
-              </FormGroup>
-              <FormGroup id={"odoStart"} errors={errors}>
-                <Label htmlFor="odoStart">Odo Meter Start *</Label>
-                <TextInput
-                  id="odoStart"
-                  value={formData.odoStart}
-                  onChange={(e) => setFormData({...formData, odoStart: e.target.value})}
-                  placeholder="Enter odo meter"
-                />
-              </FormGroup>
-               <FormGroup id={"odoEnd"} errors={errors}>
-                <Label htmlFor="odoEnd">Odo Meter End *</Label>
-                <TextInput
-                  id="odoEnd"
-                  value={formData.odoEnd}
-                  onChange={(e) => setFormData({...formData, odoEnd: e.target.value})}
-                  placeholder="Enter odo meter"
-                />
-              </FormGroup>
-            </div>
-            <FormGroup id={"description"} errors={errors}>
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
-                placeholder="Enter any additional description..."
-                rows={3}
-              />
-              </FormGroup>
             </div>
           <SheetFooter className="flex flex-row gap-4 justify-end">
              <SheetClose asChild>

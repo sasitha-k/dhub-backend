@@ -15,7 +15,7 @@ export default function usePackages() {
     try {
       const res = await getPackages(params);
       setPackages(res?.packages);
-      // console.log("drivers",res?.drivers)
+      console.log("packages",res?.packages)
      } catch (error) {
     setErrors(error);
     if (error?.response?.data?.code === 403) {

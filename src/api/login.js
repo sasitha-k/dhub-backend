@@ -1,4 +1,3 @@
-// /lib/api/auth.js
 import authInstance from "./authInstance";
 import Cookies from "js-cookie";
 
@@ -10,7 +9,7 @@ export const login = async ({ userName, password }) => {
     if (token) {
       Cookies.set("token", token, {
         expires: 7, // 7 days
-        secure: true, // only over HTTPS
+        secure: process.env.NODE_ENV === 'production', // only over HTTPS in production
         sameSite: "strict",
       });
     }

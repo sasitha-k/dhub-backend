@@ -20,7 +20,15 @@ import FormGroup from "@/components/common/FormGroup"
 import SubmitButton from '@/components/common/buttons/SubmitButton'
 import CloseButton from '@/components/common/buttons/CloseButton'
 import TextInput from '@/components/common/inputs/TextInput'
-import PayBasisPicker from '@/components/packages/PayBasisPicker'
+import { Checkbox } from '@/components/ui/checkbox'
+import PackageTypePicker from '@/components/common/dropdown/package/PackageTypePicker'
+import DayTimeTab from '@/components/packages/package-tabs/DayTimeTab'
+import NightDistanceTab from '@/components/packages/package-tabs/NightDistanceTab'
+import NightHourlyTab from '@/components/packages/package-tabs/NightHourlyTab'
+import AirportDropTab from '@/components/packages/package-tabs/AirportDropTab'
+import LongTripTab from '@/components/packages/package-tabs/LongTripTab'
+import CustomTab from '@/components/packages/package-tabs/CustomTab'
+
 
 export function PackageForm({
   sheetOpen,
@@ -39,14 +47,11 @@ export function PackageForm({
     } else {
       // Reset form for new package
       setFormData({
-        title: "",
-        description: "",
-        unit: "",
-        pricing: {
-          minimum: 0,
-          minimumCharge: 0,
-          perUnitCharge: 0
-        }
+        packageType: '',
+        packageName: '',
+        basePrice: '',
+        maxDurationHours: '',
+        pickupOutsideColomboFee: ''
       });
     }
   }, [selectedItem, isNewItem, setFormData]);
@@ -54,16 +59,7 @@ export function PackageForm({
    const onSuccess = () => {
     fetchPackages();
      setSheetOpen(false);
-     setFormData({
-       title: "",
-       description: "",
-       unit: "",
-       pricing: {
-         minimum: 0,
-         minimumCharge: 0,
-         perUnitCharge: 0
-       }
-     });
+     setFormData({});
   }
 
   const handleSubmit = async (e) => {
@@ -73,7 +69,7 @@ export function PackageForm({
     if (isNewItem) {
       await onSubmit(onSuccess);
     } else {
-      await onUpdate(formData._id, onSuccess);
+      await onUpdate(onSuccess);
     }
   };
 
@@ -94,100 +90,128 @@ export function PackageForm({
 
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-      <SheetContent className="w-full sm:max-w-md  overflow-y-auto">
+      <SheetContent className="w-full md:max-w-[80%] overflow-y-auto">
         <SheetHeader>
-          <SheetTitle className="flex items-center gap-2">
+          <div className='flex justify-between items-center gap-4'>
+             <SheetTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />
             {isNewItem ? 'Add New Package' : 'Edit Package'}
-          </SheetTitle>
+            </SheetTitle>
+            <div className='flex items-center gap-2 pr-10'>
+              <Checkbox
+              checked={formData.isAvailable}
+              onCheckedChange={() => setFormData(prev => ({...prev, isAvailable: !formData.isAvailable}))}
+              />
+              <Label>Is Available</Label>
+            </div>
+         </div>
           <SheetDescription>
-            {isNewItem 
+            {isNewItem
               ? 'Fill in the details to create a new package service.' 
               : 'Update the package information below.'
             }
           </SheetDescription>
         </SheetHeader>
-
         <form onSubmit={handleSubmit} className="space-y-6 mt-2">
             {/* Package Information Section */}
-            <div className="space-y-4">
-              <div className="grid gap-6">
-                <FormGroup id={"title"} errors={errors}>
-                  <Label htmlFor="title">Package Title *</Label>
-                  <TextInput
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) => handleInputChange('title', e.target.value)}
-                    placeholder="Enter package title"
-                  />
-                </FormGroup>
-
-                <FormGroup id={"description"} errors={errors}>
-                  <Label htmlFor="description">Description *</Label>
-                  <TextInput
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => handleInputChange('description', e.target.value)}
-                    placeholder="Enter package description"
-                  />
-                </FormGroup>
-
-                <FormGroup id={"unit"} errors={errors}>
-                  <Label htmlFor="unit">Billing Unit *</Label>
-                <PayBasisPicker
-                  value={formData?.unit}
-                  onChange={(e) => handleInputChange('unit', e) }/>
-                </FormGroup>
-
-                {/* Pricing Section */}
+            {/* type section */}
                 <div className="border-t pt-4 space-y-4">
-                  <div className="flex items-center gap-2 mb-4">
-                    <DollarSign className="h-4 w-4" />
-                    <h4 className="font-medium">Pricing</h4>
-                  </div>
-                  
-                  <FormGroup id={"minimum"} errors={errors}>
-                    <Label htmlFor="minimum">Minimum Units *</Label>
-                    <TextInput
-                      id="minimum"
-                      type="number"
-                      min="1"
-                      value={formData.pricing?.minimum || 1}
-                      onChange={(e) => updatePricing({ minimum: parseInt(e.target.value) || 1 })}
-                      placeholder="Enter minimum units"
-                    />
-                  </FormGroup>
-
-                  <FormGroup id={"minimumCharge"} errors={errors}>
-                    <Label htmlFor="minimumCharge">Minimum Charge *</Label>
-                    <TextInput
-                      id="minimumCharge"
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.pricing?.minimumCharge || 0}
-                      onChange={(e) => updatePricing({ minimumCharge: parseFloat(e.target.value) || 0 })}
-                      placeholder="Enter minimum charge amount"
-                    />
-                  </FormGroup>
-
-                  <FormGroup id={"perUnitCharge"} errors={errors}>
-                    <Label htmlFor="perUnitCharge">Per Unit Charge *</Label>
-                    <TextInput
-                      id="perUnitCharge"
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.pricing?.perUnitCharge || 0}
-                      onChange={(e) => updatePricing({ perUnitCharge: parseFloat(e.target.value) || 0 })}
-                      placeholder="Enter charge per unit"
+                  <FormGroup id={"packageType"} errors={errors}>
+                    <Label htmlFor="packageType">Package Type</Label>
+                    <PackageTypePicker
+                      id="packageType"
+                      value={formData?.packageType}
+                      onChange={(e) => setFormData(prev => ({...prev, packageType: e}))}
+                      placeholder="Select package type"
                     />
                   </FormGroup>
                 </div>
-            </div>
-          </div>
 
-          <SheetFooter className="flex flex-row gap-4 justify-end">
+           
+                  <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+                    <FormGroup id={"packageName"} errors={errors}>
+                      <Label htmlFor="packageName">Package Name *</Label>
+                      <TextInput
+                        id="packageName"
+                        value={formData.packageName}
+                        onChange={(e) => handleInputChange('packageName', e.target.value)}
+                        placeholder="Enter package name"
+                      />
+                    </FormGroup>
+                    <FormGroup id={"basePrice"} errors={errors}>
+                      <Label htmlFor="basePrice">Base Price</Label>
+                      <TextInput
+                        id="basePrice"
+                        value={formData.basePrice}
+                        onChange={(e) => handleInputChange('basePrice', e.target.value)}
+                        placeholder="Enter package base price"
+                      />
+                    </FormGroup>
+                    <FormGroup id={"maxDurationHours"} errors={errors}>
+                      <Label htmlFor="maxDurationHours">Max Duration Hours</Label>
+                    <TextInput
+                      id="maxDurationHours"
+                      placeholder="Enter maximum duration hours"
+                      value={formData?.maxDurationHours}
+                      onChange={(e) => handleInputChange('maxDurationHours', e.target.value)}/>
+                  </FormGroup>
+                  <FormGroup id={"pickupOutsideColomboFee"} errors={errors}>
+                      <Label htmlFor="pickupOutsideColomboFee">Pickup Outside Colombo Fee *</Label>
+                    <TextInput
+                        id="pickupOutsideColomboFee"
+                        placeholder="Enter pickup outside colombo fee"
+                        value={formData?.pickupOutsideColomboFee}
+                        onChange={(e) => handleInputChange('pickupOutsideColomboFee', e.target.value)}/>
+                    </FormGroup>
+                  </div>
+                {formData.packageType === 'DAY_TIME' && (
+                  <DayTimeTab
+                    formData={formData}
+                    errors={errors} 
+                    handleInputChange={handleInputChange} 
+                  />
+                )}
+                {formData.packageType === 'NIGHT_DISTANCE' && (
+                  <NightDistanceTab
+                    formData={formData}
+                    errors={errors} 
+                    handleInputChange={handleInputChange} 
+                  />
+                )}
+
+                {formData.packageType === 'NIGHT_HOURLY' && (
+                  <NightHourlyTab
+                    formData={formData}
+                    errors={errors} 
+                    handleInputChange={handleInputChange} 
+                  />
+                )}
+
+                {formData.packageType === 'AIRPORT_DROP' && (
+                  <AirportDropTab
+                    formData={formData} 
+                    errors={errors} 
+                    handleInputChange={handleInputChange}
+                  />
+                )}
+
+                {formData.packageType === 'LONG_TRIP' && (
+                  <LongTripTab
+                    formData={formData} 
+                    errors={errors} 
+                    handleInputChange={handleInputChange} 
+                  />
+          )}
+          
+          {formData.packageType === 'CUSTOM' && (
+                  <CustomTab
+                    formData={formData}
+                    errors={errors} 
+                    handleInputChange={handleInputChange} 
+                  />
+                )}
+                
+          <SheetFooter className="flex flex-row gap-4 justify-end mt-16">
             <SheetClose asChild>
               <CloseButton onClick={handleClose}/>
             </SheetClose>

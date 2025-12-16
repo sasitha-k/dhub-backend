@@ -10,6 +10,7 @@ import useBookings from '@/hooks/booking/useBookings';
 import DeleteConfirmationModal from '@/components/modals/DeleteConfirmModal';
 import { Button } from '@/components/ui/button';
 import { capitalizeWords } from '@/constants/CapitalizedWord';
+import SearchFilter from '@/components/common/filters/SearchFilter';
 
 const tabs = ["pending", "ongoing", "completed"];
 
@@ -21,16 +22,22 @@ export default function Page() {
   const [selectedItem, setSelectedItem] = useState(null);
   const { fetchBookings, bookings, isLoading, onDelete, findBooking, booking } = useBookings();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [filters, setFilters] = useState({});
+  const [filtered, setFiltered] = useState([]);
 
   useEffect(() => {
-    fetchBookings();
-  }, []);
+    fetchBookings({});
+  }, [fetchBookings]);
 
   // ✅ Filter bookings by status
   const filteredBookings = useMemo(() => {
-    if (!bookings?.length) return [];
-    return bookings.filter((b) => b.status?.toLowerCase() === activeTab.toLowerCase());
-  }, [bookings, activeTab]);
+    if (!filtered?.length) return [];
+    return filtered.filter((b) => b.status?.toLowerCase() === activeTab.toLowerCase());
+  }, [filtered, activeTab]);
+
+  const getTabCount = (status) => {
+    return filtered?.filter((b) => b.status?.toLowerCase() === status.toLowerCase())?.length || 0;
+  };
 
   const handleCreate = () => {
     setIsNewItem(true);
@@ -73,9 +80,15 @@ export default function Page() {
 
         {/* 🔹 Filter / Search Row */}
         <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
-          <TextInput placeholder="Search" readOnly />
-          <div className="col-span-3 lg:block hidden"></div>
-          <TextInput placeholder="Date Range" readOnly />
+         <SearchFilter
+                     data={bookings}
+                     filterKeys={["bookingId"]}
+                     filters={filters}
+                     setFilters={setFilters}
+                     onFilter={setFiltered}
+                     placeholder="Search by booking Id"
+                     data-id="search"
+                   />
         </div>
 
         {/* 🔹 Tabs */}
@@ -86,7 +99,7 @@ export default function Page() {
               variant={tab === activeTab ? "default" : "outline"}
               onClick={() => setActiveTab(tab)}
             >
-              {capitalizeWords(tab)}
+              {capitalizeWords(tab)} ({getTabCount(tab)})
             </Button>
           ))}
         </div>

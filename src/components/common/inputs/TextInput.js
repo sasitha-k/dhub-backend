@@ -1,5 +1,4 @@
 import React from "react";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
 export default function TextInput({
@@ -17,7 +16,7 @@ export default function TextInput({
   return (
       <Input
         type={type ? type : "text"}
-        className={`text-sm placeholder:text-gray-400 text-muted-foreground placeholder:text-xs ${
+        className={`relative text-sm placeholder:text-gray-400 border border-primary/40 text-muted-foreground placeholder:text-xs ${
           disabled ? "text-primary font-medium" : ""
         }`}
         id={id}

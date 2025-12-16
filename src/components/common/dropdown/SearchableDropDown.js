@@ -93,7 +93,7 @@ export function SearchableDropdown({
         disabled={disabled}
         {...props}
         className={cn(
-          "w-full capitalize flex items-center justify-between px-3 text-sm py-2.5 border rounded-md bg-background text-left",
+          "w-full capitalize  border border-primary/40 flex items-center justify-between px-3 text-xs py-2 border rounded-md bg-background text-left",
           disabled && "text-primary opacity-60 cursor-not-allowed",
           error && "border-red-500"
         )}
