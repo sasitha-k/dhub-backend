@@ -77,36 +77,39 @@ export default function Page() {
       ]}
     >
       <div className="flex w-auto h-auto flex-col gap-6 p-4">
+        {/* 🔹 Header Controls */}
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          {/* Tabs */}
+          <div className="flex flex-wrap gap-2">
+            {tabs.map((tab) => (
+              <Button
+                key={tab}
+                variant={tab === activeTab ? "default" : "outline"}
+                onClick={() => setActiveTab(tab)}
+              >
+                {capitalizeWords(tab)} ({getTabCount(tab)})
+              </Button>
+            ))}
+          </div>
 
-        {/* 🔹 Filter / Search Row */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
-         <SearchFilter
-                     data={bookings}
-                     filterKeys={["bookingId"]}
-                     filters={filters}
-                     setFilters={setFilters}
-                     onFilter={setFiltered}
-                     placeholder="Search by booking Id"
-                     data-id="search"
-                   />
-        </div>
+          {/* Right Side: Search & Create */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            {/* Search */}
+            <div className="w-full sm:w-72">
+              <SearchFilter
+                data={bookings}
+                filterKeys={["bookingId"]}
+                filters={filters}
+                setFilters={setFilters}
+                onFilter={setFiltered}
+                placeholder="Search by ID"
+                data-id="search"
+              />
+            </div>
 
-        {/* 🔹 Tabs */}
-        <div className="flex flex-wrap gap-4">
-          {tabs.map((tab) => (
-            <Button
-              key={tab}
-              variant={tab === activeTab ? "default" : "outline"}
-              onClick={() => setActiveTab(tab)}
-            >
-              {capitalizeWords(tab)} ({getTabCount(tab)})
-            </Button>
-          ))}
-        </div>
-
-        {/* 🔹 Create Button */}
-        <div className="w-full flex justify-end">
-          <CreateButton onClick={handleCreate} />
+            {/* Create Button */}
+            <CreateButton onClick={handleCreate} />
+          </div>
         </div>
 
         {/* 🔹 Table */}

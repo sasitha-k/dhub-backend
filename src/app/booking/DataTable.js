@@ -24,38 +24,37 @@ export function DataTable({
 
  
   return (
-    <div className="h-full flex flex-col ">
-      <div className="relative max-h-[550px] 2xl:max-h-[650px] overflow-y-scroll overflow-x-auto border rounded-lg">
+   
         <Table>
           <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
-              <TableHead>Date</TableHead>
+              <TableHead className="hidden md:table-cell">Date</TableHead>
               <TableHead>Booking Id</TableHead>
               <TableHead>Customer</TableHead>
-              <TableHead>Package</TableHead>
-              <TableHead>Driver</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Pickup Location</TableHead>
-              <TableHead>From</TableHead>
-              <TableHead>To</TableHead>
-              <TableHead>Trip Duration</TableHead>
-              <TableHead>Odo Meter</TableHead>
-              <TableHead>Booking Fee</TableHead>
+              <TableHead className="hidden lg:table-cell">Package</TableHead>
+              <TableHead className="hidden lg:table-cell">Driver</TableHead>
+              <TableHead className="hidden xl:table-cell">Description</TableHead>
+              <TableHead className="hidden xl:table-cell">Pickup Location</TableHead>
+              <TableHead className="hidden md:table-cell">From</TableHead>
+              <TableHead className="hidden md:table-cell">To</TableHead>
+              <TableHead className="hidden xl:table-cell">Trip Duration</TableHead>
+              <TableHead className="hidden 2xl:table-cell">Odo Meter</TableHead>
+              <TableHead className="hidden lg:table-cell">Booking Fee</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead></TableHead>
+              <TableHead className="w-[100px]"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             { items?.length < 1 ? (
               <TableRow>
-                <TableCell colSpan={12} className="h-24 text-center">
+                <TableCell colSpan={14} className="h-24 text-center">
                   No records available for active tab.
                 </TableCell>
               </TableRow>
             ) : (
               items?.map((item, index) => (
               <TableRow key={index}>
-                <TableCell className="font-normal">
+                <TableCell className="font-normal hidden md:table-cell">
                   {item?.date}{" "}{item?.time}
                 </TableCell>
                 <TableCell className="font-normal">
@@ -67,13 +66,13 @@ export function DataTable({
                         <span className="text-xs text-muted-foreground">{item?.customerNumber}</span>
                     </div>
                 </TableCell>
-                <TableCell>{item?.selectedPackage?.packageName || "N/A"}</TableCell>
-                <TableCell>{item?.driverName || "N/A"}</TableCell>
-                <TableCell>{item?.description || "N/A"}</TableCell>
-                <TableCell>{item?.pickupLocation || "N/A"}</TableCell>
-                <TableCell>{item?.from || "N/A"}</TableCell>
-                <TableCell>{item?.to || "N/A"}</TableCell>
-                <TableCell className={"text-xs"}>
+                <TableCell className="hidden lg:table-cell">{item?.selectedPackage?.packageName || "N/A"}</TableCell>
+                <TableCell className="hidden lg:table-cell">{item?.driverName || "N/A"}</TableCell>
+                <TableCell className="hidden xl:table-cell max-w-[200px] truncate" title={item?.description}>{item?.description || "N/A"}</TableCell>
+                <TableCell className="hidden xl:table-cell max-w-[150px] truncate" title={item?.pickupLocation}>{item?.pickupLocation || "N/A"}</TableCell>
+                <TableCell className="hidden md:table-cell">{item?.from || "N/A"}</TableCell>
+                <TableCell className="hidden md:table-cell">{item?.to || "N/A"}</TableCell>
+                <TableCell className={"text-xs hidden xl:table-cell"}>
                   <span className="grid gap-1">
                     <span>Start : {item?.tripStartAt ? moment(item.tripStartAt).format("MM-DD HH:mm") : "N/A"}</span>
                     <span>End : {item?.tripEndAt ? moment(item.tripEndAt).format("MM-DD HH:mm") : "N/A"}</span>
@@ -83,13 +82,13 @@ export function DataTable({
                     </span>
                   </span>
                 </TableCell>
-                <TableCell>
+                <TableCell className="hidden 2xl:table-cell">
                   <span className="grid gap-1">
                     <span>Odo Start : {item.odoStart || "N/A"}</span>
                     <span>Odo End : {item.odoEnd || "N/A"}</span>
                   </span>
                 </TableCell>
-                <TableCell>
+                <TableCell className="hidden lg:table-cell">
                   {formatter.format(item?.fee)}
                 </TableCell>
                 <TableCell>
@@ -113,7 +112,5 @@ export function DataTable({
             )))}
           </TableBody>
         </Table>
-      </div>
-    </div>
   );
 }
