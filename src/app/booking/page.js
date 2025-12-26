@@ -11,6 +11,7 @@ import DeleteConfirmationModal from '@/components/modals/DeleteConfirmModal';
 import { Button } from '@/components/ui/button';
 import { capitalizeWords } from '@/constants/CapitalizedWord';
 import SearchFilter from '@/components/common/filters/SearchFilter';
+import { Card } from '@/components/ui/card';
 
 const tabs = ["pending", "ongoing", "completed"];
 
@@ -76,7 +77,7 @@ export default function Page() {
         { label: "Booking", href: "/booking" },
       ]}
     >
-      <div className="flex w-auto h-auto flex-col gap-6 p-4">
+      <div className="flex h-auto flex-col gap-6 p-4">
         {/* 🔹 Header Controls */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           {/* Tabs */}
@@ -113,7 +114,7 @@ export default function Page() {
         </div>
 
         {/* 🔹 Table */}
-        <DataTable
+           <DataTable
           items={filteredBookings}
           handleEdit={handleEdit}
           handleDelete={handleDelete}
