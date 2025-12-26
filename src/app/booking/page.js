@@ -91,7 +91,7 @@ export default function Page() {
           </div>
 
           {/* Right Side: Search & Create */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="flex gap-4 flex-row sm:items-center">
             {/* Search */}
             <div className="w-full sm:w-72">
               <SearchFilter

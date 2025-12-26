@@ -3,6 +3,7 @@
 import {
   Bell,
   Bike,
+  BookText,
   Calendar,
   Car,
   ChevronsDownUp,
@@ -56,7 +57,7 @@ const navItems = [
   { label: 'Drivers', icon: Car, path: '/drivers' },
   // { label: 'Riders', icon: Bike, path: '/riders' },
   { label: 'Packages', icon: CreditCardIcon, path: '/packages' },
-  { label: 'Billing', icon: CreditCard, path: '/billing' },
+  { label: 'Billing', icon: BookText, path: '/billing' },
   { label: 'Reports', icon: FileText, path: '/reports' },
 ];
 
