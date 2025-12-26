@@ -26,7 +26,7 @@ export function DataTable({
               <TableHead>Base Price</TableHead>
               <TableHead>Details</TableHead>
               <TableHead>Extra Rates</TableHead>
-              {/* <TableHead>Actions</TableHead> */}
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -60,13 +60,13 @@ export function DataTable({
                         {item?.pickupOutsideColomboFee > 0 && <span>Outside Pickup: {item?.pickupOutsideColomboFee} LKR</span>}
                     </span>
                 </TableCell>
-                {/* <TableCell className="flex gap-4">
+                <TableCell className="flex gap-4">
                   <EditButton
                     onClick={() => {
                       handleEdit(item)
                     }}
                   />
-                </TableCell> */}
+                </TableCell>
               </TableRow>
               );
             })}

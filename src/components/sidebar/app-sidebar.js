@@ -72,10 +72,10 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar  className="group ">
+    <Sidebar  className="group z-[100] ">
       {/* App logo / header */}
          
-    <SidebarHeader className="transition-all duration-200 h-32 pl-4  py-6">
+    <SidebarHeader className="transition-all duration-200 h-32 pl-4 py-6">
             <SidebarMenu>
               <SidebarMenuItem>
                       <a href="/dashboard" className="flex gap-4 items-center">
@@ -102,8 +102,8 @@ export function AppSidebar() {
               {navItems.map(({ label, icon: Icon, path }) => (
                 <SidebarMenuItem key={label} >
                   <SidebarMenuButton className={`${pathname === path ? "bg-sidebar-accent":""}`} >
-                    <a href={path} className={`flex gap-2 items-center justify-center `}>
-                      <Icon className="w-6 h-6" />
+                    <a href={path} className={`flex gap-2 items-center justify-center`}>
+                      <Icon className="w-5 h-5" />
                       <span>{label}</span>
                     </a>
                   </SidebarMenuButton>

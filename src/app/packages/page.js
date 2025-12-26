@@ -7,12 +7,12 @@ import { DataTable } from './DataTable';
 import { PackageForm } from './PackageForm';
 import usePackages from '@/hooks/packages/usePackages';
 import SearchFilter from '@/components/common/filters/SearchFilter';
+import { Button } from '@/components/ui/button';
+import { capitalizeWords } from '@/constants/CapitalizedWord';
 
-
-const tabs = ["pending", "onGoing", "completed"]
+const tabs = ["DAY_TIME", "NIGHT_DISTANCE", "NIGHT_HOURLY", "AIRPORT_DROP", "LONG_TRIP", "CUSTOM"];
 
 export default function Page() {
-  const [activeTab, setActiveTab] = useState("pending");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [isNewItem, setIsNewItem] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -21,8 +21,8 @@ export default function Page() {
   const [filters, setFilters] = useState({});
 
   useEffect(() => {
-    fetchPackages({ status: activeTab });
-  }, [fetchPackages, activeTab])
+    fetchPackages();
+  }, [fetchPackages])
 
   const handleCreate = () => {
     setIsNewItem(true);
@@ -35,45 +35,55 @@ export default function Page() {
     setSelectedItem(item);
   }
 
-   const handleClose = () => {
+  const handleClose = () => {
     setSheetOpen(false);
   }
+  
+ 
 
   return (
-                <BreadcrumbProvider value={[
-                  { label: "Dashboard", href: "/dashboard" },
-                  { label: "Packages", href: null},
-                ]}>
-     <div className="flex w-auto h-auto flex-col gap-6 p-4">
-        <div className='grid md:grid-cols-2 lg:grid-cols-5 gap-4'>
-          <SearchFilter
-            data={packages}
-            filterKeys={["packageName"]}
-            filters={filters}
-            setFilters={setFilters}
-            onFilter={setFiltered}
-            placeholder="Search by package name"
-            data-id="search"
-          />
-        </div>
-        <div className='w-full flex justify-end'>
-           <CreateButton onClick={handleCreate}/>
-       </div>
-             <DataTable
-               items={filtered}
-               handleEdit={handleEdit}
-             />
+    <BreadcrumbProvider value={[
+      { label: "Dashboard", href: "/dashboard" },
+      { label: "Packages", href: null},
+    ]}>
+      <div className="flex h-auto flex-col gap-6 p-4">
+         {/* Right Side: Search & Create */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center w-full justify-end">
+            {/* Search */}
+            <div className="w-full sm:w-72">
+              <SearchFilter
+                data={packages}
+                filterKeys={["packageName"]}
+                filters={filters}
+                setFilters={setFilters}
+                onFilter={setFiltered}
+                placeholder="Search by package name"
+                data-id="search"
+              />
+            </div>
+
+            {/* Create Button */}
+            <CreateButton onClick={handleCreate} />
+          </div>
+
+        {/* Table */}
+        <DataTable
+          items={filtered}
+          handleEdit={handleEdit}
+        />
+
+        {/* Package Form */}
         <div className='w-full'>
           <PackageForm
-          sheetOpen={sheetOpen}
-          isNewItem={isNewItem}
-          selectedItem={selectedItem}
-          setSheetOpen={setSheetOpen}
-          fetchPackages={fetchPackages}
-          handleClose={handleClose}
-      />
-      </div>
+            sheetOpen={sheetOpen}
+            isNewItem={isNewItem}
+            selectedItem={selectedItem}
+            setSheetOpen={setSheetOpen}
+            fetchPackages={fetchPackages}
+            handleClose={handleClose}
+          />
         </div>
+      </div>
     </BreadcrumbProvider>
   )
 }

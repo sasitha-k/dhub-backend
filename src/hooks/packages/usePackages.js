@@ -9,7 +9,7 @@ export default function usePackages() {
   const [errors, setErrors] = useState({});
   const [permissionError, setPermissionError] = useState();
 
-  // get drivers
+  // get packages
   const fetchPackages = useCallback(async (params) => {
     setLoading(true);
     try {
