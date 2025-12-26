@@ -25,7 +25,7 @@ export function DataTable({
  
   return (
      <div className="h-full flex flex-col ">
-      <div className="relative max-h-[450px] md:max-h-[550px] lg:max-h-[650px] overflow-y-scroll overflow-x-auto border rounded-lg">
+      <div className="relative max-h-[450px] md:max-h-[550px] lg:max-h-[650px] overflow-y-scroll overflow-x-auto border rounded-lg ">
         <Table>
           <TableHeader className="">
             <TableRow>
@@ -40,14 +40,14 @@ export function DataTable({
               <TableHead >Odo Meter</TableHead>
               <TableHead >Booking Fee</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead ></TableHead>
+              <TableHead >Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             { items?.length < 1 ? (
               <TableRow>
                 <TableCell colSpan={14} className="h-24 text-center">
-                  No records available for active tab.
+                  No records available.
                 </TableCell>
               </TableRow>
             ) : (

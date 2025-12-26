@@ -166,7 +166,7 @@ console.log("booking :", booking)
 
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-      <SheetContent className="w-full sm:max-w-7xl overflow-y-auto">
+      <SheetContent className="w-full sm:max-w-6xl overflow-y-auto p-4">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             {isNewItem ? <FileText className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
@@ -212,6 +212,16 @@ console.log("booking :", booking)
                   labelKey={"firstName"}
                   valueKey={"_id"}
                   onChange={(e) => setFormData({...formData, customerId: e})}
+                  onCustomerSelect={(customer) => {
+                    if (customer) {
+                      const fullName = `${customer?.firstName || ''} ${customer?.lastName || ''}`.trim();
+                      setFormData(prev => ({
+                        ...prev,
+                        customerName: fullName,
+                        customerNumber: customer?.mobile || ''
+                      }));
+                    }
+                  }}
                 />
             </FormGroup>
 
@@ -322,7 +332,7 @@ console.log("booking :", booking)
 
           {/* Financials */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormGroup id={"additionalFees"} errors={errors}>
+             <FormGroup id={"additionalFees"} errors={errors}>
               <Label htmlFor="additionalFees">Additional Fees</Label>
               <TextInput
                 id="additionalFees"
@@ -332,7 +342,6 @@ console.log("booking :", booking)
                 placeholder="0.00"
               />
             </FormGroup>
-
             {formData?.packageType === "CUSTOM" && (
             <FormGroup id={"customAmount"} errors={errors}>
               <Label htmlFor="customAmount">Custom Amount</Label>
@@ -344,7 +353,7 @@ console.log("booking :", booking)
                 placeholder="0.00"
               />
             </FormGroup>
-            )}
+            ) }
           </div>
             
               <div className="flex items-end space-x-2 justify-end">

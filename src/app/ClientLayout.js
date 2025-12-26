@@ -21,7 +21,7 @@ export default function ClientLayout({ children }) {
   }
 
   return (
-    <div className='max-h-screen max-h-screen'>
+    <div className=''>
        <SidebarProvider>
       <AppSidebar/>
       <SidebarInset>
