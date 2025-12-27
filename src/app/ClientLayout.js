@@ -21,11 +21,11 @@ export default function ClientLayout({ children }) {
   }
 
   return (
-    <div className=''>
+    <div className='w-screen h-screen overflow-hidden overflow-y-scroll'>
        <SidebarProvider>
       <AppSidebar/>
       <SidebarInset>
-        <main>
+        <main className="w-auto h-auto overflow-auto">
           {children}
         </main>
       </SidebarInset>

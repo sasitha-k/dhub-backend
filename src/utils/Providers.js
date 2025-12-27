@@ -8,7 +8,7 @@ export default function Providers({ children }) {
   return (
     <CookiesProvider>
       <UserProvider>
-        <ThemeToggle />
+        <ThemeToggle/>
         {children}
       </UserProvider>
     </CookiesProvider>
