@@ -25,7 +25,7 @@ export function DataTable({
  
   return (
      <div className="h-full flex flex-col ">
-      <div className="relative max-h-[450px] md:max-h-[550px] lg:max-h-[650px] overflow-y-scroll overflow-x-auto border rounded-lg ">
+      <div className="relative max-w-100vh max-h-[450px] md:max-h-[550px] lg:max-h-[650px] overflow-y-scroll overflow-x-auto border rounded-lg ">
         <Table>
           <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
