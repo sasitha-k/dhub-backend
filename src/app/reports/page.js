@@ -2,7 +2,7 @@ import { BreadcrumbProvider } from '@/hooks/providers/useBreadcrumbProvider'
 import React from 'react'
 
 const items = [
-  { label: "Dashboard", href: "/dashboard" },
+  // { label: "Dashboard", href: "/dashboard" },
   { label: "Reports", href: "/reports" },
 //   { label: "Customer", href: null },
 ];

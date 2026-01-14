@@ -9,6 +9,7 @@ import usePackages from '@/hooks/packages/usePackages';
 import SearchFilter from '@/components/common/filters/SearchFilter';
 import { Button } from '@/components/ui/button';
 import { capitalizeWords } from '@/constants/CapitalizedWord';
+import { PackageModal } from './PackageModal';
 
 const tabs = ["DAY_TIME", "NIGHT_DISTANCE", "NIGHT_HOURLY", "AIRPORT_DROP", "LONG_TRIP", "CUSTOM"];
 
@@ -43,7 +44,7 @@ export default function Page() {
 
   return (
     <BreadcrumbProvider value={[
-      { label: "Dashboard", href: "/dashboard" },
+      // { label: "Dashboard", href: "/dashboard" },
       { label: "Packages", href: null},
     ]}>
       <div className="flex h-auto flex-col gap-6 p-4">
@@ -74,7 +75,7 @@ export default function Page() {
 
         {/* Package Form */}
         <div className='w-full'>
-          <PackageForm
+          <PackageModal
             sheetOpen={sheetOpen}
             isNewItem={isNewItem}
             selectedItem={selectedItem}

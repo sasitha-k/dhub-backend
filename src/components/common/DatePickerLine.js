@@ -43,7 +43,7 @@ const DatePickerLine = ({ value, onChange, error,  disabled, ...props }) => {
         placeholderText="YYYY-MM-DD"  
         dateFormat="yyyy-MM-dd"
         disabled={disabled}
-        className={`flex h-10 w-full border border-primary/40 text-muted-foreground items-center rounded-md bg-background px-3 py-2.5 text-xs ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 border ${
+        className={`flex  w-full border border-primary/40 text-muted-foreground items-center rounded-md bg-background px-3 py-2.5 text-xs ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50  ${
           error ? "border-red-500 text-red-500 placeholder:text-red-500" : "border-input"
         }`}
       />

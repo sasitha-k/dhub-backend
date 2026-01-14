@@ -93,7 +93,7 @@ export function SearchableDropdown({
         disabled={disabled}
         {...props}
         className={cn(
-          "w-full capitalize  border border-primary/40 flex items-center justify-between px-3 text-xs py-2 border rounded-md bg-background text-left",
+          "w-full capitalize  border-primary/40 flex items-center justify-between px-3 text-xs py-2 border rounded-md bg-background text-left",
           disabled && "text-primary opacity-60 cursor-not-allowed",
           error && "border-red-500"
         )}
@@ -132,7 +132,7 @@ export function SearchableDropdown({
               placeholder={searchPlaceholder}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className={`w-full text-sm px-2 py-1 border rounded focus:outline-none `}
+              className={`w-full text-sm px-2 py-2 border rounded focus:outline-none `}
             />
           </div>
 

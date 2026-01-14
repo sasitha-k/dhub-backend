@@ -31,11 +31,15 @@ import {
 } from 'lucide-react'
 
 import useBookings from '@/hooks/booking/useBookings'
+import { BookingModal } from '../BookingModal'
 
 export default function Page({ params }) {
 const { bookingId: reference } = use(params);
 
-const { booking, isLoading, findBooking } = useBookings();
+  const { fetchBookings, booking, isLoading, findBooking } = useBookings();
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [isNewItem, setIsNewItem] = useState(false);
 
 useEffect(() => {
   if (reference) {
@@ -49,8 +53,17 @@ const items = [
     { label: `${booking?.bookingId}`, href: null },
 ];
 
-console.log('first', booking);
-
+// console.log('first', booking);
+const handleEdit = (booking) => {
+    setSheetOpen(true);
+    setSelectedItem(booking);
+    setIsNewItem(false);
+};
+  
+  const handleClose = () => {
+    setSheetOpen(false);
+  }
+  
 const handleStatusUpdate = (newStatus) => {
     console.log("Update status to:", newStatus);
 };
@@ -103,7 +116,7 @@ return (
             </div>
           </div>
           <div className="flex gap-2">
-             <Button variant="outline" size="sm" className="hidden sm:flex">
+             <Button variant="outline" size="sm" className="hidden sm:flex" onClick={() => handleEdit(booking)}>
               <Edit className="w-4 h-4 mr-2" />
               Edit
             </Button>
@@ -227,7 +240,7 @@ return (
                   {/* Package Details Section */}
                   {booking?.selectedPackage && (
                   <>
-                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                    <div className='grid grid-cols-1 grid-flow-col h-auto md:grid-cols-2 gap-4'>
                       <div className=''>
                         {/* <h3 className="text-sm font-semibold mb-3 text-muted-foreground uppercase tracking-wider">Package Information</h3> */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -370,7 +383,7 @@ return (
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-6 h-auto">
             {/* Customer Card */}
             <Card className="p-4">
               <CardHeader>
@@ -455,7 +468,7 @@ return (
 
            {/* Waiting Periods */}
             {booking?.waitingPeriods && booking.waitingPeriods.length > 0 && (
-              <Card>
+              <Card className={"capitalize h-auto"}>
                 <CardHeader className="bg-muted/40 p-4">
                   <CardTitle className="text-lg flex items-center gap-2">
                     <Timer className="w-5 h-5 text-primary" />
@@ -499,7 +512,18 @@ return (
             
           </div>
         </div>
-      </div>
+    </div>
+    
+      <BookingModal
+        fetchBookings={fetchBookings}
+        sheetOpen={sheetOpen}
+        isNewItem={isNewItem}
+        selectedItem={selectedItem}
+        handleClose={handleClose}
+        setSheetOpen={setSheetOpen}
+        findBooking={findBooking}
+        booking={booking}
+      />
     </BreadcrumbProvider>
   );
 }

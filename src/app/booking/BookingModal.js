@@ -8,7 +8,6 @@ import PackagePicker from "@/components/common/dropdown/package/PackagePicker"
 import FormGroup from "@/components/common/FormGroup"
 import TextInput from "@/components/common/inputs/TextInput"
 import TimePicker from "@/components/common/TimePicker"
-import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogClose,
@@ -19,7 +18,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
@@ -34,15 +32,16 @@ export function BookingModal({
   selectedItem,
   setSheetOpen,
   fetchBookings,
-  setActiveTab,
   handleEdit,
   findBooking,
-  booking
+  booking,
+  activeTab
 }) {
     const {isLoading, errors, onSubmit, onUpdate, formData, setFormData, setErrors, onStartBooking, onComplete} = useBookingForm()
     const [isChecked, setIsChecked] = useState(false);
   // Load data when editing
-
+  // console.log("first", selectedItem)
+  
   useEffect(() => {
     if (isChecked && !isNewItem) {
       findBooking(selectedItem?._id);
@@ -54,22 +53,22 @@ export function BookingModal({
       setIsChecked(false)
       // Map existing item to form fields
       setFormData({
-        date: selectedItem.date || "",
-        time: selectedItem.time || "",
-        customerId: selectedItem.customerId || selectedItem.customer?._id || "",
-        customerNumber: selectedItem.customerNumber || selectedItem.customer?.number || "",
-        customerName: selectedItem.customerName || selectedItem.customer?.name || "",
-        driver: selectedItem.driver || "",
-        selectedPackage: selectedItem.selectedPackage?._id || selectedItem.selectedPackage || selectedItem.method?._id || "",
-        packageType: selectedItem.selectedPackage?.packageType || "",
-        description: selectedItem.description || "",
-        pickupLocation: selectedItem.pickupLocation || "",
-        from: selectedItem.from || "",
-        to: selectedItem.to || "",
-        isOutstation: selectedItem.isOutstation || false,
-        additionalFees: selectedItem.additionalFees || 0,
-        customAmount: selectedItem.customAmount || 0,
-        ...selectedItem // Spread rest for ID etc
+        _id: selectedItem?._id,
+        date: selectedItem?.date,
+        time: selectedItem?.time,
+        customerNumber: selectedItem?.customerNumber,
+        customerName: selectedItem?.customerName,
+        driver: selectedItem?.driver,
+        packageType: selectedItem?.selectedPackage?.packageType,
+        description: selectedItem?.description,
+        pickupLocation: selectedItem?.pickupLocation,
+        from: selectedItem?.from,
+        to: selectedItem?.to,
+        isOutstation: selectedItem?.isOutstation,
+        additionalFees: selectedItem?.additionalFees,
+        customAmount: selectedItem?.customAmount,
+        customerId: selectedItem.customer || "",
+        selectedPackage: selectedItem.selectedPackage?._id || ""
       });
     }
     else {
@@ -93,9 +92,7 @@ export function BookingModal({
   }
 }, [selectedItem, isNewItem, findBooking, setFormData])
 
- 
-
-console.log("booking :", booking)
+// console.log("booking :", booking)
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -108,7 +105,6 @@ console.log("booking :", booking)
 
   const handleStartSuccess = () => {
     setIsChecked(true);
-    setActiveTab("ongoing");
     fetchBookings();
     findBooking(formData?._id);
     // setSheetOpen(false);
@@ -116,7 +112,6 @@ console.log("booking :", booking)
 
   const handleEndSuccess = () => {
     setIsChecked(true);
-    setActiveTab("completed");
     fetchBookings();
     findBooking(formData?._id);
     // setSheetOpen(false);
@@ -146,7 +141,7 @@ console.log("booking :", booking)
 
   const handleSubmit = () => {
     if (!isNewItem && selectedItem) {
-      onUpdate(formData?._id, onSuccess)
+      onUpdate(onSuccess)
     } else if (isNewItem) {
       onSubmit(onSuccess);
     }
@@ -157,12 +152,12 @@ console.log("booking :", booking)
         <DialogTrigger asChild>
           {/* <Button variant="outline">Open Dialog</Button> */}
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[80%] max-h-[80%] overflow-hidden overflow-auto">
+        <DialogContent className="sm:max-w-[80%] max-h-[80%] overflow-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
             {isNewItem ? <FileText className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
             {isNewItem ? "Create New Booking" : "Update Booking"}
-            {!isNewItem && <StatusBadge>{booking ? booking?.status : formData?.status}</StatusBadge>}
+            {!isNewItem && <StatusBadge>{booking ? booking?.status : formData?.status || selectedItem?.status}</StatusBadge>}
             </DialogTitle>
             <DialogDescription>
                {isNewItem 
@@ -255,6 +250,7 @@ console.log("booking :", booking)
              <FormGroup id={"selectedPackage"} errors={errors}>
                 <Label htmlFor="selectedPackage">Package</Label>
                 <PackagePicker
+                  category={activeTab}
                   id="selectedPackage"
                   value={formData.selectedPackage}
                   labelKey={"packageName"}
@@ -321,31 +317,31 @@ console.log("booking :", booking)
             <Label htmlFor="isOutstation">Is Outstation?</Label>
           </div>
 
-          {/* Financials */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-             <FormGroup id={"additionalFees"} errors={errors}>
-              <Label htmlFor="additionalFees">Additional Fees</Label>
-              <TextInput
-                id="additionalFees"
-                type="number"
-                value={formData.additionalFees}
-                onChange={(e) => handleInputChange('additionalFees', e.target.value)}
-                placeholder="0.00"
-              />
-            </FormGroup>
-            {formData?.packageType === "CUSTOM" && (
-            <FormGroup id={"customAmount"} errors={errors}>
-              <Label htmlFor="customAmount">Custom Amount</Label>
-              <TextInput
-                id="customAmount"
-                type="number"
-                value={formData.customAmount}
-                onChange={(e) => handleInputChange('customAmount', e.target.value)}
-                placeholder="0.00"
-              />
-            </FormGroup>
-            ) }
-          </div>
+           {/* Financials */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                       <FormGroup id={"additionalFees"} errors={errors}>
+                        <Label htmlFor="additionalFees">Additional Fees</Label>
+                        <TextInput
+                          id="additionalFees"
+                          type="number"
+                          value={formData.additionalFees}
+                          onChange={(e) => handleInputChange('additionalFees', e.target.value)}
+                          placeholder="0.00"
+                        />
+                      </FormGroup>
+                      {formData?.packageType === "CUSTOM" && (
+                      <FormGroup id={"customAmount"} errors={errors}>
+                        <Label htmlFor="customAmount">Custom Amount</Label>
+                        <TextInput
+                          id="customAmount"
+                          type="number"
+                          value={formData.customAmount}
+                          onChange={(e) => handleInputChange('customAmount', e.target.value)}
+                          placeholder="0.00"
+                        />
+                      </FormGroup>
+                      ) }
+                    </div>
             
               <div className="flex items-end space-x-2 justify-end">
              {/* Retained Start/End logic if needed, partially commented or kept if relevant to new structure.
@@ -372,7 +368,7 @@ console.log("booking :", booking)
         </form>
           <DialogFooter>
             <DialogClose asChild>
-              <CloseButton onClick={handleClose}/>
+              <CloseButton />
             </DialogClose>
              <SubmitButton
               onClick={handleSubmit}

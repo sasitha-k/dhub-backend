@@ -11,6 +11,7 @@ import { CustomerForm } from './CustomerForm';
 import CreateButton from '@/components/common/buttons/CreateButton';
 import EditButton from '@/components/common/buttons/EditButton';
 import SearchFilter from '@/components/common/filters/SearchFilter';
+import { CustomerModal } from './CustomerModal';
 
 
 export default function Page() {
@@ -43,7 +44,7 @@ export default function Page() {
 
   return (
     <BreadcrumbProvider value={[
-                  { label: "Dashboard", href: "/dashboard" },
+                  // { label: "Dashboard", href: "/dashboard" },
                   { label: "Customers", href: null},
                 ]}>
        <div className="flex w-auto h-auto flex-col gap-6 p-4">
@@ -62,7 +63,7 @@ export default function Page() {
            <CreateButton onClick={handleCreate}/>
        </div>
               <Card>
-                <CardContent>
+                <CardContent className={"overflow-x-auto"}>
                   <Table>
       <TableCaption className={""}>A list of your recent customers.</TableCaption>
       <TableHeader>
@@ -99,7 +100,7 @@ export default function Page() {
                 </CardContent>
         </Card>
         <div className='w-full'>
-          <CustomerForm
+          <CustomerModal
           sheetOpen={sheetOpen}
           isNewItem={isNewItem}
           selectedItem={selectedItem}

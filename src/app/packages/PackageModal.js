@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react'
 import { Label } from "@/components/ui/label"
 import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet"
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogClose
+} from "@/components/ui/dialog"
 import { 
   Package, 
   DollarSign, 
@@ -31,7 +31,7 @@ import CustomTab from '@/components/packages/package-tabs/CustomTab'
 import PackageCategoryPicker from '@/components/common/dropdown/package/PackageCategoryPicker'
 
 
-export function PackageForm({
+export function PackageModal({
   sheetOpen,
   isNewItem,
   selectedItem,
@@ -63,8 +63,8 @@ export function PackageForm({
      setFormData({});
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+      setFormData({});
     setErrors({});
     
     if (isNewItem) {
@@ -90,14 +90,14 @@ export function PackageForm({
   };
 
   return (
-    <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-      <SheetContent className="w-full md:max-w-[80%] overflow-y-auto">
-        <SheetHeader>
+    <Dialog open={sheetOpen} onOpenChange={setSheetOpen}>
+      <DialogContent className="w-full md:max-w-[80%] overflow-y-auto max-h-[90vh]">
+        <DialogHeader>
           <div className='flex justify-between items-center gap-4'>
-             <SheetTitle className="flex items-center gap-2">
+             <DialogTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />
             {isNewItem ? 'Add New Package' : 'Edit Package'}
-            </SheetTitle>
+            </DialogTitle>
             <div className='flex items-center gap-2 pr-10'>
               <Checkbox
               checked={formData.isAvailable}
@@ -106,19 +106,19 @@ export function PackageForm({
               <Label>Is Available</Label>
             </div>
          </div>
-          <SheetDescription>
+          <DialogDescription>
             {isNewItem
               ? 'Fill in the details to create a new package service.' 
               : 'Update the package information below.'
             }
-          </SheetDescription>
-        </SheetHeader>
+          </DialogDescription>
+        </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6 mt-2">
             {/* Package Information Section */}
             {/* type section */}
-          <div className="border-t pt-4 flex gap-4 w-full">
+          <div className="border-t pt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
                 <FormGroup id={"category"} errors={errors}>
-                    <Label htmlFor="category">Category</Label>
+                    <Label htmlFor="category">Category <span className="text-red-500">*</span></Label>
                     <PackageCategoryPicker
                       id="category"
                       value={formData?.category}
@@ -127,7 +127,7 @@ export function PackageForm({
                     />
                   </FormGroup>
                   <FormGroup id={"packageType"} errors={errors}>
-                    <Label htmlFor="packageType">Package Type</Label>
+                    <Label htmlFor="packageType">Package Type <span className="text-red-500">*</span></Label>
                     <PackageTypePicker
                       id="packageType"
                       value={formData?.packageType}
@@ -141,7 +141,7 @@ export function PackageForm({
            
                   <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
                     <FormGroup id={"packageName"} errors={errors}>
-                      <Label htmlFor="packageName">Package Name *</Label>
+                      <Label htmlFor="packageName">Package Name <span className="text-red-500">*</span></Label>
                       <TextInput
                         id="packageName"
                         value={formData.packageName}
@@ -167,7 +167,7 @@ export function PackageForm({
                       onChange={(e) => handleInputChange('maxDurationHours', e.target.value)}/>
                   </FormGroup>
                   <FormGroup id={"pickupOutsideColomboFee"} errors={errors}>
-                      <Label htmlFor="pickupOutsideColomboFee">Pickup Outside Colombo Fee *</Label>
+                      <Label htmlFor="pickupOutsideColomboFee">Pickup Outside Colombo Fee <span className="text-red-500">*</span></Label>
                     <TextInput
                         id="pickupOutsideColomboFee"
                         placeholder="Enter pickup outside colombo fee"
@@ -222,18 +222,18 @@ export function PackageForm({
                   />
                 )}
                 
-          <SheetFooter className="flex flex-row gap-4 justify-end mt-16">
-            <SheetClose asChild>
+          <DialogFooter className="flex flex-row gap-4 justify-end mt-16">
+            <DialogClose asChild>
               <CloseButton onClick={handleClose}/>
-            </SheetClose>
+            </DialogClose>
             <SubmitButton
               onClick={handleSubmit}
               isNewItem={isNewItem}
               isLoading={isLoading}
             />
-          </SheetFooter>
+          </DialogFooter>
         </form>
-      </SheetContent>
-    </Sheet>
+      </DialogContent>
+    </Dialog>
   )
 }
