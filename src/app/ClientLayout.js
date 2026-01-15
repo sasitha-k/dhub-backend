@@ -25,7 +25,7 @@ export default function ClientLayout({ children }) {
        <SidebarProvider>
       <AppSidebar/>
       <SidebarInset>
-        <main className="w-auto h-auto overflow-auto">
+        <main className="w-auto h-auto overflow-auto ">
           {children}
         </main>
       </SidebarInset>

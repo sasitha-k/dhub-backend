@@ -74,7 +74,7 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar  className="group z-[100] ">
+    <Sidebar  className="group z-50 ">
       {/* App logo / header */}
     <SidebarHeader className="transition-all duration-200 h-32 pl-4 py-6">
             <SidebarMenu>

@@ -11,39 +11,19 @@ export default function useBookings() {
   const [permissionError, setPermissionError] = useState();
   const [booking, setBooking] = useState(null);
 
-  // get bookings
-  // const fetchBookings = useCallback(async (params) => {
-  //   setLoading(true);
-  //   try {
-  //     const res = await getBookings(params);
-  //     setBookings(res?.bookings);
-  //     // toast.success(res?.message || "Bookings Retrieved successfully");
-  //    } catch (error) {
-  //     setErrors(error);
-  //     if (error?.response?.status === 401) {
-  //     setPermissionError(error?.response?.data?.msg || "You don't have permission.");
-  //     redirect("/");
-  //   }
-  //   if (error?.response?.status === 403) {
-  //     setPermissionError(error?.response?.data?.msg || "You don't have permission.");
-  //     redirect("/");
-  //   }
-  // } finally {
-  //   setLoading(false);
-  // }
-  // }, []);
-
    const fetchBookings = useCallback(async (params) => {
     setLoading(true);
     try {
       const res = await getBookings(params);
       setBookings(res?.bookings);
-      console.log("bookings",res?.bookings)
+      console.log("bookings", res?.bookings);
      } catch (error) {
     setErrors(error);
     if (error?.response?.data?.code === 403) {
       setPermissionError(error?.response?.data?.msg || "You don't have permission.");
       redirect("/login");
+    } else {
+      toast.error(error?.response?.data?.msg || "Failed to retrieve bookings");
     }
   } finally {
     setLoading(false);

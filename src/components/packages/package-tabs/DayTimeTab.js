@@ -95,7 +95,7 @@ const DayTimeTab
       {/* Hourly Tiers */}
       <div className="space-y-2">
         <div className="flex justify-between items-center">
-          <Label>Hourly Tiers *</Label>
+          <Label>Hourly Tiers <span className="text-red-500">*</span></Label>
           <Button type="button" variant="outline" size="sm" onClick={addTier}>
             <Plus className="h-4 w-4 mr-2" /> Add Tier
           </Button>

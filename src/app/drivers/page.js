@@ -9,6 +9,7 @@ import EditButton from '@/components/common/buttons/EditButton';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import useDrivers from '@/hooks/drivers/useDrivers';
 import { DriverForm } from './DriverForm';
+import { DriverModal } from './DriverModal';
 
 
 export default function Page() {
@@ -39,7 +40,7 @@ export default function Page() {
 
   return (
     <BreadcrumbProvider value={[
-                  { label: "Dashboard", href: "/dashboard" },
+                  // { label: "Dashboard", href: "/dashboard" },
                   { label: "Drivers", href: null},
                 ]}>
      <div className="flex w-auto h-auto flex-col gap-6 p-4">
@@ -94,7 +95,7 @@ export default function Page() {
                 </CardContent>
               </Card>
         <div className='w-full'>
-          <DriverForm
+          <DriverModal
           sheetOpen={sheetOpen}
           isNewItem={isNewItem}
           selectedItem={selectedItem}

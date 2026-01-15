@@ -6,22 +6,7 @@ import { toast } from 'sonner';
 export default function useBookingForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [formData, setFormData] = useState({
-    date: "",
-    time: "",
-    customerId: "",
-    customerNumber: "",
-    customerName: "",
-    driver: "",
-    selectedPackage: "",
-    description: "",
-    pickupLocation: "",
-    from: "",
-    to: "",
-    isOutstation: false,
-    additionalFees: 0,
-    customAmount: 0,
-  });
+  const [formData, setFormData] = useState({});
 
   const onSubmit = useCallback(
   async (successCallBack) => {
@@ -52,7 +37,7 @@ export default function useBookingForm() {
 
   // Update an existing inventory
   const onUpdate = useCallback(
-    async (_id, successCallBack) => {
+    async (successCallBack) => {
       setIsLoading(true);
       setErrors({});
       try {
@@ -69,6 +54,7 @@ export default function useBookingForm() {
         if (error.response && error.response.status === 422) {
           const validationErrors = error.response.data.errors;
           setErrors(validationErrors);
+          toast.error("Failed to update data")
         } else {
           setErrors({ submit: 'Failed to submit the form' });
         }

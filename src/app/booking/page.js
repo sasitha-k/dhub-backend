@@ -2,14 +2,10 @@
 
 import { BreadcrumbProvider } from '@/hooks/providers/useBreadcrumbProvider';
 import React, { useEffect, useState, useMemo } from 'react';
-import { DataTable } from './DataTable';
 import CreateButton from '@/components/common/buttons/CreateButton';
-import { BookingForm } from './BookingForm';
 import useBookings from '@/hooks/booking/useBookings';
 import DeleteConfirmationModal from '@/components/modals/DeleteConfirmModal';
 import SearchFilter from '@/components/common/filters/SearchFilter';
-import { Button } from '@/components/ui/button';
-import { capitalizeWords } from '@/constants/CapitalizedWord';
 import { BookingModal } from './BookingModal';
 import EditButton from '@/components/common/buttons/EditButton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -18,11 +14,12 @@ import ReferenceLink from '@/components/common/ReferenceLink';
 import { Card, CardContent } from '@/components/ui/card';
 import moment from 'moment';
 import { formatter } from '@/constants/formatNumber';
+import StatusPicker from '@/components/common/dropdown/StatusPicker';
+import DatePickerLine from '@/components/common/DatePickerLine';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-const tabs = ["pending", "ongoing", "completed"];
 
 export default function Page() {
-  const [activeTab, setActiveTab] = useState("pending");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [deleteItem, setDeleteItem] = useState();
   const [isNewItem, setIsNewItem] = useState(false);
@@ -31,19 +28,31 @@ export default function Page() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [filters, setFilters] = useState({});
   const [filtered, setFiltered] = useState([]);
+  const [activeTab, setActiveTab] = useState("day_time");
 
   useEffect(() => {
-    fetchBookings({
-      status: activeTab
-    });
-  },[fetchBookings, activeTab]);
+    if (filters) {
+      fetchBookings(filters)
+    } else {
+      fetchBookings();
+    }
+  },[fetchBookings, filters]);
 
+  // console.log("bookings", bookings);
 
-  const handleCreate = () => {
+  const handleCreateDayTime = () => {
     setIsNewItem(true);
     setSelectedItem(null);
     setSheetOpen(true);
-  };
+    setActiveTab("day_time")
+  }
+
+   const handleCreateNightTime = () => {
+    setIsNewItem(true);
+    setSelectedItem(null);
+    setSheetOpen(true);
+    setActiveTab("night_time")
+  }
 
   const handleEdit = (item) => {
     setSheetOpen(true);
@@ -69,35 +78,27 @@ export default function Page() {
     setSheetOpen(false);
   };
 
-  const tabs = ["pending", "ongoing", "completed"];
-
-  const getTabCount = (status) => {
-    return bookings?.filter((b) => b.status?.toLowerCase() === status.toLowerCase())?.length || 0;
-  };
 
   return (
     <BreadcrumbProvider
       value={[
-        { label: "Dashboard", href: "/dashboard" },
-        { label: "Booking", href: "/booking" },
+        // { label: "Dashboard", href: "/dashboard" },
+        { label: "Bookings", href: "/booking" },
       ]}
     >
-      <div className="flex h-auto flex-col gap-6 p-4">
+      <div className="relative pb-20 flex h-auto flex-col gap-6 p-4 md:max-w-[92%] lg:max-w-[94%] xl:max-w-[99%] 2xl:max-w-[99%] 3xl:max-w-[100%]">
         {/* 🔹 Header Controls */}
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          {/* Tabs */}
-          <div className="flex flex-wrap gap-2">
-            {tabs?.map((tab) => (
-              <Button
-                key={tab}
-                variant={tab === activeTab ? "default" : "outline"}
-                onClick={() => setActiveTab(tab)}
-              >
-                {capitalizeWords(tab)} ({getTabCount(tab)})
-              </Button>
-            ))}
+          <div className="w-full sm:w-[30%] flex gap-2 items-center">
+            <StatusPicker
+              value={filters?.status}
+              onChange={(e) => setFilters({...filters, status: e})}
+            />
+            <DatePickerLine
+              value={filters?.date}
+              onChange={(e) => setFilters({...filters, date: e})}
+            />
           </div>
-
           {/* Right Side: Search & Create */}
           <div className="flex gap-4 flex-row sm:items-center justify-between">
             {/* Search */}
@@ -114,15 +115,20 @@ export default function Page() {
             </div>
 
             {/* Create Button */}
-            <CreateButton onClick={handleCreate} />
+
           </div>
         </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList>
+            <TabsTrigger value="day_time" className="data-[state=active]:bg-[#FFE8A3] data-[state=active]:text-[#4B0082]">Day Time</TabsTrigger>
+            <TabsTrigger value="night_time" className="data-[state=active]:bg-[#4B0082] data-[state=active]:text-[#FFE8A3]">Night Time</TabsTrigger>
+          </TabsList>
+        </Tabs>
 
         {/* 🔹 Table */}
-        <Card>
-          <CardContent className="w-full p-0">
-            <div className="w-full max-h-[550px] sm:max-h-[500px] sm:max-w-[500px] md:max-w-[600px] lg:max-w-full md:max-h-[600px] lg:max-h-[650px] xl:max-h-[700px] 2xl:max-h-[750px] overflow-x-auto overflow-y-auto">
-              <Table className="w-full min-w-[800px]">
+        <Card className="overflow-x-auto p-0 max-h-[calc(100vh-200px)]">
+          <CardContent className={"p-0"}>
+              <Table className="">
           <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
               <TableHead className={"min-w-[100px]"}>
@@ -141,7 +147,7 @@ export default function Page() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered?.length < 1 ? (
+            {bookings?.length < 1 ? (
               <TableRow>
                 <TableCell colSpan={14} className="h-24 text-center">
                   No records available.
@@ -215,13 +221,26 @@ export default function Page() {
             )))}
           </TableBody>
             </Table>
-            </div>
           </CardContent>
-          </Card>
+        </Card>
+        <div className="fixed bottom-4 right-6 z-50">
+          {activeTab === "day_time" ? (
+            <CreateButton
+              className="bg-[#FFE8A3] hover:text-[#FFE8A3] text-[#4B0082]"
+              onClick={handleCreateDayTime}>Create Day Time Booking</CreateButton>
+          ) :
+            (
+              <CreateButton
+                className="bg-[#4B0082] text-[#FFE8A3]"
+                onClick={handleCreateNightTime}>Create Night Time Booking</CreateButton>
+          )}
+          
+        </div>
       </div>
 
       {/* 🔹 Booking Form */}
       <BookingModal
+        activeTab={activeTab}
         fetchBookings={fetchBookings}
         sheetOpen={sheetOpen}
         isNewItem={isNewItem}
@@ -230,7 +249,6 @@ export default function Page() {
         setSheetOpen={setSheetOpen}
         findBooking={findBooking}
         booking={booking}
-        setActiveTab={setActiveTab}
       />
 
       {/* 🔹 Delete Confirmation */}
