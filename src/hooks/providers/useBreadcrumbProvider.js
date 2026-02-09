@@ -11,7 +11,7 @@ export const BreadcrumbProvider = ({ value, children }) => (
          <div className="w-full font-semibold border-b border-foreground/20 flex gap-4 items-center bg-gradient-to-r from-secondary to-[#01333C] dark:bg-gradient-to-r dark:from-secondary dark:to-[#01333C]">
             <CustomTrigger /> | <BreadcrumbComponent items={value}/>
           </div>
-    <div className="w-full text-primary font-semibold">
+    <div className="w-full text-primary font-medium overflow-y-auto h-[calc(100vh-64px)] px-4 space-y-4 pt-4">
       {children}
     </div>
   </BreadcrumbContext.Provider>

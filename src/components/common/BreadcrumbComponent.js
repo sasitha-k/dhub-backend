@@ -16,9 +16,9 @@ export default function BreadcrumbComponent({ items: propItems, separator = "/" 
             <React.Fragment key={index}>
               <BreadcrumbItem key={index} className={"text-md"}>
                 {item?.href !== null ? (
-                  <BreadcrumbLink href={item?.href}>{item?.label}</BreadcrumbLink>
+                  <BreadcrumbLink href={item?.href} className="text-base text-primary font-medium">{item?.label}</BreadcrumbLink>
                 ) : (
-                  <BreadcrumbPage className="text-sm">{item?.label}</BreadcrumbPage>
+                  <BreadcrumbPage className=" text-base text-primary font-medium">{item?.label}</BreadcrumbPage>
                 )}
               </BreadcrumbItem>
               {index < items.length - 1 && (

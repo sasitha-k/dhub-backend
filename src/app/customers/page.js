@@ -4,14 +4,12 @@
 import { BreadcrumbProvider } from '@/hooks/providers/useBreadcrumbProvider'
 import React, { useEffect, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card';
-import TextInput from '@/components/common/inputs/TextInput';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import useCustomer from '@/hooks/customers/useCustomer';
-import { CustomerForm } from './CustomerForm';
 import CreateButton from '@/components/common/buttons/CreateButton';
 import EditButton from '@/components/common/buttons/EditButton';
-import SearchFilter from '@/components/common/filters/SearchFilter';
 import { CustomerModal } from './CustomerModal';
+import SearchInput from '@/components/common/inputs/SearchInput';
 
 
 export default function Page() {
@@ -21,11 +19,14 @@ export default function Page() {
   const [selectedItem, setSelectedItem] = useState(null);
   const { fetchCustomers, customers, isLoading } = useCustomer();
   const [filters, setFilters] = useState({});
-  const [filtered, setFiltered] = useState(customers);
 
   useEffect(() => {
-    fetchCustomers();
-  }, [])
+    if (filters) {
+      fetchCustomers(filters);
+    } else {
+      fetchCustomers();
+    }
+  }, [filters])
 
   const handleCreate = () => {
     setIsNewItem(true);
@@ -44,22 +45,17 @@ export default function Page() {
 
   return (
     <BreadcrumbProvider value={[
-                  // { label: "Dashboard", href: "/dashboard" },
                   { label: "Customers", href: null},
                 ]}>
        <div className="flex w-auto h-auto flex-col gap-6 p-4">
-        <div className='grid md:grid-cols-2 lg:grid-cols-5 gap-4'>
-         <SearchFilter
-                              data={customers}
-                              filterKeys={["firstName", "lastName"]}
-                              filters={filters}
-                              setFilters={setFilters}
-                              onFilter={setFiltered}
-                              placeholder="Search by name"
-                              data-id="search"
-                            />
-        </div>
-        <div className='w-full flex justify-end'>
+        <div className='flex justify-between gap-4'>
+          <div className='w-full md:w-1/2 lg:w-1/4'>
+              <SearchInput
+                       value={filters?.searchQuery}
+                       onChange={(e) => setFilters({...filters, searchQuery: e.target.value})}
+                       placeholder={"Search by name"}
+                     />
+       </div>
            <CreateButton onClick={handleCreate}/>
        </div>
               <Card>
@@ -70,22 +66,21 @@ export default function Page() {
         <TableRow>
           <TableHead>First Name</TableHead>
           <TableHead>Last Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Mobile</TableHead>
-                  <TableHead>Address</TableHead>
-                  <TableHead>Type</TableHead>
-                   <TableHead></TableHead>
+          <TableHead>Email</TableHead>
+          <TableHead>Mobile</TableHead>
+          <TableHead>Address</TableHead>
+          <TableHead></TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {filtered?.map((item, index) => (
+        {customers?.map((item, index) => (
           <TableRow key={index} className={""}>
             <TableCell>{item?.firstName}</TableCell>
             <TableCell>{item?.lastName}</TableCell>
             <TableCell>{item?.email}</TableCell>
             <TableCell>{item?.mobile}</TableCell>
             <TableCell>{item?.address}</TableCell>
-            <TableCell>{item?.type}</TableCell>
+            {/* <TableCell>{item?.type}</TableCell> */}
             <TableCell className="flex gap-4">
                 <EditButton
                     onClick={() => {

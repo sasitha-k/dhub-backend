@@ -226,10 +226,10 @@ return (
               <Card>
                 <CardHeader className="bg-muted/40 p-4">
                   <CardTitle className="text-lg flex items-center gap-2 justify-between">
-                  <div className='w-1/2 flex items-center gap-2'>
+                  {/* <div className='w-1/2 flex items-center gap-2'>
                     <Package className="w-5 h-5 text-primary" />
                     Package Details
-                  </div>
+                  </div> */}
                   <div className='w-1/2 flex gap-2 items-center'>
                      <DollarSign className="w-4 h-4" />
                         Fee Breakdown
@@ -240,52 +240,9 @@ return (
                   {/* Package Details Section */}
                   {booking?.selectedPackage && (
                   <>
-                    <div className='grid grid-cols-1 grid-flow-col h-auto md:grid-cols-2 gap-4'>
-                      <div className=''>
-                        {/* <h3 className="text-sm font-semibold mb-3 text-muted-foreground uppercase tracking-wider">Package Information</h3> */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Package Type</span>
-                            <p className="text-sm font-semibold mt-1">{booking.selectedPackage.packageType?.replace(/_/g, ' ') || 'N/A'}</p>
-                          </div>
-                          <div>
-                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Base Price</span>
-                            <p className="text-sm font-semibold mt-1">LKR {booking.selectedPackage.basePrice?.toLocaleString() || 0}</p>
-                          </div>
-                          <div>
-                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Extra KM Rate</span>
-                            <p className="text-sm font-semibold mt-1">LKR {booking.selectedPackage.extraKMRate?.toLocaleString() || 0} per km</p>
-                          </div>
-                          <div>
-                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Waiting Rate</span>
-                            <p className="text-sm font-semibold mt-1">LKR {booking.selectedPackage.waiting15MinRate?.toLocaleString() || 0} per 15 min</p>
-                          </div>
-                          <div>
-                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Free Waiting</span>
-                            <p className="text-sm font-semibold mt-1">{booking.selectedPackage.freeWaitingMinutes || 0} minutes</p>
-                          </div>
-                          {booking.selectedPackage.pickupOutsideColomboFee > 0 && (
-                            <div className=''>
-                              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Outside Colombo Fee</span>
-                              <p className="text-sm font-semibold mt-1">LKR {booking.selectedPackage.pickupOutsideColomboFee?.toLocaleString() || 0}</p>
-                            </div>
-                          )}
-                        </div>
-                        {booking.selectedPackage.distanceTiers && booking.selectedPackage.distanceTiers.length > 0 && (
-                          <div className="mt-4 w-full">
-                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">Distance Tiers</span>
-                            <div className="space-y-2 w-full">
-                              {booking.selectedPackage.distanceTiers.map((tier, index) => (
-                                <div key={index} className="flex justify-between items-center  bg-muted/30 rounded w-2/3">
-                                  <span className="text-sm">Up to {tier.distanceKM} km</span>
-                                  <span className="text-sm font-semibold">LKR {tier.price?.toLocaleString() || 0}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                    </div>
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+                    <div className='w-full'>
+                     
+                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
                         {booking.meta.relevantTier && (
                           <div className="grid gap-1 p-3 bg-muted/30 rounded-lg">
                             <span className="text-sm text-muted-foreground">Base Price ({booking.meta.relevantTier.distanceKM} km tier)</span>

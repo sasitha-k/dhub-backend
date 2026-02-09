@@ -1,22 +1,28 @@
 'use client';
 
-import { BreadcrumbProvider } from '@/hooks/providers/useBreadcrumbProvider';
+import { BreadcrumbProvider } from '@/hooks/providers/useBreadcrumbProvider'
 import React, { useEffect, useState, useMemo } from 'react';
 import CreateButton from '@/components/common/buttons/CreateButton';
 import useBookings from '@/hooks/booking/useBookings';
 import DeleteConfirmationModal from '@/components/modals/DeleteConfirmModal';
-import SearchFilter from '@/components/common/filters/SearchFilter';
 import { BookingModal } from './BookingModal';
 import EditButton from '@/components/common/buttons/EditButton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import StatusBadge from '@/components/common/badges/StatusBadge';
 import ReferenceLink from '@/components/common/ReferenceLink';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import moment from 'moment';
 import { formatter } from '@/constants/formatNumber';
 import StatusPicker from '@/components/common/dropdown/StatusPicker';
 import DatePickerLine from '@/components/common/DatePickerLine';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import SearchInput from '@/components/common/inputs/SearchInput';
+import CustomerPicker from '@/components/common/dropdown/customer/CustomerPicker';
+import DriverPicker from '@/components/common/dropdown/driver/DriverPicker';
+import PaymentMethodPicker from '@/components/common/dropdown/PaymentMethodPicker';
+import FormGroup from '@/components/common/FormGroup';
+import { Label } from '@/components/ui/label';
+import { Funnel } from 'lucide-react';
 
 
 export default function Page() {
@@ -27,16 +33,18 @@ export default function Page() {
   const { fetchBookings, bookings, isLoading, onDelete, findBooking, booking } = useBookings();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [filters, setFilters] = useState({});
-  const [filtered, setFiltered] = useState([]);
-  const [activeTab, setActiveTab] = useState("day_time");
+  const [activeTab, setActiveTab] = useState("day");
 
   useEffect(() => {
-    if (filters) {
-      fetchBookings(filters)
+    if (activeTab || filters?.status) {
+      fetchBookings({
+        ...filters,
+        packageCategory: activeTab
+      })
     } else {
       fetchBookings();
     }
-  },[fetchBookings, filters]);
+  },[activeTab, filters]);
 
   // console.log("bookings", bookings);
 
@@ -44,14 +52,14 @@ export default function Page() {
     setIsNewItem(true);
     setSelectedItem(null);
     setSheetOpen(true);
-    setActiveTab("day_time")
+    setActiveTab("day")
   }
 
    const handleCreateNightTime = () => {
     setIsNewItem(true);
     setSelectedItem(null);
     setSheetOpen(true);
-    setActiveTab("night_time")
+    setActiveTab("night")
   }
 
   const handleEdit = (item) => {
@@ -82,49 +90,72 @@ export default function Page() {
   return (
     <BreadcrumbProvider
       value={[
-        // { label: "Dashboard", href: "/dashboard" },
         { label: "Bookings", href: "/booking" },
       ]}
     >
-      <div className="relative pb-20 flex h-auto flex-col gap-6 p-4 md:max-w-[92%] lg:max-w-[94%] xl:max-w-[99%] 2xl:max-w-[99%] 3xl:max-w-[100%]">
+      <div className="relative pb-20 flex h-auto flex-col gap-6 p-2 sm:p-4 w-full">
         {/* 🔹 Header Controls */}
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="w-full sm:w-[30%] flex gap-2 items-center">
-            <StatusPicker
-              value={filters?.status}
-              onChange={(e) => setFilters({...filters, status: e})}
-            />
-            <DatePickerLine
+          <Card>
+            <CardHeader>
+              <h1 className='flex gap-2'>
+                <Funnel />Filters
+              </h1>
+            </CardHeader>
+           <CardContent className="w-full flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
+            <FormGroup>
+              <Label>Date</Label>
+               <DatePickerLine
               value={filters?.date}
               onChange={(e) => setFilters({...filters, date: e})}
             />
-          </div>
-          {/* Right Side: Search & Create */}
-          <div className="flex gap-4 flex-row sm:items-center justify-between">
-            {/* Search */}
-            <div className="w-full sm:w-72">
-              <SearchFilter
-                data={bookings}
-                filterKeys={["bookingId", "customer.firstName", "customer.lastName", "customer.mobile"]}
-                filters={filters}
-                setFilters={setFilters}
-                onFilter={setFiltered}
-                placeholder="Search by ID"
-                data-id="search"
-              />
-            </div>
-
-            {/* Create Button */}
-
-          </div>
-        </div>
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList>
-            <TabsTrigger value="day_time" className="data-[state=active]:bg-[#FFE8A3] data-[state=active]:text-[#4B0082]">Day Time</TabsTrigger>
-            <TabsTrigger value="night_time" className="data-[state=active]:bg-[#4B0082] data-[state=active]:text-[#FFE8A3]">Night Time</TabsTrigger>
+            </FormGroup>
+             <FormGroup>
+              <Label>Status</Label>
+             <StatusPicker
+              value={filters?.status}
+              onChange={(e) => setFilters({...filters, status: e})}
+            />
+            </FormGroup>
+            <FormGroup>
+              <Label>Customer</Label>
+            <CustomerPicker
+              valueKey={'_id'}
+              value={filters?.customer}
+              onChange={(e) => setFilters({...filters, customer: e})}
+            />
+            </FormGroup>
+            <FormGroup>
+              <Label>Driver</Label>
+             <DriverPicker
+              valueKey={'_id'}
+              value={filters?.driver}
+              onChange={(e) => setFilters({...filters, driver: e})}
+            />
+            </FormGroup>
+            <FormGroup>
+              <Label>Payment Method</Label>
+             <PaymentMethodPicker
+              value={filters?.paymentMethod}
+              onChange={(e) => setFilters({...filters, paymentMethod: e})}
+            />
+              </FormGroup>
+            </CardContent>  
+          </Card>
+        <div className='flex flex-col md:flex-row gap-4'>
+           <Tabs value={activeTab} onValueChange={setActiveTab} className="">
+          <TabsList className="">
+            <TabsTrigger value="day" className="flex-1 sm:flex-none data-[state=active]:bg-[#FFE8A3] data-[state=active]:text-[#4B0082]">Day Time</TabsTrigger>
+            <TabsTrigger value="night" className="flex-1 sm:flex-none data-[state=active]:bg-[#4B0082] data-[state=active]:text-[#FFE8A3]">Night Time</TabsTrigger>
           </TabsList>
         </Tabs>
-
+          <div className='w-full lg:w-1/4'>
+            <SearchInput
+                value={filters?.searchQuery}
+                onChange={(e) => setFilters({...filters, searchQuery: e.target.value})}
+                placeholder={"Search by ID"}
+              />
+      </div>
+       </div>
         {/* 🔹 Table */}
         <Card className="overflow-x-auto p-0 max-h-[calc(100vh-200px)]">
           <CardContent className={"p-0"}>
@@ -154,11 +185,11 @@ export default function Page() {
                 </TableCell>
               </TableRow>
             ) : (
-              filtered?.map((item, index) => (
+              bookings?.map((item, index) => (
               <TableRow key={index}>
                   <TableCell className="font-normal grid gap-1">
                     <ReferenceLink path={`/booking/${item?._id}`} >{item?.bookingId}</ReferenceLink>
-                    <span>{item?.date}{" "}</span>
+                    <span>{moment(item?.date).format("DD-MM-YYYY")}{" "}</span>
                     <span>{item?.time}</span>
                 </TableCell>
                 <TableCell>
@@ -171,7 +202,9 @@ export default function Page() {
                   <TableCell>
                     <span className='grid gap-1'>
                       <span className='w-40 truncate'>{item?.selectedPackage?.packageName || "N/A"}</span>
-                    <span>{item?.description || "N/A"}</span></span>
+                       <span className='w-40 truncate capitalize'>{item?.selectedPackage?.packageCategory || "N/A"}</span>
+                      <span>{item?.description || "N/A"}</span>
+                    </span>
                   </TableCell>
               
                   <TableCell title={item?.pickupLocation}>
@@ -223,18 +256,23 @@ export default function Page() {
             </Table>
           </CardContent>
         </Card>
-        <div className="fixed bottom-4 right-6 z-50">
-          {activeTab === "day_time" ? (
+        <div className="fixed bottom-6 right-6 z-40 sm:bottom-10 sm:right-10">
+          {activeTab === "day" ? (
             <CreateButton
-              className="bg-[#FFE8A3] hover:text-[#FFE8A3] text-[#4B0082]"
-              onClick={handleCreateDayTime}>Create Day Time Booking</CreateButton>
+              className="shadow-2xl h-14 px-6 rounded-full bg-[#FFE8A3] hover:bg-[#ffe085] text-[#4B0082] border-none"
+              onClick={handleCreateDayTime}>
+              <span className="hidden sm:inline">Create Day Time Booking</span>
+              <span className="sm:hidden">Create Day</span>
+            </CreateButton>
           ) :
             (
               <CreateButton
-                className="bg-[#4B0082] text-[#FFE8A3]"
-                onClick={handleCreateNightTime}>Create Night Time Booking</CreateButton>
+                className="shadow-2xl h-14 px-6 rounded-full bg-[#4B0082] hover:bg-[#3d006a] text-[#FFE8A3] border-none"
+                onClick={handleCreateNightTime}>
+                <span className="hidden sm:inline">Create Night Time Booking</span>
+                <span className="sm:hidden">Create Night</span>
+              </CreateButton>
           )}
-          
         </div>
       </div>
 

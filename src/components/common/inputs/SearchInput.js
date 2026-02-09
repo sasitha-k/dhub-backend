@@ -13,13 +13,13 @@ export default function SearchInput({ value, onChange, placeholder = "Search..."
         onChange={onChange}
         data-id="search"
       />
-      <div className={`absolute text-slate-400 right-2 top-3 `}>
+      <div className={`absolute text-slate-400  right-2 top-[50%] -translate-y-1/2 `}>
         {value ? (
           <button
               onClick={() => onChange({ target: { value: "" } })} 
               className=""
             >
-              <CircleX className="w-4 h-4 hover:text-primary"/>
+              <CircleX className="w-4 h-4 text-primary"/>
           </button>
         ) : (
              <Search className="w-4 h-4 rotate-90 " />

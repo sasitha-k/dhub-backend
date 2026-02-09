@@ -33,7 +33,6 @@ export function DriverModal({
   selectedItem,
   setSheetOpen,
   fetchDrivers,
-  handleClose
 }) {
   const {isLoading, errors, onSubmit, onUpdate, formData, setFormData, setErrors} = useDriverForm()
 
@@ -56,20 +55,19 @@ export function DriverModal({
     }
   }, [selectedItem, isNewItem, setFormData]);
 
+
+  console.log("formData",formData)
    const onSuccess = () => {
     fetchDrivers();
      setSheetOpen(false);
      setFormData({});
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErrors({});
-    
+  const handleSubmit = async () => {
     if (isNewItem) {
       await onSubmit(onSuccess);
     } else {
-      await onUpdate(formData._id, onSuccess);
+      await onUpdate(selectedItem._id, onSuccess);
     }
   };
 
@@ -90,8 +88,8 @@ export function DriverModal({
 
   return (
     <Dialog open={sheetOpen} onOpenChange={setSheetOpen}>
-      <DialogContent className="w-full md:max-w-[70%] overflow-y-auto max-h-[90vh]">
-        <DialogHeader>
+      <DialogContent className="w-[95%] sm:w-[90%] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px] overflow-hidden flex flex-col p-0 max-h-[95vh]">
+        <DialogHeader className="p-6 pb-0">
           <DialogTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
             {isNewItem ? 'Add New Driver' : 'Edit Driver'}
@@ -104,10 +102,11 @@ export function DriverModal({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6 mt-2">
+        <div className="flex-1 overflow-y-auto p-6">
+          <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="space-y-6 mt-2">
             {/* Personal Information Section */}
             <div className="space-y-4">
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormGroup id={"firstName"} errors={errors}>
                   <Label htmlFor="firstName">First Name *</Label>
                   <TextInput
@@ -128,17 +127,17 @@ export function DriverModal({
                     placeholder="Enter last name"
                   />
                 </FormGroup>
-
-              <FormGroup id={"userName"} errors={errors}>
-                <Label htmlFor="userName">Username *</Label>
-                <TextInput
-                  id="userName"
-                  value={formData.userName}
-                  onChange={(e) => handleInputChange('userName', e.target.value)}
-                  placeholder="Enter username"
-                />
-              </FormGroup>
-
+              {isNewItem && (
+                <FormGroup id={"userName"} errors={errors}>
+                  <Label htmlFor="userName">Username *</Label>
+                  <TextInput
+                    id="userName"
+                    value={formData.userName}
+                    onChange={(e) => handleInputChange('userName', e.target.value)}
+                    placeholder="Enter username"
+                  />
+                </FormGroup>
+              )}
               <FormGroup id={"email"} errors={errors}>
                 <Label htmlFor="email">Email Address *</Label>
                 <div className="relative">
@@ -212,17 +211,18 @@ export function DriverModal({
             )}
           </div>
 
-          <DialogFooter className="flex flex-row gap-4 justify-end">
-            <DialogClose asChild>
-              <CloseButton onClick={handleClose}/>
-            </DialogClose>
-            <SubmitButton
-              onClick={handleSubmit}
-              isNewItem={isNewItem}
-              isLoading={isLoading}
-            />
-          </DialogFooter>
-        </form>
+          </form>
+        </div>
+        <DialogFooter className="p-6 pt-2 border-t flex flex-row gap-4 justify-end">
+          <DialogClose asChild>
+            <CloseButton onClick={() => {setSheetOpen(false); setFormData({});}}/>
+          </DialogClose>
+          <SubmitButton
+            onClick={handleSubmit}
+            isNewItem={isNewItem}
+            isLoading={isLoading}
+          />
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

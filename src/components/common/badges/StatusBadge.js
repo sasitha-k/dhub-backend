@@ -49,9 +49,20 @@ const getClassName=() => {
         case 'pending':
             return "bg-blue-600  text-white"
             break;
-        
+         case 'day':
+            return "bg-yellow-600  text-white"
+            break;
+        case 'night':
+            return "bg-primary  text-white"
+            break;
         case 'In Active':
             return "bg-muted-foreground  text-white"
+            break;
+        case 'Online':
+            return "bg-green-600  text-white"
+            break;
+        case 'Offline':
+            return "bg-gray-600  text-white"
             break;
     
         default:

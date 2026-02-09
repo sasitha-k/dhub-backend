@@ -49,6 +49,7 @@ export function PackageModal({
       // Reset form for new package
       setFormData({
         packageType: '',
+        packageCategory: '',
         packageName: '',
         basePrice: '',
         maxDurationHours: '',
@@ -91,8 +92,8 @@ export function PackageModal({
 
   return (
     <Dialog open={sheetOpen} onOpenChange={setSheetOpen}>
-      <DialogContent className="w-full md:max-w-[80%] overflow-y-auto max-h-[90vh]">
-        <DialogHeader>
+      <DialogContent className="w-[95%] sm:w-[90%] sm:max-w-[750px] lg:max-w-[1000px] overflow-hidden flex flex-col p-0 max-h-[95vh]">
+        <DialogHeader className="p-6 pb-0">
           <div className='flex justify-between items-center gap-4'>
              <DialogTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />
@@ -113,17 +114,18 @@ export function PackageModal({
             }
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-6 mt-2">
+        <div className="flex-1 overflow-y-auto p-6">
+          <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="space-y-6 mt-2">
             {/* Package Information Section */}
             {/* type section */}
-          <div className="border-t pt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
-                <FormGroup id={"category"} errors={errors}>
-                    <Label htmlFor="category">Category <span className="text-red-500">*</span></Label>
+          <div className="border-t pt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+                <FormGroup id={"packageCategory"} errors={errors}>
+                    <Label htmlFor="packageCategory">Package Category <span className="text-red-500">*</span></Label>
                     <PackageCategoryPicker
-                      id="category"
-                      value={formData?.category}
-                      onChange={(e) => setFormData(prev => ({...prev, category: e}))}
-                      placeholder="Select category"
+                      id="packageCategory"
+                      value={formData?.packageCategory}
+                      onChange={(e) => setFormData(prev => ({...prev, packageCategory: e}))}
+                      placeholder="Select package category"
                     />
                   </FormGroup>
                   <FormGroup id={"packageType"} errors={errors}>
@@ -135,11 +137,8 @@ export function PackageModal({
                       placeholder="Select package type"
                     />
                 </FormGroup>
-             
                 </div>
-
-           
-                  <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+                  <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
                     <FormGroup id={"packageName"} errors={errors}>
                       <Label htmlFor="packageName">Package Name <span className="text-red-500">*</span></Label>
                       <TextInput
@@ -222,17 +221,18 @@ export function PackageModal({
                   />
                 )}
                 
-          <DialogFooter className="flex flex-row gap-4 justify-end mt-16">
-            <DialogClose asChild>
-              <CloseButton onClick={handleClose}/>
-            </DialogClose>
-            <SubmitButton
-              onClick={handleSubmit}
-              isNewItem={isNewItem}
-              isLoading={isLoading}
-            />
-          </DialogFooter>
-        </form>
+          </form>
+        </div>
+        <DialogFooter className="p-6 pt-2 border-t flex flex-row gap-4 justify-end">
+          <DialogClose asChild>
+            <CloseButton onClick={handleClose}/>
+          </DialogClose>
+          <SubmitButton
+            onClick={handleSubmit}
+            isNewItem={isNewItem}
+            isLoading={isLoading}
+          />
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

@@ -38,6 +38,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
+  useSidebar,
 } from '@/components/ui/sidebar';
 
 import {
@@ -49,13 +50,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useLogin } from '@/hooks/login/useLogin';
 import { usePathname } from 'next/navigation';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
 const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
   { label: 'Bookings', icon: FileStack, path: '/booking' },
-  { label: 'Customers', icon: UserSquare, path: '/customers' },
-  { label: 'Drivers', icon: Car, path: '/drivers' },
+  { label: 'Customers', icon: UserSquare, path: '/customers/balances' },
+  { label: 'Drivers', icon: Car, path: '/drivers/balances' },
   // { label: 'Riders', icon: Bike, path: '/riders' },
   { label: 'Packages', icon: CreditCardIcon, path: '/packages' },
   { label: 'Billing', icon: BookText, path: '/billing' },
@@ -72,11 +72,13 @@ export function AppSidebar() {
 
   const { onLogout } = useLogin();
   const pathname = usePathname();
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
 
   return (
-    <Sidebar  className="group z-50 ">
+    <Sidebar collapsible="icon" className="group z-50">
       {/* App logo / header */}
-    <SidebarHeader className="transition-all duration-200 h-32 pl-4 py-6">
+      <SidebarHeader className="transition-all duration-200 h-20 lg:h-32 lg:pl-4 py-4 lg:py-6 flex items-center justify-center lg:items-start lg:justify-start">
             <SidebarMenu>
               <SidebarMenuItem>
                       <a href="/dashboard" className="flex gap-4 items-center">
@@ -136,17 +138,21 @@ export function AppSidebar() {
                 <SidebarMenuButton  asChild>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <div className="flex items-center gap-4 rounded-xl cursor-pointer">
+                      <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4 px-4'} rounded-xl cursor-pointer w-full py-2 hover:bg-sidebar-accent transition-colors`}>
                         <img
                           src="https://randomuser.me/api/portraits/men/32.jpg"
                           alt="User avatar"
-                          className="w-10 h-10 rounded-full border-2 border-white"
+                          className="w-10 h-10 rounded-full border-2 border-white shrink-0"
                         />
-                        <div className="flex flex-col items-start mr-6">
-                          <div className="font-semibold">John Doe</div>
-                          <div className="text-xs text-primary-foreground/70">john@gmail.com</div>
-                        </div>
-                        <ChevronsDownUp className="w-4 h-4" />
+                        {!isCollapsed && (
+                          <>
+                            <div className="flex flex-col items-start flex-1 overflow-hidden">
+                              <div className="font-semibold truncate w-full">John Doe</div>
+                              <div className="text-xs text-muted-foreground truncate w-full text-left">john@gmail.com</div>
+                            </div>
+                            <ChevronsDownUp className="w-4 h-4 shrink-0" />
+                          </>
+                        )}
                       </div>
                     </DropdownMenuTrigger>
 

@@ -59,7 +59,6 @@ export function BookingModal({
         customerNumber: selectedItem?.customerNumber,
         customerName: selectedItem?.customerName,
         driver: selectedItem?.driver,
-        packageType: selectedItem?.selectedPackage?.packageType,
         description: selectedItem?.description,
         pickupLocation: selectedItem?.pickupLocation,
         from: selectedItem?.from,
@@ -80,7 +79,6 @@ export function BookingModal({
         customerName: "",
         driver: "",
         selectedPackage: "",
-        packageType: "",
         description: "",
         pickupLocation: "",
         from: "",
@@ -148,12 +146,8 @@ export function BookingModal({
   };
   return (
     <Dialog open={sheetOpen} onOpenChange={setSheetOpen}>
-      <form>
-        <DialogTrigger asChild>
-          {/* <Button variant="outline">Open Dialog</Button> */}
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[80%] max-h-[80%] overflow-auto">
-          <DialogHeader>
+        <DialogContent className="w-[95%] sm:w-[90%] sm:max-w-[700px] lg:max-w-[900px] max-h-[95vh] overflow-hidden flex flex-col p-0">
+          <DialogHeader className="p-6 pb-0">
             <DialogTitle className="flex items-center gap-2">
             {isNewItem ? <FileText className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
             {isNewItem ? "Create New Booking" : "Update Booking"}
@@ -166,7 +160,8 @@ export function BookingModal({
             }
             </DialogDescription>
           </DialogHeader>
-           <form onSubmit={handleSubmit} className="space-y-6 py-4 w-full">
+          <div className="flex-1 overflow-y-auto p-6">
+           <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="space-y-6 w-full">
 
             {/* Date and Time */}
             <div className="flex flex-col md:flex-row gap-4">
@@ -189,7 +184,7 @@ export function BookingModal({
             </div>
 
           {/* Customer Selection */}
-         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <FormGroup id={"customerId"} errors={errors}>
                 <Label htmlFor="customerId">Customer</Label>
                 <CustomerPicker
@@ -234,7 +229,7 @@ export function BookingModal({
           </div>
 
            {/* Driver and Package */}
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormGroup id={"driver"} errors={errors}>
                 <Label htmlFor="driver">Driver</Label>
                 <DriverPicker
@@ -250,7 +245,7 @@ export function BookingModal({
              <FormGroup id={"selectedPackage"} errors={errors}>
                 <Label htmlFor="selectedPackage">Package</Label>
                 <PackagePicker
-                  category={activeTab}
+                  packageCategory={activeTab}
                   id="selectedPackage"
                   value={formData.selectedPackage}
                   labelKey={"packageName"}
@@ -264,7 +259,7 @@ export function BookingModal({
           
   
           {/* Trip Details */}
-         <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+         <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
              <FormGroup id={"pickupLocation"} errors={errors}>
                 <Label htmlFor="pickupLocation">Pickup Location *</Label>
                 <TextInput
@@ -365,8 +360,9 @@ export function BookingModal({
                 null
               }
             </div>
-        </form>
-          <DialogFooter>
+          </form>
+          </div>
+          <DialogFooter className="p-6 pt-2 border-t flex flex-row gap-2 justify-end">
             <DialogClose asChild>
               <CloseButton />
             </DialogClose>
@@ -377,7 +373,6 @@ export function BookingModal({
             />
           </DialogFooter>
         </DialogContent>
-      </form>
     </Dialog>
   )
 }

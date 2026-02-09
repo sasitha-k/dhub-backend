@@ -16,8 +16,8 @@ export default function TextInput({
   return (
       <Input
         type={type ? type : "text"}
-        className={`relative text-sm placeholder:text-gray-400 border border-primary/40 text-muted-foreground placeholder:text-xs ${
-          disabled ? "text-primary font-medium" : ""
+        className={`relative text-sm font-normal font-normal placeholder:text-gray-400 border border-primary/40 text-muted-foreground placeholder:text-xs ${
+          disabled ? "text-primary font-normal" : ""
         }`}
         id={id}
         placeholder={placeholder}

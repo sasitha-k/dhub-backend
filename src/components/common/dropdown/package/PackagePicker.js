@@ -2,14 +2,14 @@ import React, { useEffect } from 'react'
 import SearchableDropdown from '../SearchableDropDown';
 import usePackages from '@/hooks/packages/usePackages';
 
-export default function PackagePicker({error, category, value, onChange, valueKey, labelKey, onPackageSelect }) {
+export default function PackagePicker({error, packageCategory, value, onChange, valueKey, labelKey, onPackageSelect }) {
   const { fetchPackages, packages } = usePackages();
   
   useEffect(() => {
     fetchPackages({
-      category: category
+      packageCategory: packageCategory
     });
-  }, [category])
+  }, [packageCategory])
 
 
   // console.log('ffff', value);

@@ -7,11 +7,13 @@ import CreateButton from '@/components/common/buttons/CreateButton';
 import EditButton from '@/components/common/buttons/EditButton';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import useDrivers from '@/hooks/drivers/useDrivers';
-import { DriverModal } from './DriverModal';
+import { DriverModal } from '../DriverModal';
 import StatusBadge from '@/components/common/badges/StatusBadge';
 import SearchInput from '@/components/common/inputs/SearchInput';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ReferenceLink from '@/components/common/ReferenceLink';
+import { Button } from '@/components/ui/button';
+import { SettleDriverBalanceModal } from './SettleDriverBalanceModal';
 
 
 export default function Page() {
@@ -19,14 +21,15 @@ export default function Page() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [isNewItem, setIsNewItem] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  const { fetchDrivers, drivers, isLoading } = useDrivers();
-const [filters, setFilters] = useState({});
+const { fetchDriversWithBalance, driversWithBalance, isLoading } = useDrivers();
+    const [filters, setFilters] = useState({});
+    const [settleOpen, setSettleOpen] = useState(false);
 
   useEffect(() => {
     if(filters){
-      fetchDrivers(filters);
+      fetchDriversWithBalance(filters);
     } else {
-      fetchDrivers();
+      fetchDriversWithBalance();
     }
   }, [filters])
 
@@ -44,7 +47,7 @@ const [filters, setFilters] = useState({});
 
   return (
     <BreadcrumbProvider value={[
-      { label: "Drivers", href: null},
+      { label: "Drivers with Balances", href: null},
     ]}>
       
       <div className='flex flex-col md:flex-row gap-4 lg:justify-between '>
@@ -57,44 +60,67 @@ const [filters, setFilters] = useState({});
        </div>
         <CreateButton onClick={handleCreate}/>
       </div>
-       <Tabs defaultValue={"all"} value={filters?.status} onValueChange={(e) => setFilters({...filters, status: e})} className="">
+       <Tabs defaultValue={"all"} value={filters?.onlineStatus} onValueChange={(e) => setFilters({...filters, onlineStatus: e})} className="">
         <TabsList className="">
           <TabsTrigger value="all" >All</TabsTrigger>
-            <TabsTrigger value="online" >Online</TabsTrigger>
-            <TabsTrigger value="offline" >Offline</TabsTrigger>
+            <TabsTrigger value="true" >Online</TabsTrigger>
+            <TabsTrigger value="false" >Offline</TabsTrigger>
           </TabsList>
         </Tabs>
      <div className="flex w-auto h-auto flex-col gap-6">
         <Card>
           <CardContent>
             <Table>
-              <TableCaption className={""}>A list of your recent bookings.</TableCaption>
+              <TableCaption className={""}>A list of your recent drivers with balances.</TableCaption>
               <TableHeader className="bg-muted/50">
                 <TableRow>
-                  <TableHead className="w-[150px]">Driver Name</TableHead>
-                  <TableHead className="hidden lg:table-cell">Email</TableHead>
-                  <TableHead>Mobile</TableHead>
+                  <TableHead className="w-[200px]">Driver</TableHead>
+                  <TableHead>Contact</TableHead>
+                  <TableHead className="hidden lg:table-cell">Address</TableHead>
                   <TableHead className="hidden md:table-cell">License No</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Driver Owes</TableHead>
+                  <TableHead className="text-right">Company Owes</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
       <TableBody>
-        {drivers?.map((item, index) => (
+        {driversWithBalance?.map((item, index) => (
           <TableRow key={index} className="hover:bg-muted/30">
             <TableCell className="font-medium">
               <div className="flex flex-col">
+                {/* <ReferenceLink path={`/drivers/${item?._id}`} className="font-bold"> */}
                   {item?.firstName} {item?.lastName}
-                <span className="text-xs text-muted-foreground lg:hidden">{item?.email}</span>
+                {/* </ReferenceLink> */}
+                <span className="text-xs text-muted-foreground">@{item?.userName}</span>
               </div>
             </TableCell>
-            <TableCell className="hidden lg:table-cell">{item?.email}</TableCell>
-            <TableCell>{item?.mobile}</TableCell>
-            <TableCell className="hidden md:table-cell">{item?.licenseNumber}</TableCell>
+            <TableCell>
+              <div className="flex flex-col text-xs">
+                <span>{item?.mobile}</span>
+                <span className="text-muted-foreground">{item?.email}</span>
+              </div>
+            </TableCell>
+            <TableCell className="hidden lg:table-cell text-xs max-w-[200px] truncate">
+              {item?.address}
+            </TableCell>
+            <TableCell className="hidden md:table-cell text-xs">{item?.licenseNumber}</TableCell>
             <TableCell>
               <StatusBadge>{item?.onlineStatus ? "Online" : "Offline"}</StatusBadge>
             </TableCell>
-            <TableCell className="text-right">
+            <TableCell className="text-right font-semibold text-red-600">
+               {item?.driverOwesCompany ? `LKR ${item.driverOwesCompany.toLocaleString()}` : "LKR 0"}
+            </TableCell>
+            <TableCell className="text-right font-semibold text-green-600">
+               {item?.companyOwesDriver ? `LKR ${item.companyOwesDriver.toLocaleString()}` : "LKR 0"}
+            </TableCell>
+                <TableCell className="text-right gap-2 flex items-center justify-end pl-10">
+                    <SettleDriverBalanceModal
+                        isOpen={settleOpen}
+                        setIsOpen={setSettleOpen}
+                        selectedItem={item}
+                        fetchDrivers={fetchDriversWithBalance}
+                    />
               <EditButton
                 onClick={() => {
                   handleEdit(item)
@@ -113,7 +139,7 @@ const [filters, setFilters] = useState({});
             isNewItem={isNewItem}
             selectedItem={selectedItem}
             setSheetOpen={setSheetOpen}
-            fetchDrivers={fetchDrivers}
+            fetchDrivers={fetchDriversWithBalance}
           />
         </div>
         <div className="fixed bottom-6 right-6 z-40 md:hidden">
