@@ -4,7 +4,7 @@ import React from 'react'
 const CloseButton = ({onClick}) => {
   return (
       <div>
-           <Button variant="outline" onClick={onClick}>
+           <Button type="button" variant="outline" onClick={onClick}>
                 Cancel
               </Button>
     </div>

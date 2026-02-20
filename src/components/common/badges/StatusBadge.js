@@ -6,7 +6,8 @@ import React from 'react'
 export default function StatusBadge({ children, ...props}) {
 
 const getClassName=() => {
-    switch (children) {
+    const status = typeof children === 'string' ? children.toLowerCase() : children;
+    switch (status) {
          case 'confirmed':
             return "bg-green-600 text-white"
             break;
@@ -22,8 +23,11 @@ const getClassName=() => {
         case 'active':
             return "bg-green-600 text-white"
             break;
-        case 'Active':
+        case 'available':
             return "bg-green-600 text-white"
+            break;
+        case 'unavailable':
+            return "bg-red-600 text-white"
             break;
         case 'rejected':
             return "bg-red-600 text-white"
@@ -50,7 +54,8 @@ const getClassName=() => {
             return "bg-blue-600  text-white"
             break;
         
-        case 'In Active':
+        case 'in active':
+        case 'inactive':
             return "bg-muted-foreground  text-white"
             break;
     

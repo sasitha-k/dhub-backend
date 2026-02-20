@@ -132,7 +132,7 @@ export function SearchableDropdown({
               placeholder={searchPlaceholder}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className={`w-full text-sm px-2 py-2 border rounded focus:outline-none `}
+              className={`w-full text-xs px-2 py-2 border rounded focus:outline-none `}
             />
           </div>
 

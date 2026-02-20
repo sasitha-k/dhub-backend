@@ -13,7 +13,7 @@ export function middleware(request) {
     //   return Response.redirect(new URL('/dashboard', request.url))
     // }
     if (token && request.nextUrl.pathname.startsWith('/login')) {
-      return Response.redirect(new URL('/dashboard', request.url))
+      return Response.redirect(new URL('/booking', request.url))
     }
    
     if (!token && !request.nextUrl.pathname.startsWith('/login')) {

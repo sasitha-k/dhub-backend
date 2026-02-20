@@ -87,21 +87,24 @@ export function CustomerModal({
 
   return (
     <Dialog open={sheetOpen} onOpenChange={setSheetOpen}>
-      <DialogContent className="w-full md:max-w-[70%]  overflow-y-auto max-h-[90vh]">
-        <DialogHeader>
+      <DialogContent
+        className="w-full md:max-w-[70%] max-h-[90vh] flex flex-col p-0 gap-0"
+        closeButtonClassName="text-white"
+      >
+        <DialogHeader className="shrink-0 px-6 pr-12 pt-6 pb-4 border-b bg-primary text-primary-foreground rounded-md">
           <DialogTitle className="flex items-center gap-2">
-          <User className="h-5 w-5" />
+            <User className="h-5 w-5" />
             {isNewItem ? 'Add New Customer' : 'Edit Customer'}
           </DialogTitle>
-          <DialogDescription>
-            {isNewItem 
-              ? 'Fill in the details to add a new customer to the system.' 
-              : 'Update the customer information below.'
-            }
+          <DialogDescription className="text-primary-foreground/90">
+            {isNewItem
+              ? 'Fill in the details to add a new customer to the system.'
+              : 'Update the customer information below.'}
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6 mt-2">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+          <div className="flex-1 overflow-y-auto min-h-0 px-6 pt-4">
             {/* Personal Information Section */}
             <div className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
@@ -157,16 +160,6 @@ export function CustomerModal({
                   />
               </FormGroup>
 
-              <FormGroup id={"licenseNumber"} errors={errors}>
-                <Label htmlFor="licenseNumber">License Number *</Label>
-                 <TextInput
-                    id="licenseNumber"
-                    value={formData.licenseNumber}
-                    onChange={(e) => handleInputChange('licenseNumber', e.target.value)}
-                    placeholder="Enter licenseNumber number"
-                  />
-              </FormGroup>
-
               <FormGroup id={"address"} errors={errors}>
                 <Label htmlFor="address">Address *</Label>
                   <TextInput
@@ -198,8 +191,9 @@ export function CustomerModal({
               </div>
             )}
           </div>
+          </div>
 
-          <DialogFooter className="flex flex-row gap-4 justify-end">
+          <DialogFooter className="shrink-0 flex flex-row gap-4 justify-end px-6 py-4 border-t bg-background">
             <DialogClose asChild>
               <CloseButton onClick={handleClose}/>
             </DialogClose>

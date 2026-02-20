@@ -28,6 +28,7 @@ import NightHourlyTab from '@/components/packages/package-tabs/NightHourlyTab'
 import AirportDropTab from '@/components/packages/package-tabs/AirportDropTab'
 import LongTripTab from '@/components/packages/package-tabs/LongTripTab'
 import CustomTab from '@/components/packages/package-tabs/CustomTab'
+import VehiclePickupTab from '@/components/packages/package-tabs/VehiclePickupTab'
 import PackageCategoryPicker from '@/components/common/dropdown/package/PackageCategoryPicker'
 
 
@@ -91,38 +92,38 @@ export function PackageModal({
 
   return (
     <Dialog open={sheetOpen} onOpenChange={setSheetOpen}>
-      <DialogContent className="w-full md:max-w-[80%] overflow-y-auto max-h-[90vh]">
-        <DialogHeader>
-          <div className='flex justify-between items-center gap-4'>
-             <DialogTitle className="flex items-center gap-2">
+      <DialogContent
+        className="w-full md:max-w-[80%] max-h-[90vh] flex flex-col p-0 gap-0"
+        closeButtonClassName="text-white"
+      >
+        <DialogHeader className="shrink-0 px-6 pr-12 pt-6 pb-4 border-b bg-primary text-primary-foreground rounded-md">
+          <DialogTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />
             {isNewItem ? 'Add New Package' : 'Edit Package'}
-            </DialogTitle>
-            <div className='flex items-center gap-2 pr-10'>
-              <Checkbox
-              checked={formData.isAvailable}
-              onCheckedChange={() => setFormData(prev => ({...prev, isAvailable: !formData.isAvailable}))}
-              />
-              <Label>Is Available</Label>
-            </div>
-         </div>
-          <DialogDescription>
+          </DialogTitle>
+          <DialogDescription className="text-primary-foreground/90">
             {isNewItem
               ? 'Fill in the details to create a new package service.' 
-              : 'Update the package information below.'
-            }
+              : 'Update the package information below.'}
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-6 mt-2">
-            {/* Package Information Section */}
-            {/* type section */}
-          <div className="border-t pt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+          <div className="flex-1 overflow-y-auto min-h-0 px-6 pt-4 space-y-6">
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="isAvailable"
+                checked={formData.isAvailable}
+                onCheckedChange={() => setFormData(prev => ({...prev, isAvailable: !formData.isAvailable}))}
+              />
+              <Label htmlFor="isAvailable">Is Available</Label>
+            </div>
+            <div className="border-t pt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
                 <FormGroup id={"category"} errors={errors}>
                     <Label htmlFor="category">Category <span className="text-red-500">*</span></Label>
                     <PackageCategoryPicker
                       id="category"
-                      value={formData?.category}
-                      onChange={(e) => setFormData(prev => ({...prev, category: e}))}
+                      value={formData?.packageCategory}
+                      onChange={(e) => setFormData(prev => ({...prev, packageCategory: e}))}
                       placeholder="Select category"
                     />
                   </FormGroup>
@@ -221,8 +222,17 @@ export function PackageModal({
                     handleInputChange={handleInputChange} 
                   />
                 )}
-                
-          <DialogFooter className="flex flex-row gap-4 justify-end mt-16">
+
+          {formData.packageType === 'VEHICLE_PICKUP' && (
+                  <VehiclePickupTab
+                    formData={formData}
+                    errors={errors} 
+                    handleInputChange={handleInputChange} 
+                  />
+                )}
+          </div>
+
+          <DialogFooter className="shrink-0 flex flex-row gap-4 justify-end px-6 py-4 border-t bg-background">
             <DialogClose asChild>
               <CloseButton onClick={handleClose}/>
             </DialogClose>

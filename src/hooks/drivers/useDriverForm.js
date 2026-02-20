@@ -15,17 +15,51 @@ export default function useDriverForm() {
     type: "driver",
     address:"",
     firstName: "",
-    lastName: ""
+    lastName: "",
+    licenseNumber: "",
+    employmentType: "full_time",
+    passportImage: null,
+    drivingLicenseFrontImage: null,
+    drivingLicenseBackImage: null,
+    nicFrontImage: null,
+    nicBackImage: null,
+    electricityBill1: null,
+    electricityBill2: null,
+    gramasewakaCertificate: null,
+    vehicleNumber: "",
+    vehiclePhoto: null
 });
 
-  // Create an inventory
+  // Helper function to convert formData to FormData if files are present
+  const prepareFormData = (data) => {
+    const hasFiles = Object.values(data).some(value => value instanceof File);
+    
+    if (hasFiles) {
+      const formDataObj = new FormData();
+      Object.keys(data).forEach(key => {
+        const value = data[key];
+        if (value !== null && value !== undefined && value !== "") {
+          if (value instanceof File) {
+            formDataObj.append(key, value);
+          } else {
+            formDataObj.append(key, value);
+          }
+        }
+      });
+      return formDataObj;
+    }
+    return data;
+  };
+
+  // Create a driver
   const onSubmit = useCallback(
     async (successCallBack) => {
       setIsLoading(true);
       setErrors({});
       try {
-        const res = await createUser(formData);
-        if (re.status === 201) {
+        const dataToSend = prepareFormData(formData);
+        const res = await createUser(dataToSend);
+        if (res.status === 201) {
           toast.success(res.message || "Driver added successfully");
           successCallBack();
         }
@@ -37,8 +71,8 @@ export default function useDriverForm() {
           setErrors({ submit: messages.join(", ") });
           toast.error(messages.join(", "));
         } else {
-          setErrors({ submit: "Failed to update package" });
-          toast.error("Failed to update package");
+          setErrors({ submit: "Failed to create driver" });
+          toast.error("Failed to create driver");
         }
       } finally {
         setIsLoading(false);
@@ -47,13 +81,14 @@ export default function useDriverForm() {
     [formData]
   );
 
-  // Update an existing inventory
+  // Update an existing driver
   const onUpdate = useCallback(
     async (_id, successCallBack) => {
       setIsLoading(true);
       setErrors({});
       try {
-        const res = await updateUser(formData);
+        const dataToSend = prepareFormData({ ...formData, _id });
+        const res = await updateUser(dataToSend);
         if (res.status === 200) {
           toast.success(res.message || "Driver updated successfully");
           successCallBack();
@@ -68,8 +103,8 @@ export default function useDriverForm() {
           setErrors({ submit: messages.join(", ") });
           toast.error(messages.join(", "));
         } else {
-          setErrors({ submit: "Failed to update package" });
-          toast.error("Failed to update package");
+          setErrors({ submit: "Failed to update driver" });
+          toast.error("Failed to update driver");
         }
       } finally {
         setIsLoading(false);

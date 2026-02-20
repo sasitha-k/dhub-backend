@@ -3,8 +3,8 @@ import SearchableDropdown from '../SearchableDropDown';
 
 export default function PackageCategoryPicker({error, value, onChange, valueKey, labelKey }) {
     const options = [
-        { label: "Day Time", value: "day_time" },
-        { label: "Night Time", value: "night_time" }
+        { label: "Day Time", value: "day" },
+        { label: "Night Time", value: "night" }
     ]
 
   return (

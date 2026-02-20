@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import SearchableDropdown from '../SearchableDropDown';
 import usePackages from '@/hooks/packages/usePackages';
 
-export default function PackagePicker({error, category, value, onChange, valueKey, labelKey, onPackageSelect }) {
+export default function PackagePicker({error, category, value, onChange, valueKey, labelKey, onPackageSelect, options }) {
   const { fetchPackages, packages } = usePackages();
   
   useEffect(() => {
@@ -12,11 +12,12 @@ export default function PackagePicker({error, category, value, onChange, valueKe
   }, [category])
 
 
+
   // console.log('ffff', value);
   return (
     <SearchableDropdown
       error={error}
-      options={packages}
+      options={options}
       value={value}
       onChange={onChange}
       labelKey={labelKey}
