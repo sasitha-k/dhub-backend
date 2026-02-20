@@ -22,10 +22,10 @@ export default function ClientLayout({ children }) {
 
   return (
     <div className='w-screen h-screen overflow-hidden overflow-y-scroll'>
-       <SidebarProvider>
+       <SidebarProvider defaultOpen={true}>
       <AppSidebar/>
       <SidebarInset>
-        <main className="w-auto h-auto overflow-auto ">
+        <main className="w-auto h-auto overflow-auto md:px-2 lg:px-4">
           {children}
         </main>
       </SidebarInset>

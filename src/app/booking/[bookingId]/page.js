@@ -48,8 +48,7 @@ useEffect(() => {
 }, [findBooking, reference]);
 
 const items = [
-    { label: "Dashboard", href: "/dashboard" },
-    { label: "Booking", href: "/booking" },
+    { label: "Bookings", href: "/booking" },
     { label: `${booking?.bookingId}`, href: null },
 ];
 

@@ -8,6 +8,7 @@ export default function PackageTypePicker({error, value, onChange, valueKey, lab
         { label: "Night Hourly", value: "NIGHT_HOURLY" },
         { label: "Airport Drop", value: "AIRPORT_DROP" },
         { label: "Long Trip", value: "LONG_TRIP" },
+        { label: "Vehicle Pickup & Drop", value: "VEHICLE_PICKUP" },
         { label: "Custom", value: "CUSTOM" },
     ]
 
