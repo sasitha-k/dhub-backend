@@ -18,10 +18,13 @@ import { formatter } from "@/constants/formatNumber";
 import { ArrowUp, ArrowDown } from "lucide-react";
 import moment from "moment";
 import SearchableDropdown from "@/components/common/dropdown/SearchableDropDown";
+import { AddExpenseModal } from "./AddExpenseModal";
 
 export default function Page() {
   const { fetchDriverBalances, driverBalances, isLoading } =
     useDriverBalances();
+  const [selectedDriver, setSelectedDriver] = useState(null);
+  const [expenseModalOpen, setExpenseModalOpen] = useState(false);
   const [filters, setFilters] = useState({
     name: "",
     onlineStatus: "all",
@@ -53,6 +56,16 @@ export default function Page() {
   }, [fetchDriverBalances, filters, activeSort, sortValue]);
 
   let filtered = driverBalances?.drivers || driverBalances || [];
+
+  // After refetch (e.g. after adding expense), update selectedDriver so modal shows fresh driver data
+  useEffect(() => {
+    if (selectedDriver?._id && filtered?.length) {
+      const updated = filtered.find((d) => d._id === selectedDriver._id);
+      if (updated) {
+        setSelectedDriver(updated);
+      }
+    }
+  }, [filtered]);
 
   // Calculate totals for company balance
   const balanceTotals = React.useMemo(() => {
@@ -136,6 +149,32 @@ export default function Page() {
       setActiveSort("recentlyActive");
       setSortValue(1);
     }
+  };
+
+  const openExpenseModal = (driver) => {
+    setSelectedDriver(driver);
+    setExpenseModalOpen(true);
+  };
+
+  const closeExpenseModal = () => {
+    setExpenseModalOpen(false);
+    setSelectedDriver(null);
+  };
+
+  const refetchBalances = () => {
+    const params = {};
+    if (filters.name) params.name = filters.name;
+    if (filters.onlineStatus && filters.onlineStatus !== "all")
+      params.onlineStatus = filters.onlineStatus;
+    if (filters.isDriverInBooking && filters.isDriverInBooking !== "all") {
+      params.isDriverInBooking = filters.isDriverInBooking === "true";
+    }
+    if (activeSort === "companyBalance") {
+      params.companyBalance = sortValue;
+    } else if (activeSort === "recentlyActive") {
+      params.recentlyActive = sortValue;
+    }
+    fetchDriverBalances(params);
   };
 
   return (
@@ -309,13 +348,11 @@ export default function Page() {
                 </TableHeader>
                 <TableBody>
                   {filtered && filtered.length > 0 ? (
-                    filtered.map(
-                      (item, index) => (
-                        console.log({ item }),
-                        (
+                    filtered.map((item, index) => (
                           <TableRow
                             key={index}
-                            className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors h-14"
+                            className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors h-14 cursor-pointer"
+                            onClick={() => openExpenseModal(item)}
                           >
                             <TableCell>{item?.firstName || "N/A"}</TableCell>
                             <TableCell>{item?.lastName || "N/A"}</TableCell>
@@ -351,9 +388,7 @@ export default function Page() {
                               {formatCurrency(item?.companyBalance || 0)}
                             </TableCell>
                           </TableRow>
-                        )
-                      ),
-                    )
+                    ))
                   ) : (
                     <TableRow>
                       <TableCell
@@ -369,6 +404,13 @@ export default function Page() {
             )}
           </CardContent>
         </Card>
+
+        <AddExpenseModal
+          isOpen={expenseModalOpen}
+          onClose={closeExpenseModal}
+          driver={selectedDriver}
+          onSuccess={refetchBalances}
+        />
       </div>
     </BreadcrumbProvider>
   );
