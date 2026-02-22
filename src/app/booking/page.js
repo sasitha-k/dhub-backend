@@ -55,7 +55,11 @@ export default function Page() {
       const filteredByTab = bookings.filter((item) => {
         const packageCategory = item?.selectedPackage?.packageCategory;
         if (activeTab === "day") {
-          return packageCategory === "day_time" || packageCategory === "day";
+          return (
+            packageCategory === "day_time" ||
+            packageCategory === "day" ||
+            !packageCategory
+          );
         } else if (activeTab === "night") {
           return (
             packageCategory === "night_time" || packageCategory === "night"

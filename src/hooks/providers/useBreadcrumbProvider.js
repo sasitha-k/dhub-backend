@@ -11,16 +11,22 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { User, Settings, LogOut, Bell, CreditCard, ChevronsDownUp } from 'lucide-react';
 import { useLogin } from '@/hooks/login/useLogin';
+import { SidebarTrigger } from '@/components/ui/sidebar';
+import { useIsMobile } from '@/hooks/use-device';
 
 const BreadcrumbContext = createContext([]);
 
 export const BreadcrumbProvider = ({ value, children }) => {
   const { onLogout } = useLogin();
+  const isMobile = useIsMobile();
 
   return (
     <BreadcrumbContext.Provider value={value}>
       <>
          <div className="w-full h-14 font-semibold flex gap-2 md:gap-4 items-center justify-between bg-white border-b-2 px-2 md:px-4">
+            {isMobile && (
+              <SidebarTrigger className="shrink-0 -ml-1 size-10 [&_svg]:w-5 [&_svg]:h-5" />
+            )}
             <div className="flex-1 min-w-0">
               <BreadcrumbComponent items={value}/>
             </div>
