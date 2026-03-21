@@ -29,3 +29,13 @@ module.exports.startBooking = function (params) {
 module.exports.completeBooking = function (params) {
     return authInstance.post("/booking/complete", params);
 };
+
+/** Create a completed booking with fee set (credit booking). Skips start/complete flow. */
+module.exports.createCreditBooking = function (params) {
+    return authInstance.post("/booking/credit", params);
+};
+
+/** Cancel a booking with optional reason. */
+module.exports.cancelBooking = function (params) {
+  return authInstance.post("/booking/cancel", params);
+};

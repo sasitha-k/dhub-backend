@@ -26,6 +26,15 @@ module.exports.addDriverExpense = async (driverId, amount, note) => {
   return res.data;
 };
 
+module.exports.addDriverBalance = async (driverId, amount, note) => {
+  const res = await authInstance.post("/drivers/balance", {
+    driverId,
+    amount: Number(amount),
+    note: note || "",
+  });
+  return res.data;
+};
+
 module.exports.getDriverExpenses = async (driverId) => {
   const res = await authInstance.get("/drivers/expenses", {
     params: { driverId },

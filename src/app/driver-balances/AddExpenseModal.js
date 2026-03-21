@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TextInput from "@/components/common/inputs/TextInput";
 import StatusBadge from "@/components/common/badges/StatusBadge";
 import {
@@ -31,8 +32,10 @@ import {
   CheckCircle2,
   Receipt,
   History,
+  MinusCircle,
+  PlusCircle,
 } from "lucide-react";
-import { addDriverExpense } from "@/api/drivers";
+import { addDriverExpense, addDriverBalance } from "@/api/drivers";
 import useDriverBookingHistory from "@/hooks/drivers/useDriverBookingHistory";
 import useDriverExpenses from "@/hooks/drivers/useDriverExpenses";
 import useDriverHistory from "@/hooks/drivers/useDriverHistory";
@@ -46,6 +49,14 @@ const EXPENSE_NOTE_OPTIONS = [
   "Accommodation",
   "Electricity Bill",
   "Water Bill",
+];
+
+const BALANCE_NOTE_OPTIONS = [
+  "Advance Payment",
+  "Bonus",
+  "Adjustment",
+  "Refund",
+  "Settlement",
 ];
 
 export function AddExpenseModal({ isOpen, onClose, driver, onSuccess }) {
@@ -65,7 +76,12 @@ export function AddExpenseModal({ isOpen, onClose, driver, onSuccess }) {
   const [note, setNote] = useState("");
   const [noteDropdownOpen, setNoteDropdownOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [balanceAmount, setBalanceAmount] = useState("");
+  const [balanceNote, setBalanceNote] = useState("");
+  const [balanceNoteDropdownOpen, setBalanceNoteDropdownOpen] = useState(false);
+  const [isBalanceSubmitting, setIsBalanceSubmitting] = useState(false);
   const noteDropdownRef = useRef(null);
+  const balanceNoteDropdownRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -74,6 +90,12 @@ export function AddExpenseModal({ isOpen, onClose, driver, onSuccess }) {
         !noteDropdownRef.current.contains(e.target)
       ) {
         setNoteDropdownOpen(false);
+      }
+      if (
+        balanceNoteDropdownRef.current &&
+        !balanceNoteDropdownRef.current.contains(e.target)
+      ) {
+        setBalanceNoteDropdownOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -87,6 +109,8 @@ export function AddExpenseModal({ isOpen, onClose, driver, onSuccess }) {
       fetchHistory(driver._id);
       setAmount("");
       setNote("");
+      setBalanceAmount("");
+      setBalanceNote("");
     }
   }, [isOpen, driver?._id, fetchBookingHistory, fetchExpenses, fetchHistory]);
 
@@ -146,7 +170,37 @@ export function AddExpenseModal({ isOpen, onClose, driver, onSuccess }) {
     }
   };
 
-  console.log({ driverHistory });
+  const handleBalanceSubmit = async (e) => {
+    e.preventDefault();
+    if (!driver?._id) {
+      toast.error("Driver is missing");
+      return;
+    }
+    const numAmount = Number(balanceAmount);
+    if (!balanceAmount || isNaN(numAmount) || numAmount <= 0) {
+      toast.error("Please enter a valid amount");
+      return;
+    }
+
+    setIsBalanceSubmitting(true);
+    try {
+      await addDriverBalance(driver._id, numAmount, balanceNote || "");
+      toast.success("Balance added successfully");
+      onSuccess?.();
+      setBalanceAmount("");
+      setBalanceNote("");
+      fetchExpenses(driver._id);
+      fetchBookingHistory(driver._id);
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ||
+          error?.response?.data?.msg ||
+          "Failed to add balance",
+      );
+    } finally {
+      setIsBalanceSubmitting(false);
+    }
+  };
 
   if (!driver) return null;
 
@@ -237,96 +291,210 @@ export function AddExpenseModal({ isOpen, onClose, driver, onSuccess }) {
               </CardContent>
             </Card>
 
-            {/* Add Expense Section */}
+            {/* Add Transaction (Expense or Balance) */}
             <Card className="border-primary/20 bg-primary/5">
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-2">
                 <CardTitle className="flex items-center gap-2 ml-4 text-base">
                   <DollarSign className="w-4 h-4" />
-                  Add Expense
+                  Add Transaction
                 </CardTitle>
+                <p className="text-xs text-muted-foreground ml-4 -mt-1">
+                  Record an expense or add to driver balance
+                </p>
               </CardHeader>
               <CardContent className="pt-0">
-                <form
-                  onSubmit={handleSubmit}
-                  className="flex flex-col sm:flex-row gap-3 items-end flex-wrap"
-                >
-                  <div className="w-full sm:min-w-[140px]">
-                    <label className="text-xs text-muted-foreground mb-1 block">
-                      Amount (Rs.)
-                    </label>
-                    <TextInput
-                      type="number"
-                      min="1"
-                      step="1"
-                      placeholder="e.g. 5000"
-                      value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
-                      disabled={isSubmitting}
-                    />
-                  </div>
-                  <div
-                    className="flex-1 min-w-[160px] relative"
-                    ref={noteDropdownRef}
-                  >
-                    <label className="text-xs text-muted-foreground mb-1 block">
-                      Note
-                    </label>
-                    <TextInput
-                      placeholder="Select or type..."
-                      value={note}
-                      onChange={(e) => setNote(e.target.value)}
-                      onFocus={() => setNoteDropdownOpen(true)}
-                      disabled={isSubmitting}
-                    />
-                    {noteDropdownOpen && !isSubmitting && (
-                      <div className="absolute left-0 right-0 z-[120] mt-1 rounded-md border bg-background shadow-md max-h-48 overflow-y-auto">
-                        {EXPENSE_NOTE_OPTIONS.filter((opt) =>
-                          opt
-                            .toLowerCase()
-                            .includes((note || "").toLowerCase()),
-                        ).map((option) => (
-                          <button
-                            key={option}
-                            type="button"
-                            onClick={() => {
-                              setNote(option);
-                              setNoteDropdownOpen(false);
-                            }}
-                            className="w-full text-left px-3 py-2 text-sm hover:bg-accent capitalize"
-                          >
-                            {option}
-                          </button>
-                        ))}
-                        {EXPENSE_NOTE_OPTIONS.filter((opt) =>
-                          opt
-                            .toLowerCase()
-                            .includes((note || "").toLowerCase()),
-                        ).length === 0 && (
-                          <div className="px-3 py-2 text-muted-foreground text-sm">
-                            Type for custom note
+                <Tabs defaultValue="expense" className="w-full">
+                  <TabsList className="grid w-full max-w-xs grid-cols-2 mb-4">
+                    <TabsTrigger value="expense" className="gap-1.5">
+                      <MinusCircle className="w-4 h-4" />
+                      Add Expense
+                    </TabsTrigger>
+                    <TabsTrigger value="balance" className="gap-1.5">
+                      <PlusCircle className="w-4 h-4" />
+                      Add Balance
+                    </TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="expense" className="mt-0">
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Amounts deducted from the driver balance (e.g. uniform, bills,
+                      accommodation).
+                    </p>
+                    <form
+                      onSubmit={handleSubmit}
+                      className="flex flex-col sm:flex-row gap-3 items-end flex-wrap"
+                    >
+                      <div className="w-full sm:min-w-[120px] sm:max-w-[140px]">
+                        <label className="text-xs text-muted-foreground mb-1 block">
+                          Amount (Rs.)
+                        </label>
+                        <TextInput
+                          type="number"
+                          min="1"
+                          step="1"
+                          placeholder="e.g. 5000"
+                          value={amount}
+                          onChange={(e) => setAmount(e.target.value)}
+                          disabled={isSubmitting}
+                        />
+                      </div>
+                      <div
+                        className="flex-1 min-w-[140px] relative"
+                        ref={noteDropdownRef}
+                      >
+                        <label className="text-xs text-muted-foreground mb-1 block">
+                          Note
+                        </label>
+                        <TextInput
+                          placeholder="Select or type..."
+                          value={note}
+                          onChange={(e) => setNote(e.target.value)}
+                          onFocus={() => setNoteDropdownOpen(true)}
+                          disabled={isSubmitting}
+                        />
+                        {noteDropdownOpen && !isSubmitting && (
+                          <div className="absolute left-0 right-0 z-[120] mt-1 rounded-md border bg-background shadow-md max-h-48 overflow-y-auto">
+                            {EXPENSE_NOTE_OPTIONS.filter((opt) =>
+                              opt
+                                .toLowerCase()
+                                .includes((note || "").toLowerCase()),
+                            ).map((option) => (
+                              <button
+                                key={option}
+                                type="button"
+                                onClick={() => {
+                                  setNote(option);
+                                  setNoteDropdownOpen(false);
+                                }}
+                                className="w-full text-left px-3 py-2 text-sm hover:bg-accent capitalize"
+                              >
+                                {option}
+                              </button>
+                            ))}
+                            {EXPENSE_NOTE_OPTIONS.filter((opt) =>
+                              opt
+                                .toLowerCase()
+                                .includes((note || "").toLowerCase()),
+                            ).length === 0 && (
+                              <div className="px-3 py-2 text-muted-foreground text-sm">
+                                Type for custom note
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
-                    )}
-                  </div>
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting || !amount || Number(amount) <= 0}
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent mr-2" />
-                        Adding...
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle2 className="w-4 h-4 mr-2" />
-                        Add Expense
-                      </>
-                    )}
-                  </Button>
-                </form>
+                      <Button
+                        type="submit"
+                        disabled={
+                          isSubmitting || !amount || Number(amount) <= 0
+                        }
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent mr-2" />
+                            Adding...
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle2 className="w-4 h-4 mr-2" />
+                            Add Expense
+                          </>
+                        )}
+                      </Button>
+                    </form>
+                  </TabsContent>
+                  <TabsContent value="balance" className="mt-0">
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Amounts that will be added to the driver balance (e.g. advance
+                      payment, bonus, settlement).
+                    </p>
+                    <form
+                      onSubmit={handleBalanceSubmit}
+                      className="flex flex-col sm:flex-row gap-3 items-end flex-wrap"
+                    >
+                      <div className="w-full sm:min-w-[120px] sm:max-w-[140px]">
+                        <label className="text-xs text-muted-foreground mb-1 block">
+                          Amount (Rs.)
+                        </label>
+                        <TextInput
+                          type="number"
+                          min="1"
+                          step="1"
+                          placeholder="e.g. 5000"
+                          value={balanceAmount}
+                          onChange={(e) => setBalanceAmount(e.target.value)}
+                          disabled={isBalanceSubmitting}
+                        />
+                      </div>
+                      <div
+                        className="flex-1 min-w-[140px] relative"
+                        ref={balanceNoteDropdownRef}
+                      >
+                        <label className="text-xs text-muted-foreground mb-1 block">
+                          Note
+                        </label>
+                        <TextInput
+                          placeholder="Select or type..."
+                          value={balanceNote}
+                          onChange={(e) => setBalanceNote(e.target.value)}
+                          onFocus={() => setBalanceNoteDropdownOpen(true)}
+                          disabled={isBalanceSubmitting}
+                        />
+                        {balanceNoteDropdownOpen && !isBalanceSubmitting && (
+                          <div className="absolute left-0 right-0 z-[120] mt-1 rounded-md border bg-background shadow-md max-h-48 overflow-y-auto">
+                            {BALANCE_NOTE_OPTIONS.filter((opt) =>
+                              opt
+                                .toLowerCase()
+                                .includes((balanceNote || "").toLowerCase()),
+                            ).map((option) => (
+                              <button
+                                key={option}
+                                type="button"
+                                onClick={() => {
+                                  setBalanceNote(option);
+                                  setBalanceNoteDropdownOpen(false);
+                                }}
+                                className="w-full text-left px-3 py-2 text-sm hover:bg-accent capitalize"
+                              >
+                                {option}
+                              </button>
+                            ))}
+                            {BALANCE_NOTE_OPTIONS.filter((opt) =>
+                              opt
+                                .toLowerCase()
+                                .includes((balanceNote || "").toLowerCase()),
+                            ).length === 0 && (
+                              <div className="px-3 py-2 text-muted-foreground text-sm">
+                                Type for custom note
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      <Button
+                        type="submit"
+                        disabled={
+                          isBalanceSubmitting ||
+                          !balanceAmount ||
+                          Number(balanceAmount) <= 0
+                        }
+                        className="bg-green-600 hover:bg-green-700 text-white"
+                      >
+                        {isBalanceSubmitting ? (
+                          <>
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent mr-2" />
+                            Adding...
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle2 className="w-4 h-4 mr-2" />
+                            Add Balance
+                          </>
+                        )}
+                      </Button>
+                    </form>
+                  </TabsContent>
+                </Tabs>
               </CardContent>
             </Card>
             <Separator />

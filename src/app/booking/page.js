@@ -39,6 +39,9 @@ export default function Page() {
   const [filtered, setFiltered] = useState([]);
   const [activeTab, setActiveTab] = useState("day");
 
+  const refetchBookingsWithToday = () =>
+    fetchBookings({ date: moment().format("YYYY-MM-DD") });
+
   useEffect(() => {
     if (filters) {
       fetchBookings(filters);
@@ -106,7 +109,7 @@ export default function Page() {
 
   const onSuccess = () => {
     setIsDeleteModalOpen(false);
-    fetchBookings();
+    refetchBookingsWithToday();
   };
 
   const handleClose = () => {
@@ -463,7 +466,7 @@ export default function Page() {
       {/* 🔹 Booking Form */}
       <BookingModal
         activeTab={activeTab}
-        fetchBookings={fetchBookings}
+        fetchBookings={refetchBookingsWithToday}
         sheetOpen={sheetOpen}
         isNewItem={isNewItem}
         selectedItem={selectedItem}

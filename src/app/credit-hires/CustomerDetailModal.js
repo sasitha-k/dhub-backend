@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -40,13 +40,18 @@ import {
   DollarSign,
   Package,
   CheckCircle2,
+  FileText,
+  Download,
+  X,
 } from "lucide-react";
 import useCustomerBookingHistory from "@/hooks/customers/useCustomerBookingHistory";
 import { formatter } from "@/constants/formatNumber";
 import moment from "moment";
 import { settleCustomerCredit } from "@/api/customers";
+import { createConsolidatedInvoice } from "@/api/invoice";
 import { toast } from "sonner";
 import TextInput from "@/components/common/inputs/TextInput";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export function CustomerDetailModal({
   isOpen,
@@ -59,13 +64,110 @@ export function CustomerDetailModal({
   const [settlementAmount, setSettlementAmount] = useState("");
   const [isSettling, setIsSettling] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [selectedBookingIds, setSelectedBookingIds] = useState([]);
+  const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [createdInvoice, setCreatedInvoice] = useState(null);
+  const scrollContainerRef = useRef(null);
+
+  useEffect(() => {
+    if (createdInvoice?.pdfUrl && scrollContainerRef.current) {
+      const scrollToBottom = () => {
+        const el = scrollContainerRef.current;
+        if (el) {
+          el.scrollTo({
+            top: el.scrollHeight,
+            behavior: "smooth",
+          });
+        }
+      };
+      requestAnimationFrame(() => {
+        scrollToBottom();
+        setTimeout(scrollToBottom, 100);
+      });
+    }
+  }, [createdInvoice]);
 
   useEffect(() => {
     if (isOpen && customer?._id) {
       fetchBookingHistory(customer._id);
       setSettlementAmount("");
+      setSelectedBookingIds([]);
     }
   }, [isOpen, customer?._id, fetchBookingHistory]);
+
+  useEffect(() => {
+    if (!isOpen) setCreatedInvoice(null);
+  }, [isOpen]);
+
+  const toggleBookingSelection = (bookingId) => {
+    setSelectedBookingIds((prev) =>
+      prev.includes(bookingId)
+        ? prev.filter((id) => id !== bookingId)
+        : [...prev, bookingId],
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedBookingIds.length === bookingHistory.length) {
+      setSelectedBookingIds([]);
+    } else {
+      setSelectedBookingIds(
+        bookingHistory.map((b) => b.bookingId).filter(Boolean),
+      );
+    }
+  };
+
+  const handleCreateInvoice = async () => {
+    if (selectedBookingIds.length === 0) return;
+    setIsCreatingInvoice(true);
+    try {
+      const res = await createConsolidatedInvoice(selectedBookingIds, 0);
+      toast.success(res.message || "Invoice created successfully");
+      setSelectedBookingIds([]);
+      setCreatedInvoice(res);
+      if (onSettlementSuccess) onSettlementSuccess();
+      fetchBookingHistory(customer._id);
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ||
+          error?.response?.data?.msg ||
+          "Failed to create invoice",
+      );
+    } finally {
+      setIsCreatingInvoice(false);
+    }
+  };
+
+  const handleDownloadInvoice = async () => {
+    if (!createdInvoice?.pdfUrl || !customer) return;
+    const customerName = (
+      `${customer.firstName || ""} ${customer.lastName || ""}`.trim() ||
+      "customer"
+    )
+      .replace(/[/\\:*?"<>|]/g, "-")
+      .replace(/\s+/g, " ");
+    const filename = `${customerName} invoice.pdf`;
+    setIsDownloading(true);
+    try {
+      const downloadUrl = `/api/invoice/download?url=${encodeURIComponent(createdInvoice.pdfUrl)}&filename=${encodeURIComponent(filename)}`;
+      const res = await fetch(downloadUrl);
+      if (!res.ok) throw new Error("Download failed");
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      toast.error("Failed to download invoice");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   const formatCurrency = (amount) => {
     return `Rs. ${formatter.format(amount || 0)}`;
@@ -155,7 +257,10 @@ export function CustomerDetailModal({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-6 px-6 py-4 overflow-y-auto flex-1">
+          <div
+            ref={scrollContainerRef}
+            className="space-y-6 px-6 py-4 overflow-y-auto flex-1"
+          >
             {/* Customer Information Card */}
             <Card>
               <CardHeader className="pb-3">
@@ -290,7 +395,7 @@ export function CustomerDetailModal({
 
             {/* Booking History Card */}
             <Card>
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2 ml-4">
                   <Package className="w-5 h-5" />
                   Booking History
@@ -301,6 +406,32 @@ export function CustomerDetailModal({
                     </span>
                   )}
                 </CardTitle>
+                {selectedBookingIds.length > 0 && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">
+                      {selectedBookingIds.length}{" "}
+                      {selectedBookingIds.length === 1 ? "booking" : "bookings"}{" "}
+                      selected
+                    </span>
+                    <Button
+                      onClick={handleCreateInvoice}
+                      disabled={isCreatingInvoice}
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                    >
+                      {isCreatingInvoice ? (
+                        <>
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent mr-2" />
+                          Creating...
+                        </>
+                      ) : (
+                        <>
+                          <FileText className="w-4 h-4 mr-2" />
+                          Create Invoice
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                )}
               </CardHeader>
               <CardContent>
                 {isLoading ? (
@@ -317,6 +448,21 @@ export function CustomerDetailModal({
                     <Table>
                       <TableHeader>
                         <TableRow>
+                          <TableHead className="w-12">
+                            <Checkbox
+                              checked={
+                                bookingHistory.filter((b) => b.bookingId)
+                                  .length > 0 &&
+                                bookingHistory
+                                  .filter((b) => b.bookingId)
+                                  .every((b) =>
+                                    selectedBookingIds.includes(b.bookingId),
+                                  )
+                              }
+                              onCheckedChange={toggleSelectAll}
+                              aria-label="Select all bookings"
+                            />
+                          </TableHead>
                           <TableHead>Booking ID</TableHead>
                           <TableHead>Date</TableHead>
                           <TableHead>Package</TableHead>
@@ -329,7 +475,27 @@ export function CustomerDetailModal({
                       </TableHeader>
                       <TableBody>
                         {bookingHistory.map((booking, index) => (
-                          <TableRow key={index}>
+                          <TableRow
+                            key={index}
+                            className={
+                              selectedBookingIds.includes(booking.bookingId)
+                                ? "bg-primary/5"
+                                : ""
+                            }
+                          >
+                            <TableCell>
+                              {booking.bookingId && (
+                                <Checkbox
+                                  checked={selectedBookingIds.includes(
+                                    booking.bookingId,
+                                  )}
+                                  onCheckedChange={() =>
+                                    toggleBookingSelection(booking.bookingId)
+                                  }
+                                  aria-label={`Select ${booking.bookingId}`}
+                                />
+                              )}
+                            </TableCell>
                             <TableCell className="font-medium">
                               {booking.bookingId || "N/A"}
                             </TableCell>
@@ -387,6 +553,64 @@ export function CustomerDetailModal({
                 )}
               </CardContent>
             </Card>
+
+            {/* Invoice Preview Section */}
+            {createdInvoice?.pdfUrl && (
+              <div>
+                <Card className="border-primary/20 bg-primary/5">
+                  <CardHeader className="flex flex-row items-center justify-between pb-3">
+                    <div>
+                      <CardTitle className="flex items-center gap-2 ml-4 text-base">
+                        <FileText className="w-4 h-4" />
+                        Invoice #{createdInvoice.invoiceNumber}
+                      </CardTitle>
+                      <p className="text-sm text-muted-foreground ml-4 mt-1">
+                        {createdInvoice.bookingCount} bookings · Total:{" "}
+                        {formatCurrency(createdInvoice.totalAmount)}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleDownloadInvoice}
+                        disabled={isDownloading}
+                        className="gap-2"
+                      >
+                        {isDownloading ? (
+                          <>
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                            Downloading...
+                          </>
+                        ) : (
+                          <>
+                            <Download className="w-4 h-4" />
+                            Download PDF
+                          </>
+                        )}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setCreatedInvoice(null)}
+                        aria-label="Close invoice preview"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="rounded-md border bg-muted/30 overflow-hidden">
+                      <iframe
+                        src={createdInvoice.pdfUrl}
+                        title={`Invoice ${createdInvoice.invoiceNumber}`}
+                        className="w-full h-[500px]"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
           </div>
         </DialogContent>
 

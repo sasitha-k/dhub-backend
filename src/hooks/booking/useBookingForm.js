@@ -1,5 +1,5 @@
 
-import { completeBooking, createBooking, startBooking, updateBooking } from '@/api/booking';
+import { completeBooking, createBooking, createCreditBooking, startBooking, updateBooking } from '@/api/booking';
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
 
@@ -34,6 +34,38 @@ export default function useBookingForm() {
   [formData]
 );
 
+  /** Create a completed booking with the given fee (credit booking). No start/complete flow. */
+  const onSubmitCredit = useCallback(
+    async (successCallBack) => {
+      setIsLoading(true);
+      setErrors({});
+      const fee = formData.fee != null && formData.fee !== '' ? parseFloat(formData.fee) : NaN;
+      if (isNaN(fee) || fee < 0) {
+        setErrors({ fee: 'Fee is required and must be a valid amount' });
+        toast.error('Please enter a valid fee for credit booking');
+        setIsLoading(false);
+        return;
+      }
+      try {
+        const payload = { ...formData, fee, paymentMethod: 'credit' };
+        const res = await createCreditBooking(payload);
+        if (res.status === 201) {
+          toast.success(res.message || "Credit booking created successfully");
+          successCallBack();
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 422) {
+          const validationErrors = error.response.data.errors;
+          setErrors(validationErrors);
+        } else {
+          setErrors({ submit: 'Failed to create credit booking' });
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [formData]
+  );
 
   // Update an existing inventory
   const onUpdate = useCallback(
@@ -126,6 +158,7 @@ export default function useBookingForm() {
     formData,
     setFormData,
     onSubmit,
+    onSubmitCredit,
     onUpdate,
     setErrors,
     onStartBooking,

@@ -32,6 +32,18 @@ import {
 
 import useBookings from '@/hooks/booking/useBookings'
 import { BookingModal } from '../BookingModal'
+import { cancelBooking } from '@/api/booking'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { toast } from 'sonner'
 
 export default function Page({ params }) {
 const { bookingId: reference } = use(params);
@@ -40,6 +52,9 @@ const { bookingId: reference } = use(params);
   const [selectedItem, setSelectedItem] = useState(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [isNewItem, setIsNewItem] = useState(false);
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
+  const [cancelLoading, setCancelLoading] = useState(false);
 
 useEffect(() => {
   if (reference) {
@@ -65,6 +80,33 @@ const handleEdit = (booking) => {
   
 const handleStatusUpdate = (newStatus) => {
     console.log("Update status to:", newStatus);
+};
+
+const handleCancelBookingClick = () => {
+  setCancelReason('');
+  setCancelDialogOpen(true);
+};
+
+const handleCancelBookingConfirm = async () => {
+  if (!booking?._id) return;
+  setCancelLoading(true);
+  try {
+    const res = await cancelBooking({
+      bookingId: booking._id,
+      reason: cancelReason || 'No reason provided',
+    });
+    if (res.status === 200) {
+      toast.success(res.data?.message || res.message || 'Booking cancelled successfully');
+      setCancelDialogOpen(false);
+      findBooking(reference);
+    } else {
+      toast.error(res.response?.data?.message || 'Failed to cancel booking');
+    }
+  } catch (err) {
+    toast.error(err.response?.data?.message || 'Failed to cancel booking');
+  } finally {
+    setCancelLoading(false);
+  }
 };
 
 const formatDateTime = (dateTime) => {
@@ -118,6 +160,16 @@ return (
              <Button variant="outline" size="sm" className="hidden sm:flex" onClick={() => handleEdit(booking)}>
               <Edit className="w-4 h-4 mr-2" />
               Edit
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="hidden sm:flex text-destructive hover:text-destructive hover:bg-destructive/10 disabled:opacity-70"
+              onClick={handleCancelBookingClick}
+              disabled={booking?.status?.toLowerCase() === 'cancelled'}
+            >
+              <XCircle className="w-4 h-4 mr-2" />
+              {booking?.status?.toLowerCase() === 'cancelled' ? 'Cancelled' : 'Cancel Booking'}
             </Button>
             {/* <Button variant="outline" size="sm">
               <FileText className="w-4 h-4 mr-2" />
@@ -523,6 +575,38 @@ return (
         findBooking={findBooking}
         booking={booking}
       />
+
+      <Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Cancel Booking</DialogTitle>
+            <DialogDescription>
+              This will cancel booking {booking?.bookingId}. You can provide a reason below (optional).
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-2 py-2">
+            <Label htmlFor="cancel-reason">Reason</Label>
+            <Input
+              id="cancel-reason"
+              placeholder="e.g. Mistake, Customer request"
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCancelDialogOpen(false)} disabled={cancelLoading}>
+              Back
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleCancelBookingConfirm}
+              disabled={cancelLoading}
+            >
+              {cancelLoading ? 'Cancelling...' : 'Cancel Booking'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </BreadcrumbProvider>
   );
 }
