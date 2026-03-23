@@ -5,6 +5,7 @@ import DatePickerLine from "@/components/common/DatePickerLine";
 import CustomerPicker from "@/components/common/dropdown/customer/CustomerPicker";
 import DriverPicker from "@/components/common/dropdown/driver/DriverPicker";
 import PackagePicker from "@/components/common/dropdown/package/PackagePicker";
+import PackageCategoryPicker from "@/components/common/dropdown/package/PackageCategoryPicker";
 import FormGroup from "@/components/common/FormGroup";
 import TextInput from "@/components/common/inputs/TextInput";
 import TimePicker from "@/components/common/TimePicker";
@@ -22,6 +23,13 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import useBookingForm from "@/hooks/booking/useBookingForm";
 import {
   AlertCircle,
@@ -31,9 +39,25 @@ import {
   MapPin,
   DollarSign,
   Info,
+  CheckCircle2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import usePackages from "@/hooks/packages/usePackages";
+
+function hasSelectedPackage(booking, selectedItem) {
+  const pkg = booking?.selectedPackage ?? selectedItem?.selectedPackage;
+  if (!pkg) return false;
+  if (typeof pkg === "object") return Boolean(pkg._id);
+  return Boolean(pkg);
+}
+
+function dayNightFromPackage(pkg) {
+  if (!pkg || typeof pkg !== "object") return null;
+  const c = pkg.packageCategory;
+  if (c === "night" || c === "night_time") return "night";
+  if (c === "day" || c === "day_time" || c === "day") return "day";
+  return null;
+}
 
 export function BookingModal({
   sheetOpen,
@@ -61,12 +85,16 @@ export function BookingModal({
   } = useBookingForm();
   const [isChecked, setIsChecked] = useState(false);
   const [isCreditBooking, setIsCreditBooking] = useState(false);
+  const [packageCategoryChoice, setPackageCategoryChoice] = useState("day");
   const { fetchPackages, packages } = usePackages();
+
+  const bookingHasPackage = hasSelectedPackage(booking, selectedItem);
+  const unassignedLike =
+    activeTab === "unassigned" || (!isNewItem && !bookingHasPackage);
+  const needsPackageCategoryPicker = unassignedLike;
 
   // Load data when editing
   // console.log("first", selectedItem)
-  console.log({ activeTab });
-
   useEffect(() => {
     fetchPackages();
   }, []);
@@ -76,7 +104,14 @@ export function BookingModal({
       findBooking(selectedItem?._id);
       setFormData({
         ...booking,
-        // Ensure keys map correctly if backend differs
+        completeBooking: booking?.completeBooking ?? false,
+        fee: booking?.fee ?? "",
+        paymentMethod:
+          (booking?.paymentMethod &&
+            String(booking.paymentMethod).toLowerCase()) ||
+          "cash",
+        cashAmount:
+          booking?.cashAmount != null ? booking.cashAmount : "",
       });
     } else if (selectedItem && !isNewItem) {
       setIsChecked(false);
@@ -87,7 +122,7 @@ export function BookingModal({
         time: selectedItem?.time,
         customerNumber: selectedItem?.customerNumber,
         customerName: selectedItem?.customerName,
-        driver: selectedItem?.driver,
+        driver: selectedItem?.driver?._id,
         packageType: selectedItem?.selectedPackage?.packageType,
         description: selectedItem?.description,
         pickupLocation: selectedItem?.pickupLocation,
@@ -98,6 +133,14 @@ export function BookingModal({
         customAmount: selectedItem?.customAmount,
         customerId: selectedItem.customer || "",
         selectedPackage: selectedItem.selectedPackage?._id || "",
+        completeBooking: false,
+        fee: selectedItem?.fee ?? "",
+        paymentMethod:
+          (selectedItem?.paymentMethod &&
+            String(selectedItem.paymentMethod).toLowerCase()) ||
+          "cash",
+        cashAmount:
+          selectedItem?.cashAmount != null ? selectedItem.cashAmount : "",
       });
     } else if (isNewItem && sheetOpen) {
       // Set today's date in YYYY-MM-DD format when modal opens for new booking
@@ -120,10 +163,33 @@ export function BookingModal({
         additionalFees: 0,
         customAmount: 0,
         fee: 0,
+        completeBooking: false,
       });
       setIsCreditBooking(false);
     }
   }, [selectedItem, isNewItem, findBooking, setFormData, sheetOpen, booking]);
+
+  useEffect(() => {
+    if (!sheetOpen) return;
+
+    if (unassignedLike) {
+      if (isNewItem) {
+        setPackageCategoryChoice("day");
+        return;
+      }
+      const pkg = booking?.selectedPackage ?? selectedItem?.selectedPackage;
+      if (pkg && typeof pkg === "object") {
+        const c = pkg?.packageCategory;
+        setPackageCategoryChoice(
+          c === "night" || c === "night_time" ? "night" : "day",
+        );
+      } else {
+        setPackageCategoryChoice("day");
+      }
+    } else if (isNewItem && (activeTab === "day" || activeTab === "night")) {
+      setPackageCategoryChoice(activeTab);
+    }
+  }, [sheetOpen, isNewItem, activeTab, selectedItem, booking, unassignedLike]);
 
   // Open date picker when modal opens for new booking
   // useEffect(() => {
@@ -195,22 +261,48 @@ export function BookingModal({
     }
   };
 
+  const inferredDayNight = dayNightFromPackage(
+    booking?.selectedPackage ?? selectedItem?.selectedPackage,
+  );
+
+  const bookingTab =
+    activeTab === "unassigned"
+      ? packageCategoryChoice
+      : activeTab === "day" || activeTab === "night"
+        ? activeTab
+        : (inferredDayNight ?? packageCategoryChoice);
+
   const filteredPackages =
-    packages.filter((pkg) => pkg?.packageCategory === activeTab) ?? [];
+    packages.filter((pkg) => pkg?.packageCategory === bookingTab) ?? [];
   const selectedPackageInfo =
     filteredPackages.find((pkg) => pkg?._id === formData?.selectedPackage) ??
     {};
+
+  const isUnassignedHeader =
+    activeTab === "unassigned" || (!isNewItem && !bookingHasPackage);
+
+  // Match booking list tab active styles (see booking/page.js TabsTrigger "unassigned")
+  const headerClass = isUnassignedHeader
+    ? "bg-slate-600 text-white shadow-lg font-semibold"
+    : bookingTab === "day"
+      ? "bg-amber-500 text-white"
+      : bookingTab === "night"
+        ? "bg-indigo-700 text-white"
+        : "bg-gradient-to-r from-blue-600 to-blue-700 text-white";
 
   return (
     <Dialog open={sheetOpen} onOpenChange={setSheetOpen}>
       <DialogTrigger asChild>
         {/* <Button variant="outline">Open Dialog</Button> */}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[85%] max-h-[90vh] flex flex-col p-0">
+      <DialogContent
+        className="sm:max-w-[85%] max-h-[90vh] flex flex-col p-0"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <DialogHeader
-          className={`rounded-t-lg px-6 pt-6 pb-4 shrink-0 ${activeTab === "day" ? "bg-amber-500 text-white" : activeTab === "night" ? "bg-indigo-700 text-white" : "bg-gradient-to-r from-blue-600 to-blue-700 text-white"}`}
+          className={`rounded-t-lg px-6 pt-6 pb-4 shrink-0 ${headerClass}`}
         >
-          <DialogTitle className="flex items-center gap-2 text-xl">
+          <DialogTitle className="flex items-center gap-2 text-xl text-white">
             {isNewItem ? (
               <FileText className="w-5 h-5" />
             ) : (
@@ -225,13 +317,7 @@ export function BookingModal({
               </StatusBadge>
             )}
           </DialogTitle>
-          <DialogDescription
-            className={
-              activeTab === "day" || activeTab === "night"
-                ? "text-white/90"
-                : "text-white/90"
-            }
-          >
+          <DialogDescription className="!text-white/90 text-sm sm:text-left">
             {isNewItem
               ? "Fill in the details below to create a new booking."
               : "Update the booking information below."}
@@ -243,7 +329,7 @@ export function BookingModal({
         >
           <div className="overflow-y-auto flex-1 px-6 py-6 space-y-6">
             {/* Date and Time Section */}
-            <div className="space-y-4">
+            <div className="space-y-4 ">
               <div className="flex items-center gap-2 text-sm font-semibold text-gray-700">
                 <Calendar className="w-4 h-4" />
                 <span>Date & Time</span>
@@ -335,39 +421,70 @@ export function BookingModal({
                 <User className="w-4 h-4" />
                 <span>Driver & Package</span>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormGroup id={"driver"} errors={errors}>
-                  <Label htmlFor="driver">Driver</Label>
-                  <DriverPicker
-                    id="driver"
-                    value={formData.driver}
-                    labelKey={"firstName"}
-                    valueKey={"_id"}
-                    onChange={(e) => setFormData({ ...formData, driver: e })}
-                    error={errors?.driver}
-                  />
-                </FormGroup>
-                <FormGroup id={"selectedPackage"} errors={errors}>
-                  <Label htmlFor="selectedPackage">Package</Label>
-                  <PackagePicker
-                    options={filteredPackages}
-                    category={activeTab}
-                    id="selectedPackage"
-                    value={formData.selectedPackage}
-                    labelKey={"packageName"}
-                    valueKey={"_id"}
-                    onChange={(e) =>
-                      setFormData({ ...formData, selectedPackage: e })
-                    }
-                    onPackageSelect={(pkg) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        packageType: pkg?.packageType,
-                      }))
-                    }
-                    error={errors?.selectedPackage}
-                  />
-                </FormGroup>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 min-w-0">
+                <div
+                  className={
+                    needsPackageCategoryPicker
+                      ? "sm:col-span-2 min-w-0"
+                      : "min-w-0"
+                  }
+                >
+                  <FormGroup id={"driver"} errors={errors}>
+                    <Label htmlFor="driver">Driver</Label>
+                    <DriverPicker
+                      id="driver"
+                      value={formData.driver}
+                      labelKey={"firstName"}
+                      valueKey={"_id"}
+                      onChange={(e) => setFormData({ ...formData, driver: e })}
+                      error={errors?.driver}
+                    />
+                  </FormGroup>
+                </div>
+                {needsPackageCategoryPicker && (
+                  <div className="min-w-0">
+                    <FormGroup id={"packageCategory"} errors={errors}>
+                      <Label htmlFor="packageCategory">
+                        Package category *
+                      </Label>
+                      <PackageCategoryPicker
+                        id="packageCategory"
+                        value={packageCategoryChoice}
+                        onChange={(val) => {
+                          setPackageCategoryChoice(val);
+                          setFormData((prev) => ({
+                            ...prev,
+                            selectedPackage: "",
+                            packageType: "",
+                          }));
+                        }}
+                      />
+                    </FormGroup>
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <FormGroup id={"selectedPackage"} errors={errors}>
+                    <Label htmlFor="selectedPackage">Package</Label>
+                    <PackagePicker
+                      options={filteredPackages}
+                      category={bookingTab}
+                      id="selectedPackage"
+                      value={formData.selectedPackage}
+                      labelKey={"packageName"}
+                      valueKey={"_id"}
+                      onChange={(e) =>
+                        setFormData({ ...formData, selectedPackage: e })
+                      }
+                      onPackageSelect={(pkg) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          packageType: pkg?.packageType,
+                        }))
+                      }
+                      error={errors?.selectedPackage}
+                    />
+                  </FormGroup>
+                </div>
               </div>
             </div>
 
@@ -511,6 +628,112 @@ export function BookingModal({
                 </div>
               )}
             </div>
+
+            {!isNewItem && (
+              <>
+                <Separator />
+                <div className="space-y-4 rounded-lg border border-emerald-200 bg-emerald-50/50 p-4">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-gray-800">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-700" />
+                    <span>Complete booking</span>
+                  </div>
+                  <div className="flex items-center space-x-2 rounded-md bg-white/80 p-3">
+                    <Switch
+                      id="completeBooking"
+                      checked={Boolean(formData.completeBooking)}
+                      onCheckedChange={(checked) => {
+                        handleInputChange("completeBooking", checked);
+                        if (!checked) {
+                          handleInputChange("fee", "");
+                          handleInputChange("cashAmount", "");
+                          handleInputChange(
+                            "paymentMethod",
+                            (selectedItem?.paymentMethod &&
+                              String(
+                                selectedItem.paymentMethod,
+                              ).toLowerCase()) ||
+                              "cash",
+                          );
+                        }
+                      }}
+                    />
+                    <Label
+                      htmlFor="completeBooking"
+                      className="cursor-pointer"
+                    >
+                      Mark as completed on update (backend will finalize
+                      booking)
+                    </Label>
+                  </div>
+                  {formData.completeBooking && (
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <FormGroup id={"paymentMethod"} errors={errors}>
+                        <Label htmlFor="completionPaymentMethod">
+                          Payment method *
+                        </Label>
+                        <Select
+                          value={
+                            formData.paymentMethod === "credit"
+                              ? "credit"
+                              : "cash"
+                          }
+                          onValueChange={(v) => {
+                            handleInputChange("paymentMethod", v);
+                            if (v === "credit") {
+                              handleInputChange("cashAmount", "");
+                            }
+                          }}
+                        >
+                          <SelectTrigger
+                            id="completionPaymentMethod"
+                            className="h-9 w-full"
+                          >
+                            <SelectValue placeholder="Cash or credit" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="cash">Cash</SelectItem>
+                            <SelectItem value="credit">Credit</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormGroup>
+                      <FormGroup id={"fee"} errors={errors}>
+                        <Label htmlFor="completeBookingFee">Fee (LKR) *</Label>
+                        <TextInput
+                          id="completeBookingFee"
+                          type="number"
+                          min={0}
+                          step="0.01"
+                          value={formData.fee ?? ""}
+                          onChange={(e) =>
+                            handleInputChange("fee", e.target.value)
+                          }
+                          placeholder="Enter fee to apply on completion"
+                        />
+                      </FormGroup>
+                    </div>
+                  )}
+                  {formData.completeBooking &&
+                    formData.paymentMethod === "cash" && (
+                      <FormGroup id={"cashAmount"} errors={errors}>
+                        <Label htmlFor="completionCashAmount">
+                          Cash amount (LKR) *
+                        </Label>
+                        <TextInput
+                          id="completionCashAmount"
+                          type="number"
+                          min={0}
+                          step="0.01"
+                          value={formData.cashAmount ?? ""}
+                          onChange={(e) =>
+                            handleInputChange("cashAmount", e.target.value)
+                          }
+                          placeholder="Amount received as cash"
+                        />
+                      </FormGroup>
+                    )}
+                </div>
+              </>
+            )}
 
             {/* Booking Status Actions */}
             {(formData?.status === "pending" ||

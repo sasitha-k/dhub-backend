@@ -67,13 +67,62 @@ export default function useBookingForm() {
     [formData]
   );
 
-  // Update an existing inventory
+  // Update an existing booking (completeBooking + fee + paymentMethod when completing)
   const onUpdate = useCallback(
     async (successCallBack) => {
       setIsLoading(true);
       setErrors({});
+      if (formData.completeBooking) {
+        const raw = formData.fee;
+        const fee = raw != null && raw !== "" ? parseFloat(raw) : NaN;
+        if (Number.isNaN(fee) || fee < 0) {
+          setErrors({ fee: "Fee is required and must be a valid amount" });
+          toast.error("Please enter a valid fee to complete booking");
+          setIsLoading(false);
+          return;
+        }
+        const pm = String(formData.paymentMethod || "").toLowerCase();
+        if (pm !== "credit" && pm !== "cash") {
+          setErrors({
+            paymentMethod: "Select whether this booking is cash or credit",
+          });
+          toast.error("Select payment method (cash or credit) to complete");
+          setIsLoading(false);
+          return;
+        }
+        if (pm === "cash") {
+          const rawCash = formData.cashAmount;
+          const cashAmount =
+            rawCash != null && rawCash !== "" ? parseFloat(rawCash) : NaN;
+          if (Number.isNaN(cashAmount) || cashAmount < 0) {
+            setErrors({
+              cashAmount: "Cash amount is required and must be a valid amount",
+            });
+            toast.error("Please enter a valid cash amount");
+            setIsLoading(false);
+            return;
+          }
+        }
+      }
       try {
-        const res = await updateBooking(formData); 
+        const payload = { ...formData };
+        if (payload.completeBooking) {
+          payload.fee = parseFloat(payload.fee);
+          payload.paymentMethod =
+            String(payload.paymentMethod || "cash").toLowerCase() === "credit"
+              ? "credit"
+              : "cash";
+          if (payload.paymentMethod === "cash") {
+            payload.cashAmount = parseFloat(payload.cashAmount);
+          } else {
+            delete payload.cashAmount;
+          }
+        } else {
+          delete payload.fee;
+          delete payload.paymentMethod;
+          delete payload.cashAmount;
+        }
+        const res = await updateBooking(payload);
         if (res.status === 200) {
           toast.success(res.message || "Booking updated successfully");
           successCallBack();

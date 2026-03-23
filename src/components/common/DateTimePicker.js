@@ -4,6 +4,9 @@ import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment-timezone";
 import { CalendarIcon } from "lucide-react";
 
+const DATE_PICKER_TEXT_INPUT = (
+  <input type="text" inputMode="none" autoComplete="off" />
+);
 
 const DateTimePicker = ({
   selectedDate,
@@ -25,7 +28,7 @@ const DateTimePicker = ({
 
   const handleIconClick = () => {
     if (datePickerRef.current) {
-      datePickerRef.current.setFocus();
+      datePickerRef.current.setOpen(true);
     }
   };
 
@@ -39,6 +42,7 @@ const DateTimePicker = ({
     <div className="relative flex w-full">
       <DatePicker
         ref={datePickerRef}
+        customInput={DATE_PICKER_TEXT_INPUT}
         // locale={enGB}
         selected={
           selectedDate && moment(selectedDate, "YYYY-MM-DD HH:mm").isValid()

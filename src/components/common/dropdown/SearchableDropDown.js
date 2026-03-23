@@ -123,7 +123,7 @@ export function SearchableDropdown({
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="relative lg:absolute left-0 z-[120] mt-1 w-full rounded-md border bg-background shadow-md max-h-60 overflow-y-auto">
+        <div className="absolute left-0 right-0 top-full z-[120] mt-1 w-full rounded-md border bg-background shadow-md max-h-60 overflow-y-auto">
           <div className="p-2">
             <input
               ref={inputRef}
@@ -132,7 +132,7 @@ export function SearchableDropdown({
               placeholder={searchPlaceholder}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className={`w-full text-xs px-2 py-2 border rounded focus:outline-none `}
+              className="w-full text-base md:text-xs px-2 py-2 border rounded focus:outline-none"
             />
           </div>
 

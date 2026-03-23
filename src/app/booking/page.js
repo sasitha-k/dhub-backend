@@ -57,15 +57,20 @@ export default function Page() {
       // Filter by activeTab only when there's no search
       const filteredByTab = bookings.filter((item) => {
         const packageCategory = item?.selectedPackage?.packageCategory;
+        const hasPackage = item?.selectedPackage != null;
+        if (activeTab === "unassigned") {
+          return !hasPackage;
+        }
         if (activeTab === "day") {
           return (
-            packageCategory === "day_time" ||
-            packageCategory === "day" ||
-            !packageCategory
+            hasPackage &&
+            (packageCategory === "day_time" || packageCategory === "day")
           );
-        } else if (activeTab === "night") {
+        }
+        if (activeTab === "night") {
           return (
-            packageCategory === "night_time" || packageCategory === "night"
+            hasPackage &&
+            (packageCategory === "night_time" || packageCategory === "night")
           );
         }
         return true;
@@ -90,6 +95,13 @@ export default function Page() {
     setSelectedItem(null);
     setSheetOpen(true);
     setActiveTab("night");
+  };
+
+  const handleCreateUnassigned = () => {
+    setIsNewItem(true);
+    setSelectedItem(null);
+    setSheetOpen(true);
+    setActiveTab("unassigned");
   };
 
   const handleEdit = (item) => {
@@ -129,10 +141,21 @@ export default function Page() {
     // Filter by active tab (day/night time)
     const filteredByTab = bookings.filter((item) => {
       const packageCategory = item?.selectedPackage?.packageCategory;
+      const hasPackage = item?.selectedPackage != null;
+      if (activeTab === "unassigned") {
+        return !hasPackage;
+      }
       if (activeTab === "day") {
-        return packageCategory === "day_time" || packageCategory === "day";
-      } else if (activeTab === "night") {
-        return packageCategory === "night_time" || packageCategory === "night";
+        return (
+          hasPackage &&
+          (packageCategory === "day_time" || packageCategory === "day")
+        );
+      }
+      if (activeTab === "night") {
+        return (
+          hasPackage &&
+          (packageCategory === "night_time" || packageCategory === "night")
+        );
       }
       return true;
     });
@@ -171,7 +194,7 @@ export default function Page() {
             onValueChange={setActiveTab}
             className="w-full"
           >
-            <TabsList className="grid w-full max-w-md grid-cols-2 bg-muted/50 p-1 rounded-lg">
+            <TabsList className="grid w-full max-w-2xl grid-cols-3 bg-muted/50 p-1 rounded-lg">
               <TabsTrigger
                 value="day"
                 className="data-[state=active]:bg-amber-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:font-semibold transition-all duration-200 hover:bg-amber-50 dark:hover:bg-amber-950/20 rounded-md"
@@ -183,6 +206,12 @@ export default function Page() {
                 className="data-[state=active]:bg-indigo-700 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:font-semibold transition-all duration-200 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 rounded-md"
               >
                 🌙 Night Time
+              </TabsTrigger>
+              <TabsTrigger
+                value="unassigned"
+                className="data-[state=active]:bg-slate-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:font-semibold transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-900/40 rounded-md"
+              >
+                📭 Unassigned
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -330,15 +359,22 @@ export default function Page() {
                       : (bookings || []).filter((item) => {
                           const packageCategory =
                             item?.selectedPackage?.packageCategory;
+                          const hasPackage = item?.selectedPackage != null;
+                          if (activeTab === "unassigned") {
+                            return !hasPackage;
+                          }
                           if (activeTab === "day") {
                             return (
-                              packageCategory === "day_time" ||
-                              packageCategory === "day"
+                              hasPackage &&
+                              (packageCategory === "day_time" ||
+                                packageCategory === "day")
                             );
-                          } else if (activeTab === "night") {
+                          }
+                          if (activeTab === "night") {
                             return (
-                              packageCategory === "night_time" ||
-                              packageCategory === "night"
+                              hasPackage &&
+                              (packageCategory === "night_time" ||
+                                packageCategory === "night")
                             );
                           }
                           return true;
@@ -397,7 +433,11 @@ export default function Page() {
                       </TableCell>
                       <TableCell>
                         <span className="grid gap-1">
-                          {activeTab === "day" ? (
+                          {activeTab === "unassigned" ? (
+                            <span className="w-40 truncate font-semibold text-muted-foreground">
+                              —
+                            </span>
+                          ) : activeTab === "day" ? (
                             <span className="w-40 truncate font-semibold text-amber-500">
                               {item?.selectedPackage?.packageName || "N/A"}
                             </span>
@@ -452,6 +492,13 @@ export default function Page() {
               onClick={handleCreateDayTime}
             >
               Create Day Time Booking
+            </CreateButton>
+          ) : activeTab === "unassigned" ? (
+            <CreateButton
+              className="bg-slate-600 hover:bg-slate-700 text-white"
+              onClick={handleCreateUnassigned}
+            >
+              Create booking
             </CreateButton>
           ) : (
             <CreateButton

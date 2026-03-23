@@ -43,6 +43,7 @@ import {
   FileText,
   Download,
   X,
+  MessageCircle,
 } from "lucide-react";
 import useCustomerBookingHistory from "@/hooks/customers/useCustomerBookingHistory";
 import { formatter } from "@/constants/formatNumber";
@@ -67,6 +68,7 @@ export function CustomerDetailModal({
   const [selectedBookingIds, setSelectedBookingIds] = useState([]);
   const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
   const [createdInvoice, setCreatedInvoice] = useState(null);
   const scrollContainerRef = useRef(null);
 
@@ -166,6 +168,61 @@ export function CustomerDetailModal({
       toast.error("Failed to download invoice");
     } finally {
       setIsDownloading(false);
+    }
+  };
+
+  const handleShareOnWhatsApp = async () => {
+    if (!createdInvoice?.pdfUrl || !customer) return;
+    const customerName = (
+      `${customer.firstName || ""} ${customer.lastName || ""}`.trim() ||
+      "customer"
+    )
+      .replace(/[/\\:*?"<>|]/g, "-")
+      .replace(/\s+/g, " ");
+    const filename = `${customerName} invoice.pdf`;
+    setIsSharing(true);
+    try {
+      const downloadUrl = `/api/invoice/download?url=${encodeURIComponent(createdInvoice.pdfUrl)}&filename=${encodeURIComponent(filename)}`;
+      const res = await fetch(downloadUrl);
+      if (!res.ok) throw new Error("Failed to fetch PDF");
+      const blob = await res.blob();
+      const file = new File([blob], filename, { type: "application/pdf" });
+
+      const shareData = {
+        files: [file],
+        text: "Your consolidated invoice",
+        title: `Invoice #${createdInvoice.invoiceNumber}`,
+      };
+      const canShare =
+        navigator.share && (navigator.canShare ? navigator.canShare(shareData) : true);
+
+      if (canShare) {
+        if (customer?.mobile) {
+          const phone = customer.mobile.replace(/\D/g, "");
+          const waPhone = phone.startsWith("0") ? "94" + phone.slice(1) : phone;
+          window.open(`https://wa.me/${waPhone}`, "_blank", "noopener,noreferrer");
+        }
+        await navigator.share(shareData);
+        toast.success("Pick WhatsApp to attach PDF and send");
+      } else if (customer?.mobile) {
+        const phone = customer.mobile.replace(/\D/g, "");
+        const waPhone = phone.startsWith("0") ? "94" + phone.slice(1) : phone;
+        const message = `Your consolidated invoice: ${createdInvoice.pdfUrl}`;
+        window.open(
+          `https://wa.me/${waPhone}?text=${encodeURIComponent(message)}`,
+          "_blank",
+          "noopener,noreferrer"
+        );
+        toast.info("Opening WhatsApp with invoice link");
+      } else {
+        toast.error("Customer mobile required. Please download the PDF.");
+      }
+    } catch (err) {
+      if (err?.name !== "AbortError") {
+        toast.error("Failed to share invoice");
+      }
+    } finally {
+      setIsSharing(false);
     }
   };
 
@@ -586,6 +643,25 @@ export function CustomerDetailModal({
                           <>
                             <Download className="w-4 h-4" />
                             Download PDF
+                          </>
+                        )}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleShareOnWhatsApp}
+                        disabled={isSharing}
+                        className="gap-2 border-green-600 text-green-600 hover:bg-green-50 hover:text-green-700 dark:hover:bg-green-950/30"
+                      >
+                        {isSharing ? (
+                          <>
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                            Preparing...
+                          </>
+                        ) : (
+                          <>
+                            <MessageCircle className="w-4 h-4" />
+                            Send on WhatsApp
                           </>
                         )}
                       </Button>

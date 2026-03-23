@@ -135,6 +135,7 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
 .scrollbar-container::-webkit-scrollbar {
   width: 1px; /* Adjust the width of the scrollbar */
 }
@@ -291,6 +292,14 @@ body {
 /* Placeholder Styling */
 .phone-number-input .PhoneInputInput::placeholder {
   color: #6b7280; /* Tailwind Gray-500 */
+}
+
+/* iOS Safari zooms focused inputs when font-size < 16px */
+@media (max-width: 768px) {
+  .phone-number-input .PhoneInputInput,
+  .phone-number-input .PhoneInputCountrySelect {
+    font-size: 16px;
+  }
 }
 
 
