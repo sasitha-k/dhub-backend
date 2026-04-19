@@ -1,9 +1,9 @@
 // /lib/api/authInstance.js
 import axios from "axios";
-  import Cookies from "js-cookie";
+import Cookies from "js-cookie";
 
 const authInstance = axios.create({
-  baseURL: "https://dhub.yaludev.com",
+  baseURL: "https://dhub-api-79g3m.ondigitalocean.app",
   headers: {
     "Content-Type": "application/json",
   },
@@ -12,20 +12,19 @@ const authInstance = axios.create({
 authInstance.interceptors.request.use(
   (config) => {
     const token = Cookies.get("token");
-    console.log('token', token)
+    console.log("token", token);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    
+
     // If FormData is being sent, let the browser set Content-Type with boundary
     if (config.data instanceof FormData) {
-      delete config.headers['Content-Type'];
+      delete config.headers["Content-Type"];
     }
-    
+
     return config;
-    
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 export default authInstance;
