@@ -1,0 +1,18 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:3000",
+  "executionArgs": {
+    "projectName": "dhub-backend",
+    "projectPath": "/Users/sasithakarunarathne/Projects/Private/dhub-backend",
+    "testIds": [],
+    "additionalInstruction": "",
+    "serverMode": "development",
+    "envs": {
+      "API_KEY": "sk-user-lUG_eh2eyVaVd9x6GKqjT7KJx-BIygdAXn0Seh5CrYN6zO9VYv6Gp0-bvrQASuDB3Ir-M9uyVxT27B3OAN910fsXVXifVNIP4jJucXGVhw3awCpfyOkkhnAt8pfX58frQEU"
+    }
+  },
+  "serverPort": 59480,
+  "proxy": "http://488e77e4-8154-46f8-8ab7-5599adce6113:RLyLZqtOwBTWOuLz38mwqzApVQX61o94@tun.testsprite.com:8080"
+}

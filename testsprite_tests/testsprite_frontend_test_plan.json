@@ -1,0 +1,2537 @@
+[
+  {
+    "id": "TC001",
+    "title": "View booking list and open a booking detail from the list",
+    "description": "Verifies an operator can log in, view the booking list, filter by today, and open a booking detail page.",
+    "category": "Booking hub (list and detail)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Booking\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click the date filter control"
+      },
+      {
+        "type": "action",
+        "description": "Click the option for \"Today\""
+      },
+      {
+        "type": "action",
+        "description": "Click the first visible booking row in the list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking/\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Booking\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Booking list loads after login and shows key list UI elements",
+    "description": "Verifies the booking list page loads post-login and the primary list controls are visible.",
+    "category": "Booking hub (list and detail)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Date\" filter control is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Create booking\" button is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Day\" tab is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Night\" tab is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Unassigned\" tab is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Switch booking list tabs (Day, Night, Unassigned) without navigation errors",
+    "description": "Verifies switching between booking tabs updates the visible list section and stays on the booking list page.",
+    "category": "Booking hub (list and detail)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Night\" tab"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Night\" tab is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Unassigned\" tab"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Unassigned\" tab is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Day\" tab"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Day\" tab is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Filter bookings to a date with no results and verify empty state",
+    "description": "Verifies selecting a date with no bookings shows an empty-state message in the booking list.",
+    "category": "Booking hub (list and detail)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click the date filter control"
+      },
+      {
+        "type": "action",
+        "description": "Select a date clearly far in the past (for example, a date several years ago) from the date picker"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"No bookings\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Open Create booking modal from empty state and verify it appears",
+    "description": "Verifies the Create booking entry point works from an empty list and the booking form modal opens.",
+    "category": "Booking hub (list and detail)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click the date filter control"
+      },
+      {
+        "type": "action",
+        "description": "Select a date clearly far in the past (for example, a date several years ago) from the date picker"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"No bookings\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create booking\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Create booking\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Submit\" button is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Create booking validation: submit empty form shows required field errors",
+    "description": "Verifies submitting the Create booking form with missing required fields shows visible validation errors.",
+    "category": "Booking hub (list and detail)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create booking\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Create booking\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Submit\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Required\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Close Create booking modal without creating a booking",
+    "description": "Verifies the user can dismiss the Create booking modal and return to the booking list.",
+    "category": "Booking hub (list and detail)",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create booking\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Create booking\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Press \"Escape\" key"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Create booking\" is not visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Start then complete a booking from booking details",
+    "description": "Verifies an operator can open a booking and successfully start and complete it, seeing visible status updates.",
+    "category": "Booking lifecycle actions",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Log in\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click a booking row in the booking list"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Start booking\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Started\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Complete a started booking from booking details",
+    "description": "Verifies a booking can be completed after it has been started, and the completed status is shown.",
+    "category": "Booking lifecycle actions",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Log in\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click a booking row in the booking list"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Start booking\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Complete booking\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Completed\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Create a credit booking successfully and see success toast",
+    "description": "Verifies an operator can open the credit booking form from the booking list and submit it successfully with a visible success confirmation.",
+    "category": "Booking lifecycle actions",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Log in\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create credit booking\" button"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"100\" into the payment field"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"10\" into the fee field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Submit\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Success\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Create a credit booking and verify it appears in the booking list",
+    "description": "Verifies that after creating a credit booking, the operator can return to the booking list and see the newly created item present.",
+    "category": "Booking lifecycle actions",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Log in\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create credit booking\" button"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"120\" into the payment field"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"12\" into the fee field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Submit\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a booking list row for \"Credit\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Credit booking form rejects invalid fee and shows validation errors",
+    "description": "Verifies the credit booking form blocks submission with an invalid fee value and shows visible validation feedback while staying on the form.",
+    "category": "Booking lifecycle actions",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Log in\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create credit booking\" button"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"100\" into the payment field"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"-1\" into the fee field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Submit\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Invalid\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Credit booking form remains open after validation error",
+    "description": "Verifies that after a validation failure, the user remains in the credit booking form and can still see the submit action.",
+    "category": "Booking lifecycle actions",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Log in\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create credit booking\" button"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"0\" into the fee field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Submit\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Credit booking form\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Customers directory loads with summary cards and customer table",
+    "description": "Verifies an authenticated operator can open the Customers page and see the core UI elements (summary cards and the customers table).",
+    "category": "Customers (directory & CRUD)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/login\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Customers\" in the main navigation menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/customers\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Customers\" page heading is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Filter customers using search on Customers page",
+    "description": "Verifies the search input filters the visible customer results in the directory table.",
+    "category": "Customers (directory & CRUD)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Customers\" in the main navigation menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/customers\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"a\" into the customer search field"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Customers\" results table is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Open Create customer modal from Customers page",
+    "description": "Verifies the Create customer action opens a modal with a customer form.",
+    "category": "Customers (directory & CRUD)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Customers\" in the main navigation menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Create customer\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Create customer\" modal dialog is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Customer\" form is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Cancel Create customer modal without saving",
+    "description": "Verifies the user can dismiss the Create customer modal and return to the customers list without creating a record.",
+    "category": "Customers (directory & CRUD)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Customers\" in the main navigation menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Create customer\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Cancel\" button in the modal"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Create customer\" modal dialog is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Create a customer with required fields and return to list",
+    "description": "Verifies the happy path create customer workflow submits successfully and returns to the customers directory view.",
+    "category": "Customers (directory & CRUD)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Customers\" in the main navigation menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Create customer\" button"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"Test Customer\" into the \"Name\" field"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"test.customer@example.com\" into the \"Email\" field"
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "Create customer with invalid email shows validation and stays in modal",
+    "description": "Verifies invalid email input triggers visible validation errors and does not close the create modal.",
+    "category": "Customers (directory & CRUD)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Customers\" in the main navigation menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Create customer\" button"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"Invalid Email Customer\" into the \"Name\" field"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"not-an-email\" into the \"Email\" field"
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "Submitting create form with invalid email shows error and does not create customer",
+    "description": "Verifies submitting the create form with an invalid email displays a validation message and the modal remains open.",
+    "category": "Customers (directory & CRUD)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Customers\" in the main navigation menu"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Create customer\" button"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"Invalid Email Customer\" into the \"Name\" field"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"not-an-email\" into the \"Email\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Create\" or \"Save\" button in the modal"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Email\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Create customer\" modal dialog is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC021",
+    "title": "Settle a valid amount from a customer balance and see updated balance",
+    "description": "Verifies an operator can open a customer balance, settle a valid amount, and see confirmation plus an updated balance.",
+    "category": "Customer balances & credit hires",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the username/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Customer balances\" navigation item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/customer-balances\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Customer balances\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC022",
+    "title": "Filter customer balances by name and verify results update",
+    "description": "Verifies filtering the balances list by customer name updates visible results.",
+    "category": "Customer balances & credit hires",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the username/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Customer balances\" navigation item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/customer-balances\""
+      },
+      {
+        "type": "action",
+        "description": "Click into the \"Name\" or \"Search\" filter field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"a\" into the \"Name\" or \"Search\" filter field"
+      }
+    ]
+  },
+  {
+    "id": "TC023",
+    "title": "Open a customer detail modal from a balance row",
+    "description": "Verifies clicking a customer row opens the customer detail modal with booking history context.",
+    "category": "Customer balances & credit hires",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the username/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Customer balances\" navigation item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/customer-balances\""
+      },
+      {
+        "type": "action",
+        "description": "Click the first customer row in the balances list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Customer\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC024",
+    "title": "Settle amount flow: open modal, enter valid settlement, submit, and confirm success toast",
+    "description": "Verifies the end-to-end settlement flow shows a success confirmation after submitting a valid amount.",
+    "category": "Customer balances & credit hires",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the username/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Customer balances\" navigation item"
+      },
+      {
+        "type": "action",
+        "description": "Click the first customer row in the balances list"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Settle amount\" button"
+      },
+      {
+        "type": "action",
+        "description": "Type \"1\" into the \"Settlement amount\" field"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Success\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC025",
+    "title": "Reject settlement when entered amount is greater than owed",
+    "description": "Verifies validation/error feedback appears and settlement is not applied when amount exceeds amount owed.",
+    "category": "Customer balances & credit hires",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the username/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Customer balances\" navigation item"
+      },
+      {
+        "type": "action",
+        "description": "Click the first customer row in the balances list"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Settle amount\" button"
+      },
+      {
+        "type": "action",
+        "description": "Type \"999999\" into the \"Settlement amount\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Submit\" or \"Confirm\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"greater\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC026",
+    "title": "Settlement cancel/close does not apply changes",
+    "description": "Verifies closing the settlement flow without submitting does not show success confirmation.",
+    "category": "Customer balances & credit hires",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the username/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Customer balances\" navigation item"
+      },
+      {
+        "type": "action",
+        "description": "Click the first customer row in the balances list"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Settle amount\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Cancel\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Success\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC027",
+    "title": "Filtering then opening a customer row still opens correct detail modal",
+    "description": "Verifies that after applying a name filter, selecting a row still opens a customer detail modal (no empty or mismatched modal state).",
+    "category": "Customer balances & credit hires",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the username/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Customer balances\" navigation item"
+      },
+      {
+        "type": "action",
+        "description": "Click into the \"Name\" or \"Search\" filter field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"e\" into the \"Name\" or \"Search\" filter field"
+      },
+      {
+        "type": "action",
+        "description": "Click the first customer row in the balances list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Customer detail modal\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC028",
+    "title": "Create a new driver successfully from Drivers directory",
+    "description": "Verifies that an authenticated operator can create a driver and see it appear in the Drivers list.",
+    "category": "Drivers (directory & CRUD)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the username/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Drivers\" in the main navigation menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/drivers\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Drivers\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC029",
+    "title": "Drivers page shows summary metrics and a driver table",
+    "description": "Verifies that the Drivers directory loads and displays summary cards and a populated table area.",
+    "category": "Drivers (directory & CRUD)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the username/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Drivers\" in the main navigation menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Driver search\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Create driver\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC030",
+    "title": "Search for an existing driver from the Drivers directory",
+    "description": "Verifies that searching filters the visible driver results in the table.",
+    "category": "Drivers (directory & CRUD)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the username/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Drivers\" in the main navigation menu"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Ali\" into the driver search field"
+      },
+      {
+        "type": "action",
+        "description": "Press \"Enter\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Ali\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC031",
+    "title": "Open Create Driver modal and verify required fields are present",
+    "description": "Verifies that the create driver modal opens and shows key form fields and a submit action.",
+    "category": "Drivers (directory & CRUD)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the username/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Drivers\" in the main navigation menu"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create driver\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Create driver\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"License\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC032",
+    "title": "Create Driver validation: missing required license field",
+    "description": "Verifies that submitting the create driver form without a required license shows validation errors and keeps the modal open.",
+    "category": "Drivers (directory & CRUD)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the username/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Drivers\" in the main navigation menu"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create driver\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Submit\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"License\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC033",
+    "title": "Cancel out of Create Driver modal without saving",
+    "description": "Verifies that the operator can close the create driver modal and return to the Drivers directory without creating a driver.",
+    "category": "Drivers (directory & CRUD)",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the username/email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Drivers\" in the main navigation menu"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create driver\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Cancel\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Create driver\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC034",
+    "title": "Add a driver balance adjustment successfully from Driver Balances",
+    "description": "Verifies an operator can add a balance adjustment and see success feedback and refreshed balances list.",
+    "category": "Driver balances, expenses & leaves",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Driver balances\" in the main navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/driver-balances\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Driver Balances\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC035",
+    "title": "Open Add balance form and submit a valid adjustment",
+    "description": "Verifies the Add balance workflow accepts valid amount and description and shows a success message.",
+    "category": "Driver balances, expenses & leaves",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Driver balances\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Add balance\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Add balance\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC036",
+    "title": "Validate required fields when adding a balance adjustment",
+    "description": "Verifies submitting Add balance with missing fields shows visible validation feedback and does not succeed.",
+    "category": "Driver balances, expenses & leaves",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Driver balances\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Add balance\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Submit\" or \"Save\" button"
+      }
+    ]
+  },
+  {
+    "id": "TC037",
+    "title": "Prevent non-numeric amount when adding a balance adjustment",
+    "description": "Verifies entering a non-numeric amount shows validation errors and does not add a balance adjustment.",
+    "category": "Driver balances, expenses & leaves",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Driver balances\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Add balance\" button"
+      },
+      {
+        "type": "action",
+        "description": "Type \"abc\" into the amount field"
+      }
+    ]
+  },
+  {
+    "id": "TC038",
+    "title": "Driver Leaves page loads and displays leave list",
+    "description": "Verifies the driver leaves page is accessible and shows the leave list UI.",
+    "category": "Driver balances, expenses & leaves",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Driver leaves\" in the main navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/driver-leaves\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Driver Leaves\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC039",
+    "title": "Open a driver leave record to view details/history",
+    "description": "Verifies a leave record can be opened from the list and a details/history view is shown.",
+    "category": "Driver balances, expenses & leaves",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Driver leaves\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first leave record in the list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"History\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC040",
+    "title": "Driver Leaves page shows error feedback when leaves fail to load (if occurs)",
+    "description": "Verifies that if the leaves list cannot be fetched, the page presents visible error feedback instead of a silent failure.",
+    "category": "Driver balances, expenses & leaves",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Driver leaves\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the page content to finish loading"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Error\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC041",
+    "title": "Create a new Day package with pricing and availability enabled",
+    "description": "Verifies an operator can create a new package from the Packages page using the Day tab, set pricing, toggle availability, submit, and see the result reflected in the list.",
+    "category": "Packages management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Packages\" in the main navigation menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/packages\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create package\" button"
+      }
+    ]
+  },
+  {
+    "id": "TC042",
+    "title": "Complete the Day package form and submit successfully",
+    "description": "Verifies the create package sheet/form supports selecting category and Day type, filling pricing fields, setting availability, and submitting without visible errors.",
+    "category": "Packages management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Packages\" in the main navigation menu"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create package\" button"
+      },
+      {
+        "type": "action",
+        "description": "Select a category from the category dropdown"
+      }
+    ]
+  },
+  {
+    "id": "TC043",
+    "title": "Create a new Night package and verify it appears under Night tab",
+    "description": "Verifies a Night-type package can be created and is visible when switching to the Night tab.",
+    "category": "Packages management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Packages\" in the main navigation menu"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create package\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Night\" tab in the package type selector"
+      }
+    ]
+  },
+  {
+    "id": "TC044",
+    "title": "Toggle package availability during creation and verify state is shown in list",
+    "description": "Verifies the availability toggle in the create form affects how the package is shown in the package list (e.g., Available/Unavailable indicator).",
+    "category": "Packages management",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Packages\" in the main navigation menu"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create package\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click the availability toggle to change its state"
+      }
+    ]
+  },
+  {
+    "id": "TC045",
+    "title": "Validation: submit with missing required pricing fields shows errors and stays in form",
+    "description": "Verifies required pricing fields are validated and prevent submission when empty, showing visible validation feedback and keeping the user in the create package form.",
+    "category": "Packages management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Packages\" in the main navigation menu"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create package\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Submit\" or \"Save\" button"
+      }
+    ]
+  },
+  {
+    "id": "TC046",
+    "title": "Switch between Day and Night tabs in the list view",
+    "description": "Verifies the Packages page supports switching between Day and Night tabs and shows tab-specific content without leaving the page.",
+    "category": "Packages management",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Packages\" in the main navigation menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/packages\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Night\" tab in the package list view"
+      }
+    ]
+  },
+  {
+    "id": "TC047",
+    "title": "Cancel/close the create package sheet without saving",
+    "description": "Verifies the create package sheet can be closed without creating a package and the user returns to the packages list view.",
+    "category": "Packages management",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Packages\" in the main navigation menu"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create package\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Cancel\" button or the close icon on the create package sheet"
+      }
+    ]
+  },
+  {
+    "id": "TC048",
+    "title": "Validation: after selecting a type, required fields for that type are visible",
+    "description": "Verifies that selecting Day vs Night (or other available type tabs) reveals the type-specific pricing fields required for that package type.",
+    "category": "Packages management",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Packages\" in the main navigation menu"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create package\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Day\" tab in the package type selector"
+      }
+    ]
+  },
+  {
+    "id": "TC049",
+    "title": "Create consolidated invoice from selected bookings and see download link",
+    "description": "Verifies an operator can create a consolidated invoice from selected bookings and sees a success state with a download link.",
+    "category": "Invoice consolidation & PDF download (server proxy)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Select multiple bookings in the booking list (use the row selection checkboxes)"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create invoice\" or \"Invoice\" action to open the invoice creation UI"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Invoice\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC050",
+    "title": "Consolidated invoice submission shows success confirmation",
+    "description": "Verifies submitting the consolidated invoice request shows a visible success confirmation in the UI.",
+    "category": "Invoice consolidation & PDF download (server proxy)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Select multiple bookings in the booking list (use the row selection checkboxes)"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create invoice\" or \"Invoice\" action to open the invoice creation UI"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Submit\" or \"Create\" button in the invoice creation UI"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Success\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC051",
+    "title": "After successful invoice creation, download link is visible",
+    "description": "Verifies the UI shows a visible download link after a successful consolidated invoice creation.",
+    "category": "Invoice consolidation & PDF download (server proxy)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Select multiple bookings in the booking list (use the row selection checkboxes)"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create invoice\" or \"Invoice\" action to open the invoice creation UI"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Submit\" or \"Create\" button in the invoice creation UI"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Download\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC052",
+    "title": "Prevent invoice creation when fewer than two bookings are selected",
+    "description": "Verifies the UI blocks consolidated invoice creation when an insufficient number of bookings is selected.",
+    "category": "Invoice consolidation & PDF download (server proxy)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Select exactly one booking in the booking list (use a single row selection checkbox)"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create invoice\" or \"Invoice\" action"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Select\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC053",
+    "title": "Authenticated entry loads booking and shows global navigation branding",
+    "description": "Verifies that after logging in, the app lands on the authenticated area and displays the sidebar branding.",
+    "category": "Global navigation & supporting UX",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Driver hub\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Sidebar navigation\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC054",
+    "title": "Navigate to Customers via sidebar and confirm breadcrumb location",
+    "description": "Verifies sidebar navigation to Customers and that breadcrumb reflects the destination page.",
+    "category": "Global navigation & supporting UX",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Customers\" in the sidebar navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/customers\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Breadcrumb\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Customers\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC055",
+    "title": "Sidebar collapse and expand using the sidebar toggle",
+    "description": "Verifies the sidebar can be collapsed and expanded and remains functional for navigation.",
+    "category": "Global navigation & supporting UX",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Sidebar toggle\" control"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Collapsed sidebar\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Sidebar toggle\" control"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Expanded sidebar\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC056",
+    "title": "Theme toggle changes theme control state and keeps current page",
+    "description": "Verifies the theme toggle is available in global navigation and does not navigate away from the current route.",
+    "category": "Global navigation & supporting UX",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Theme toggle\" control"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Theme toggle\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/booking\""
+      }
+    ]
+  },
+  {
+    "id": "TC057",
+    "title": "Navigate across multiple sections using sidebar (Customers -> Drivers)",
+    "description": "Verifies global navigation supports moving between major sections without losing navigation UI.",
+    "category": "Global navigation & supporting UX",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Customers\" in the sidebar navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/customers\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Drivers\" in the sidebar navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/drivers\""
+      }
+    ]
+  },
+  {
+    "id": "TC058",
+    "title": "Breadcrumb remains visible and updates when navigating to Reports",
+    "description": "Verifies breadcrumb presence and that it reflects the page after navigation.",
+    "category": "Global navigation & supporting UX",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Reports\" in the sidebar navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/reports\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Breadcrumb\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Reports\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC059",
+    "title": "Graceful handling when attempting to access an unavailable route is not testable via static routes",
+    "description": "Ensures tests do not attempt to validate missing/404 linked routes because no concrete missing route is provided in the route list.",
+    "category": "Global navigation & supporting UX",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Sidebar navigation\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Driver hub\" is visible"
+      }
+    ]
+  }
+]

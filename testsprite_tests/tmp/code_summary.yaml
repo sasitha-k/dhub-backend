@@ -1,0 +1,118 @@
+version: "2"
+type: frontend
+tech_stack:
+  - JavaScript
+  - Next.js 16 (App Router)
+  - React 19
+  - Material UI (@mui/material), Radix UI, Tailwind CSS 4
+  - Axios, next-auth, next-runtime-env
+routes:
+  - path: /
+    file: src/app/page.js
+    auth_required: true
+    description: Root redirects to /booking when authenticated
+  - path: /login
+    file: src/app/login/page.js
+    auth_required: false
+    description: User login with username and password
+  - path: /booking
+    file: src/app/booking/page.js
+    auth_required: true
+    description: Booking list and management
+  - path: /booking/[bookingId]
+    file: src/app/booking/[bookingId]/page.js
+    auth_required: true
+    description: Single booking detail view
+  - path: /customers
+    file: src/app/customers/page.js
+    auth_required: true
+    description: Customers management
+  - path: /drivers
+    file: src/app/drivers/page.js
+    auth_required: true
+    description: Drivers management
+  - path: /riders
+    file: src/app/riders/page.js
+    auth_required: true
+    description: Riders management
+  - path: /users
+    file: src/app/users/page.js
+    auth_required: true
+    description: Users management
+  - path: /credit-hires
+    file: src/app/credit-hires/page.js
+    auth_required: true
+    description: Credit hires and customer detail workflows
+  - path: /customer-balances
+    file: src/app/customer-balances/page.js
+    auth_required: true
+    description: Customer balances
+  - path: /driver-balances
+    file: src/app/driver-balances/page.js
+    auth_required: true
+    description: Driver balances
+  - path: /driver-leaves
+    file: src/app/driver-leaves/page.js
+    auth_required: true
+    description: Driver leave management
+  - path: /billing
+    file: src/app/billing/page.js
+    auth_required: true
+    description: Billing
+  - path: /reports
+    file: src/app/reports/page.js
+    auth_required: true
+    description: Reports
+  - path: /packages
+    file: src/app/packages/page.js
+    auth_required: true
+    description: Packages management
+features:
+  - name: Authentication
+    description: Cookie-based session after login via backend auth API
+    files:
+      - src/app/login/page.js
+      - src/hooks/login/useLogin.js
+      - src/api/login.js
+      - src/middleware.js
+    entry_route: /login
+    user_interactions:
+      - Enter username in user name field
+      - Enter password in password field
+      - Optionally toggle remember for 30 days
+      - Submit login form
+      - See success toast and redirect to booking on valid credentials
+      - See error feedback on invalid credentials
+    api_calls:
+      - method: POST
+        endpoint: /login (via authInstance base URL)
+    auth_required: false
+  - name: Booking hub
+    description: Default post-login area for bookings
+    files:
+      - src/app/booking/page.js
+      - src/app/booking/[bookingId]/page.js
+    entry_route: /booking
+    user_interactions:
+      - View booking list after login
+      - Navigate to a specific booking by id
+    api_calls: []
+    auth_required: true
+  - name: Operations pages
+    description: Authenticated CRUD and list views for fleet and finance data
+    files:
+      - src/app/customers/page.js
+      - src/app/drivers/page.js
+      - src/app/credit-hires/page.js
+      - src/app/packages/page.js
+    entry_route: /booking
+    user_interactions:
+      - Open sidebar or navigation to reach each section
+      - View tables, filters, and forms per page
+      - Interact with modals and actions where provided
+    api_calls: []
+    auth_required: true
+known_limitations:
+  - issue: E2E tests require a running backend matching authInstance and valid test credentials; pages depend on API responses
+    location: src/api/
+    impact: Login and data-heavy pages may fail automated tests without API fixtures
